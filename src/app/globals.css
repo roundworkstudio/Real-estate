@@ -1,26 +1,61 @@
 @import "tailwindcss";
 
+/*
+ * Colour tokens — PROVISIONAL.
+ * Proposed "bright fintech" direction, not yet confirmed by the client.
+ * See ../../brand-guidelines.md before treating any of this as final.
+ * Do not add a second visual direction alongside this one — see
+ * directives/anti-slop-ui.md and docs/what-worked.md ("one visual
+ * direction, chosen once").
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Canvas */
+  --color-canvas: #ffffff;
+  --color-sand: #f4ead2;
+
+  /* Accent */
+  --color-royal: #0055ff;
+  /* Deep panel variant — solid, not a gradient. Used for the "dashboard chrome"
+     surfaces (stat panels, calculators) in the fintech-dashboard direction.
+     A blue-to-purple gradient card is the specific look
+     directives/anti-slop-ui.md bans as a generic SaaS tell — solid deep blue
+     gets the same weight without that tell. */
+  --color-royal-deep: #001a66;
+
+  /* Investment / growth indicator */
+  --color-sovereign: #00c853;
+
+  /* Text */
+  --color-slate: #1e293b;
+
+  --background: var(--color-canvas);
+  --foreground: var(--color-slate);
+
+  /* Shadows — neutral near-black only, two layers max. A tinted shadow over
+     the sand/canvas surfaces reads as a colour halo, not shade. */
+  --shadow-contact: 0 1px 2px rgb(0 0 0 / 0.06);
+  --shadow-ambient: 0 16px 40px -12px rgb(0 0 0 / 0.18);
 }
 
 @theme inline {
+  --color-canvas: var(--color-canvas);
+  --color-sand: var(--color-sand);
+  --color-royal: var(--color-royal);
+  --color-royal-deep: var(--color-royal-deep);
+  --color-sovereign: var(--color-sovereign);
+  --color-slate: var(--color-slate);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  --shadow-card: var(--shadow-contact), var(--shadow-ambient);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
