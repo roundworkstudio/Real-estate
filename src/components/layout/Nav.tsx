@@ -13,14 +13,21 @@ import { navLinks } from "@/lib/nav-links";
  * highlight (light catching the top edge) actually reads against it; the
  * same highlight on a light bar would be white-on-near-white.
  *
+ * Rounded and inset from the viewport edges at all times (not just when
+ * scrolled) — a floating pill, matching MobileTabBar's shape language for
+ * the same bar's mobile equivalent. It's rounded in both states so
+ * scrolling only ever morphs colour/opacity, never the shape itself —
+ * changing the inset/radius only on scroll would shift the logo, links
+ * and button position at the same moment the color changes, which reads
+ * as a jump rather than a morph.
+ *
  * Deliberately a translucent solid background, not `backdrop-filter:
  * blur()` — directives/anti-slop-ui.md bans backdrop-filter on
  * fixed/sticky elements outright ("Content scrolling beneath it lags" —
  * measured on the first build attempt). CurrencyVisaToolbar already
  * established the same solid-bg workaround for a sticky bar; `.glass-nav`
  * (box-shadow only, not blur — see globals.css) carries the "glassy" look
- * instead, same trick MobileTabBar uses for the mobile equivalent of this
- * bar.
+ * instead.
  *
  * Mounts useScrollingFlag here rather than in a separate root component —
  * Nav is already the one thing every page renders, so it's the natural
@@ -42,7 +49,7 @@ export function Nav() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-30 flex items-center justify-between border-b px-6 py-6 transition-colors duration-300 sm:px-10 ${
+      className={`fixed inset-x-3 top-3 z-30 flex items-center justify-between rounded-2xl border px-6 py-5 transition-colors duration-300 sm:inset-x-6 sm:top-4 sm:px-8 ${
         scrolled
           ? "glass-nav border-white/10 bg-royal-deep/85 shadow-card"
           : "border-transparent bg-transparent"
