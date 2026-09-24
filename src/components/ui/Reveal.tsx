@@ -2,11 +2,28 @@
 
 import { useInView } from "@/lib/motion";
 
+const OFFSET: Record<NonNullable<RevealProps["direction"]>, string> = {
+  up: "translate-y-5",
+  left: "-translate-x-10",
+  right: "translate-x-10",
+};
+
+type RevealProps = {
+  children: React.ReactNode;
+  delayMs?: number;
+  className?: string;
+  as?: "div" | "li";
+  /** Entrance direction — "up" (default, the brief's fade-up) or a
+   * horizontal slide-in, used on /developments for row-by-row variety
+   * instead of every section using the identical fade-up. */
+  direction?: "up" | "left" | "right";
+};
+
 /**
- * Fade-up-on-scroll wrapper: opacity 0 → 1, translateY 20px → 0, once per
- * element per page load. `delayMs` staggers a grid of these (index * 100
- * per the brief's "0.1s stagger" spec). Timing matches the brief exactly:
- * 0.6s, cubic-bezier(0.16, 1, 0.3, 1).
+ * Scroll-reveal wrapper: opacity 0 → 1 plus a translate from `direction`,
+ * once per element per page load. `delayMs` staggers a grid of these
+ * (index * 100 per the brief's "0.1s stagger" spec). Timing matches the
+ * brief exactly: 0.6s, cubic-bezier(0.16, 1, 0.3, 1).
  *
  * Never a source of hidden content: useInView resolves to `true`
  * immediately under prefers-reduced-motion or without IntersectionObserver
@@ -19,19 +36,15 @@ export function Reveal({
   delayMs = 0,
   className = "",
   as: Tag = "div",
-}: {
-  children: React.ReactNode;
-  delayMs?: number;
-  className?: string;
-  as?: "div" | "li";
-}) {
+  direction = "up",
+}: RevealProps) {
   const { ref, inView } = useInView<HTMLDivElement>();
 
   return (
     <Tag
       ref={ref as never}
       className={`transition-[opacity,transform] duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
-        inView ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
+        inView ? "translate-x-0 translate-y-0 opacity-100" : `${OFFSET[direction]} opacity-0`
       } ${className}`}
       style={{ transitionDelay: inView ? `${delayMs}ms` : "0ms" }}
     >
