@@ -1,4 +1,5 @@
 import { Reveal } from "@/components/ui/Reveal";
+import { GlassCard } from "@/components/ui/GlassCard";
 
 const services = [
   {
@@ -55,13 +56,11 @@ export function Services() {
         </Reveal>
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {services.map((s, i) => (
-            <Reveal
-              key={s.name}
-              delayMs={i * 100}
-              className="hover-lift rounded-2xl border border-white/15 bg-white/10 p-6 backdrop-blur-md hover:border-royal/50"
-            >
-              <div className="text-lg font-medium text-white">{s.name}</div>
-              <p className="mt-2 text-sm text-white/70">{s.desc}</p>
+            <Reveal key={s.name} delayMs={i * 100}>
+              <GlassCard className="rounded-2xl bg-white/10 p-6 backdrop-blur-md hover:border-royal/50">
+                <div className="text-lg font-medium text-white">{s.name}</div>
+                <p className="mt-2 text-sm text-white/70">{s.desc}</p>
+              </GlassCard>
             </Reveal>
           ))}
         </div>

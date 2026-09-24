@@ -94,3 +94,88 @@ html.is-scrolling .hover-lift:hover {
     transform: none;
   }
 }
+
+/* 3D tilt + glass sheen — see lib/motion.ts's useTilt3D, which sets
+   `transform` and the --sheen-x/--sheen-y custom properties directly on
+   the element (inline style, so it can track the pointer every frame);
+   this rule only supplies the resting perspective/transition and the
+   sheen's gradient. Used both on true glass cards (paired with
+   .glass-pane below) and on a plain photo frame, where the photo itself
+   becomes "the window" — the only card-like treatment this project's
+   anti-slop rule allows for property/development listings, since it adds
+   no border/background box around the listing itself. */
+.glass-tilt {
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.4s ease;
+}
+.glass-tilt:hover {
+  box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.35);
+}
+html.is-scrolling .glass-tilt {
+  transition: none;
+}
+
+.glass-sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--sheen-x, 50%) var(--sheen-y, 50%),
+    rgb(255 255 255 / 0.35),
+    transparent 55%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.glass-tilt:hover .glass-sheen {
+  opacity: 1;
+}
+
+/* Glass-pane edge: a bright inner top highlight, the way light catches
+   the top edge of a real pane of glass, plus a faint border. Purely a
+   gradient/border treatment, no backdrop-filter — safe to use on an
+   opaque card (CredibilityNumbers, InsightToolCard) as well as a true
+   glass one (Services), unlike backdrop-blur which anti-slop-ui.md scopes
+   to photography only. */
+.glass-pane {
+  border: 1px solid rgb(255 255 255 / 0.15);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-tilt,
+  .glass-tilt:hover {
+    transition: none;
+    transform: none !important;
+    box-shadow: none;
+  }
+  .glass-sheen {
+    display: none;
+  }
+}
+
+/* Hides the scrollbar on MobileTabBar's horizontally-scrolling pill —
+   still scrolls via touch/drag, just without a visible track, matching
+   the native iOS/Android tab-bar feel it's modelled on. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Glass-sheen edge used by the fixed nav bars (Nav.tsx, MobileTabBar.tsx)
+   — an inset highlight, the way light catches the inner rim of a pane of
+   glass, adapted from the Uiverse.io reference. Deliberately no
+   backdrop-filter: both are fixed elements, and anti-slop-ui.md bans blur
+   there outright (measured scroll lag on the first build attempt) — see
+   Nav.tsx's own note. The translucent tinted background carries the
+   "glass" look instead. */
+.glass-nav {
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.2),
+    inset 0 -1px 0 rgb(255 255 255 / 0.08);
+}

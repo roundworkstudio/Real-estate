@@ -88,7 +88,9 @@ export default async function DevelopmentDetailPage({
 
         {/* Project insight — every figure computed live from the listings
             in this development, see lib/developments.ts. */}
-        <div className={`grid grid-cols-2 gap-6 sm:grid-cols-4 ${meta ? "" : "mt-8"}`}>
+        <div
+          className={`grid grid-cols-2 gap-6 text-center sm:grid-cols-4 ${meta ? "" : "mt-8"}`}
+        >
           <div>
             <div className="text-2xl font-semibold tabular-nums text-slate sm:text-3xl">
               {stats.unitCount}

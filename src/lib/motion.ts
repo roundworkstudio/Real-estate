@@ -156,3 +156,48 @@ export function useMagnetic<T extends HTMLElement>(radius = 60, strength = 0.35)
 
   return ref;
 }
+
+/**
+ * 3D tilt + glass "sheen" tracking: the element rotates toward the
+ * pointer (perspective + rotateX/rotateY) and a highlight follows it via
+ * two CSS custom properties (`--sheen-x`/`--sheen-y`), which globals.css's
+ * `.glass-tilt`/`.glass-sheen` classes read to position a radial-gradient
+ * highlight. Pairs with those two classes — see their comment for how
+ * this is used on both true cards (a bordered glass panel) and on a plain
+ * photo frame (the photo itself becomes "the window", no border added —
+ * the only form of card this project's anti-slop rule allows for property
+ * and development listings).
+ */
+export function useTilt3D<T extends HTMLElement>(maxDeg = 8) {
+  const ref = useRef<T>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || prefersReducedMotion()) return;
+
+    function onMove(e: MouseEvent) {
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width;
+      const py = (e.clientY - rect.top) / rect.height;
+      const rotateY = (px - 0.5) * 2 * maxDeg;
+      const rotateX = (0.5 - py) * 2 * maxDeg;
+      el.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      el.style.setProperty("--sheen-x", `${px * 100}%`);
+      el.style.setProperty("--sheen-y", `${py * 100}%`);
+    }
+
+    function reset() {
+      if (el) el.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg)";
+    }
+
+    el.addEventListener("mousemove", onMove);
+    el.addEventListener("mouseleave", reset);
+    return () => {
+      el.removeEventListener("mousemove", onMove);
+      el.removeEventListener("mouseleave", reset);
+    };
+  }, [maxDeg]);
+
+  return ref;
+}

@@ -44,9 +44,24 @@ export function Hero() {
           Yield, price per sqft, and payment terms alongside every listing,
           not buried in a PDF.
         </p>
+        {/* Slightly glassy — backdrop-blur is only used here because these
+            sit over moving video, the one context directives/anti-slop-ui.md
+            permits it in; scoped via className rather than the shared
+            Button variants, which are also used over flat backgrounds
+            elsewhere where blur would be meaningless. */}
         <div className="mt-8 flex gap-3">
-          <Button variant="primary">Book a call</Button>
-          <Button variant="ghost-light">View listings</Button>
+          <Button
+            variant="primary"
+            className="border border-white/15 bg-royal/80 backdrop-blur-sm hover:bg-royal/70"
+          >
+            Book a call
+          </Button>
+          <Button
+            variant="ghost-light"
+            className="border border-white/20 backdrop-blur-sm"
+          >
+            View listings
+          </Button>
         </div>
       </div>
 

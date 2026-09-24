@@ -3,30 +3,24 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { useMagnetic, useScrollingFlag } from "@/lib/motion";
-
-const links = [
-  { href: "/properties", label: "Properties" },
-  // Index not yet in SITEMAP.md (only /developments/[slug] is planned
-  // there) — see app/developments/page.tsx's top comment.
-  { href: "/developments", label: "Projects" },
-  { href: "/portfolio", label: "Portfolio" },
-  { href: "/areas", label: "Areas" },
-  { href: "/insights", label: "Insights" },
-  { href: "/about", label: "About" },
-  // Not yet in SITEMAP.md — see app/invest/page.tsx's top comment.
-  { href: "/invest", label: "Invest" },
-  // Not yet in SITEMAP.md — see app/analytics/page.tsx's top comment.
-  { href: "/analytics", label: "Analytics" },
-];
+import { navLinks } from "@/lib/nav-links";
 
 /**
- * Fixed header that morphs on scroll: transparent/blend-in over the hero
- * at the top of the page, solid canvas bar past ~80px. Deliberately a
- * solid background, not `backdrop-filter: blur()` — directives/
- * anti-slop-ui.md bans backdrop-filter on fixed/sticky elements outright
- * ("Content scrolling beneath it lags" — measured on the first build
- * attempt). CurrencyVisaToolbar already established the same solid-bg
- * workaround for a sticky bar; this is the same trick for the header.
+ * Fixed header that morphs on scroll: fully transparent/blend-in over the
+ * hero at the top of the page, matcha-tinted glass bar past ~80px. Text
+ * stays white in both states — the scrolled bar is a dark matcha tint
+ * (royal-deep), not a light one, specifically so `.glass-nav`'s inset
+ * highlight (light catching the top edge) actually reads against it; the
+ * same highlight on a light bar would be white-on-near-white.
+ *
+ * Deliberately a translucent solid background, not `backdrop-filter:
+ * blur()` — directives/anti-slop-ui.md bans backdrop-filter on
+ * fixed/sticky elements outright ("Content scrolling beneath it lags" —
+ * measured on the first build attempt). CurrencyVisaToolbar already
+ * established the same solid-bg workaround for a sticky bar; `.glass-nav`
+ * (box-shadow only, not blur — see globals.css) carries the "glassy" look
+ * instead, same trick MobileTabBar uses for the mobile equivalent of this
+ * bar.
  *
  * Mounts useScrollingFlag here rather than in a separate root component —
  * Nav is already the one thing every page renders, so it's the natural
@@ -48,27 +42,22 @@ export function Nav() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-30 flex items-center justify-between px-6 py-6 transition-colors duration-300 sm:px-10 ${
-        scrolled ? "bg-canvas/95 shadow-card" : "bg-transparent"
+      className={`fixed inset-x-0 top-0 z-30 flex items-center justify-between border-b px-6 py-6 transition-colors duration-300 sm:px-10 ${
+        scrolled
+          ? "glass-nav border-white/10 bg-royal-deep/85 shadow-card"
+          : "border-transparent bg-transparent"
       }`}
     >
       {/* Wordmark placeholder — real logo pending, see brand-guidelines.md */}
-      <a
-        href="/"
-        className={`text-lg font-semibold transition-colors duration-300 ${
-          scrolled ? "text-slate" : "text-white"
-        }`}
-      >
+      <a href="/" className="text-lg font-semibold text-white">
         Janvi
       </a>
       <nav className="hidden items-center gap-8 md:flex">
-        {links.map((l) => (
+        {navLinks.map((l) => (
           <a
             key={l.href}
             href={l.href}
-            className={`text-sm transition-colors duration-300 ${
-              scrolled ? "text-slate/70 hover:text-slate" : "text-white/80 hover:text-white"
-            }`}
+            className="text-sm text-white/80 transition-colors hover:text-white"
           >
             {l.label}
           </a>

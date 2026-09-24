@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import type { Development, DevelopmentStats } from "@/lib/developments";
-import { useInView } from "@/lib/motion";
+import { useInView, useTilt3D } from "@/lib/motion";
 
 /** Same full-bleed pattern as PropertyCard — no bordered card, per
- * directives/anti-slop-ui.md. Same reveal-scale + hover-lift treatment as
- * PropertyCard — see that component's note for how the two scale
- * transforms compose without conflict. */
+ * directives/anti-slop-ui.md. Same reveal-scale + hover-lift + 3D tilt/
+ * glass sheen treatment as PropertyCard — see that component's note for
+ * how the scale transforms and the two refs (inView + tilt) compose. */
 export function DevelopmentCard({
   development,
   stats,
@@ -15,7 +15,8 @@ export function DevelopmentCard({
   development: Development;
   stats: DevelopmentStats;
 }) {
-  const { ref, inView } = useInView<HTMLDivElement>();
+  const { ref: inViewRef, inView } = useInView<HTMLDivElement>();
+  const tiltRef = useTilt3D<HTMLDivElement>(6);
   const cover = development.meta?.heroImage ?? development.properties[0].image;
   const priceRange =
     stats.minPriceAed === stats.maxPriceAed
@@ -25,8 +26,11 @@ export function DevelopmentCard({
   return (
     <a href={`/developments/${development.slug}`} className="hover-lift group block">
       <div
-        ref={ref}
-        className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-sand"
+        ref={(node) => {
+          inViewRef.current = node;
+          tiltRef.current = node;
+        }}
+        className="glass-tilt relative aspect-[16/10] overflow-hidden rounded-2xl bg-sand"
       >
         <Image
           src={cover.src}
@@ -37,6 +41,7 @@ export function DevelopmentCard({
             inView ? "scale-100" : "scale-[1.08]"
           }`}
         />
+        <div className="glass-sheen" />
       </div>
       <div className="mt-4 flex items-baseline justify-between">
         <span className="text-lg font-semibold text-slate">{development.name}</span>

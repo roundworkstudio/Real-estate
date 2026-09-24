@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import { GlassCard } from "./GlassCard";
 
 /**
  * Adapted from a Uiverse.io card by Yaya12085 (solid header block, footer
@@ -12,6 +13,10 @@ import type { LucideIcon } from "lucide-react";
  * tag was dropped rather than filled with invented copy — the directive's
  * "every label must carry real meaning" rule — leaving just the one real
  * action, a jump link to the tool itself.
+ *
+ * GlassCard gives it the 3D tilt + glass sheen treatment — pointer-tracked
+ * rotation and a moving highlight, on top of the shadow-card lift it
+ * already had.
  */
 export function InsightToolCard({
   icon: Icon,
@@ -25,7 +30,7 @@ export function InsightToolCard({
   href: string;
 }) {
   return (
-    <div className="hover-lift flex flex-col justify-between rounded-2xl bg-canvas shadow-card">
+    <GlassCard className="flex flex-col justify-between overflow-hidden rounded-2xl bg-canvas shadow-card">
       <div className="p-4">
         <div className="flex h-32 items-center justify-center rounded-xl bg-royal shadow-[0_10px_15px_-3px_rgba(107,142,78,0.4),0_4px_6px_-4px_rgba(107,142,78,0.4)]">
           <Icon size={32} className="text-white" strokeWidth={1.75} />
@@ -43,6 +48,6 @@ export function InsightToolCard({
           Explore
         </a>
       </div>
-    </div>
+    </GlassCard>
   );
 }
