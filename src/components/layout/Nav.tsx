@@ -2,12 +2,17 @@ import { Button } from "@/components/ui/Button";
 
 const links = [
   { href: "/properties", label: "Properties" },
+  // Index not yet in SITEMAP.md (only /developments/[slug] is planned
+  // there) — see app/developments/page.tsx's top comment.
+  { href: "/developments", label: "Projects" },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/areas", label: "Areas" },
   { href: "/insights", label: "Insights" },
   { href: "/about", label: "About" },
   // Not yet in SITEMAP.md — see app/invest/page.tsx's top comment.
   { href: "/invest", label: "Invest" },
+  // Not yet in SITEMAP.md — see app/analytics/page.tsx's top comment.
+  { href: "/analytics", label: "Analytics" },
 ];
 
 export function Nav() {

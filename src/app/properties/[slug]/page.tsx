@@ -17,6 +17,11 @@ import { pricePerSqft } from "@/lib/types";
 import { StatusBadge } from "@/components/ui/Badge";
 import { InvestmentCalculator } from "@/components/tools/InvestmentCalculator";
 import { BeforeAfterSlider } from "@/components/tools/BeforeAfterSlider";
+import { YieldSimulator } from "@/components/tools/YieldSimulator";
+import { HoldAppreciationModel } from "@/components/tools/HoldAppreciationModel";
+import { PaymentPlanCalculator } from "@/components/tools/PaymentPlanCalculator";
+import { CurrencyVisaToolbar } from "@/components/tools/CurrencyVisaToolbar";
+import { CurrencyProvider } from "@/lib/currency-context";
 import { LocationMap } from "@/components/ui/LocationMap";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
@@ -39,6 +44,12 @@ export default async function PropertyDetailPage({
   const estimatedMonthlyRent = property.expectedAnnualRentAed
     ? Math.round(property.expectedAnnualRentAed / 12)
     : Math.round(property.priceAed * 0.05) / 12;
+  // Rough net-of-opex estimate for the hold model's flat cash-flow
+  // assumption (15% opex ratio) — not a per-listing figure, see
+  // lib/holdAppreciation.ts's simplification note.
+  const estimatedAnnualNetCashFlow = Math.round(
+    (property.expectedAnnualRentAed ?? property.priceAed * 0.05) * 0.85,
+  );
 
   return (
     <main>
@@ -108,6 +119,60 @@ export default async function PropertyDetailPage({
             />
           </div>
         </section>
+
+        {/* Analytics & Insight Suite — yield strategy, 5-year hold model,
+            payment plan and fee transparency. Deeper, optional layer on
+            top of the Investment analysis calculator above, not a
+            replacement for it. */}
+        <CurrencyProvider>
+          <div className="border-t border-slate/10">
+            <CurrencyVisaToolbar priceAed={property.priceAed} />
+          </div>
+
+          <section className="py-10">
+            <h2 className="text-xl font-semibold text-slate">
+              Yield strategy simulator
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm text-slate/60">
+              Compare a short-term holiday let against a standard long-term
+              lease for this property.
+            </p>
+            <div className="mt-6">
+              <YieldSimulator priceAed={property.priceAed} sqft={property.sqft} />
+            </div>
+          </section>
+
+          <section className="border-t border-slate/10 py-10">
+            <h2 className="text-xl font-semibold text-slate">
+              5-year hold &amp; appreciation model
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm text-slate/60">
+              Project equity growth over a hold period under a market
+              scenario.
+            </p>
+            <div className="mt-6">
+              <HoldAppreciationModel
+                purchasePriceAed={property.priceAed}
+                annualNetCashFlowAed={estimatedAnnualNetCashFlow}
+              />
+            </div>
+          </section>
+
+          {property.status === "off-plan" && (
+            <section className="border-t border-slate/10 py-10">
+              <h2 className="text-xl font-semibold text-slate">
+                Payment plan &amp; fee transparency
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm text-slate/60">
+                Capital outlay by milestone and every upfront fee due at
+                closing.
+              </p>
+              <div className="mt-6">
+                <PaymentPlanCalculator priceAed={property.priceAed} city={property.city} />
+              </div>
+            </section>
+          )}
+        </CurrencyProvider>
 
         {/* Before & after — the real widget, sample photos/costs. */}
         <section className="border-t border-slate/10 py-10">

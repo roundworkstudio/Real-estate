@@ -10,11 +10,11 @@ import { DeepPanel } from "@/components/ui/DeepPanel";
 import { Button } from "@/components/ui/Button";
 
 const swatches = [
-  { name: "canvas", className: "bg-canvas", hex: "#FFFFFF", border: true },
-  { name: "sand", className: "bg-sand", hex: "#F4EAD2" },
-  { name: "royal", className: "bg-royal", hex: "#0055FF" },
-  { name: "sovereign", className: "bg-sovereign", hex: "#00C853" },
-  { name: "slate", className: "bg-slate", hex: "#1E293B" },
+  { name: "canvas", className: "bg-canvas", hex: "#FAF8F0", border: true },
+  { name: "sand", className: "bg-sand", hex: "#ECE4CC" },
+  { name: "royal", className: "bg-royal", hex: "#6B8E4E" },
+  { name: "sovereign", className: "bg-sovereign", hex: "#3FA34D" },
+  { name: "slate", className: "bg-slate", hex: "#2B2E22" },
 ];
 
 export default function Home() {

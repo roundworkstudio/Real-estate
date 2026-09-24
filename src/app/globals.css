@@ -2,31 +2,37 @@
 
 /*
  * Colour tokens — PROVISIONAL.
- * Proposed "bright fintech" direction, not yet confirmed by the client.
+ * "Matcha green" exploration, swapped in 2026-09-24 to try alongside the
+ * original "bright fintech" direction. Not yet confirmed by the client.
  * See ../../brand-guidelines.md before treating any of this as final.
- * Do not add a second visual direction alongside this one — see
+ * Do not add a THIRD visual direction alongside this one — see
  * directives/anti-slop-ui.md and docs/what-worked.md ("one visual
- * direction, chosen once").
+ * direction, chosen once"). Token names (royal, sovereign, slate, sand)
+ * kept as-is so every component reference still maps correctly; only the
+ * hex values changed, per brand-guidelines.md's "easy to swap" intent.
  */
 :root {
   /* Canvas */
-  --color-canvas: #ffffff;
-  --color-sand: #f4ead2;
+  --color-canvas: #faf8f0;
+  --color-sand: #ece4cc;
 
   /* Accent */
-  --color-royal: #0055ff;
+  --color-royal: #6b8e4e;
   /* Deep panel variant — solid, not a gradient. Used for the "dashboard chrome"
      surfaces (stat panels, calculators) in the fintech-dashboard direction.
      A blue-to-purple gradient card is the specific look
-     directives/anti-slop-ui.md bans as a generic SaaS tell — solid deep blue
+     directives/anti-slop-ui.md bans as a generic SaaS tell — solid deep matcha
      gets the same weight without that tell. */
-  --color-royal-deep: #001a66;
+  --color-royal-deep: #263818;
 
-  /* Investment / growth indicator */
-  --color-sovereign: #00c853;
+  /* Investment / growth indicator. Kept visually distinct from --color-royal
+     (brighter, fresher green) since the whole palette now sits in the green
+     family — this one still needs to read as "positive figure", not just
+     "brand colour". */
+  --color-sovereign: #3fa34d;
 
   /* Text */
-  --color-slate: #1e293b;
+  --color-slate: #2b2e22;
 
   --background: var(--color-canvas);
   --foreground: var(--color-slate);
