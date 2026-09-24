@@ -28,8 +28,15 @@ export function useInView<T extends HTMLElement>(threshold = 0.15) {
     if (!el) return;
 
     if (prefersReducedMotion() || typeof IntersectionObserver === "undefined") {
-      setInView(true);
-      return;
+      // Deferred via rAF rather than called synchronously here: state
+      // starts `false` on both server and client so hydration always
+      // matches (IntersectionObserver's existence differs between the
+      // two, so resolving this eagerly in a lazy useState initializer
+      // would flip the initial render's class output between them). The
+      // flip to `true` happens client-only, one frame after mount either
+      // way — same as a real observer callback firing.
+      const frame = requestAnimationFrame(() => setInView(true));
+      return () => cancelAnimationFrame(frame);
     }
 
     const observer = new IntersectionObserver(
@@ -67,8 +74,12 @@ export function useCountUp(value: number, active: boolean, durationMs = 1400) {
     animated.current = true;
 
     if (prefersReducedMotion()) {
-      setDisplay(value);
-      return;
+      // Same deferral as useInView above — avoids a synchronous setState
+      // in the effect body; display already starts at `value` (see the
+      // useState call below), so this only matters if `value` changed
+      // between mount and `active` turning true.
+      const frame = requestAnimationFrame(() => setDisplay(value));
+      return () => cancelAnimationFrame(frame);
     }
 
     const start = performance.now();

@@ -13,6 +13,7 @@ import { useInView } from "@/lib/motion";
 export function RevealImage({
   containerClassName = "",
   className = "",
+  alt,
   ...imageProps
 }: ImageProps & { containerClassName?: string }) {
   const { ref, inView } = useInView<HTMLDivElement>();
@@ -21,6 +22,7 @@ export function RevealImage({
     <div ref={ref} className={`overflow-hidden ${containerClassName}`}>
       <Image
         {...imageProps}
+        alt={alt}
         className={`transition-transform duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
           inView ? "scale-100" : "scale-[1.08]"
         } ${className}`}

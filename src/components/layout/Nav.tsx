@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { useMagnetic, useScrollingFlag } from "@/lib/motion";
 import { navLinks } from "@/lib/nav-links";
@@ -56,9 +57,9 @@ export function Nav() {
       }`}
     >
       {/* Wordmark placeholder — real logo pending, see brand-guidelines.md */}
-      <a href="/" className="text-lg font-semibold text-white">
+      <Link href="/" className="text-lg font-semibold text-white">
         Janvi
-      </a>
+      </Link>
       <nav className="hidden items-center gap-8 md:flex">
         {navLinks.map((l) => (
           <a
