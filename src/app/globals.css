@@ -65,3 +65,32 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
+
+/* Card lift + border-glow hover, used on property/development/tool cards.
+   Suppressed while scrolling (html.is-scrolling, set by lib/motion.ts's
+   useScrollingFlag) per directives/anti-slop-ui.md's motion rule — content
+   moving under a stationary cursor must not spuriously trigger :hover. */
+.hover-lift {
+  transition:
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-card);
+}
+html.is-scrolling .hover-lift {
+  transition: none;
+}
+html.is-scrolling .hover-lift:hover {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hover-lift,
+  .hover-lift:hover {
+    transition: none;
+    transform: none;
+  }
+}

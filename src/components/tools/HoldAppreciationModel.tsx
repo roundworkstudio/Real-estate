@@ -153,6 +153,9 @@ export function HoldAppreciationModel({
                 borderRadius: 8,
               }}
             />
+            {/* Draws itself left to right on first reveal (Recharts'
+                default mount animation); redraws faster on input change so
+                dragging the growth/down-payment sliders stays responsive. */}
             <Area
               type="monotone"
               dataKey="Appreciation"
@@ -160,6 +163,8 @@ export function HoldAppreciationModel({
               stroke="var(--color-royal)"
               fill="var(--color-royal)"
               fillOpacity={0.25}
+              animationDuration={1000}
+              animationEasing="ease-out"
             />
             <Area
               type="monotone"
@@ -168,6 +173,8 @@ export function HoldAppreciationModel({
               stroke="var(--color-sovereign)"
               fill="var(--color-sovereign)"
               fillOpacity={0.35}
+              animationDuration={1000}
+              animationEasing="ease-out"
             />
           </AreaChart>
         </ResponsiveContainer>

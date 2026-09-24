@@ -86,8 +86,11 @@ export default async function PropertyDetailPage({
           </div>
           <div className="mt-6 flex flex-wrap gap-x-8 gap-y-2 text-sm text-slate/70">
             <span>{property.beds} bed</span>
-            <span>{property.baths} bath</span>
+            {property.baths !== undefined && <span>{property.baths} bath</span>}
             <span>{property.sqft.toLocaleString("en-AE")} sqft</span>
+            {property.plotSqft !== undefined && (
+              <span>{property.plotSqft.toLocaleString("en-AE")} sqft plot</span>
+            )}
             <span>AED {pricePerSqft(property).toLocaleString("en-AE")}/sqft</span>
           </div>
         </section>
@@ -168,13 +171,21 @@ export default async function PropertyDetailPage({
                 closing.
               </p>
               <div className="mt-6">
-                <PaymentPlanCalculator priceAed={property.priceAed} city={property.city} />
+                <PaymentPlanCalculator
+                  priceAed={property.priceAed}
+                  city={property.city}
+                  defaultStructureId={
+                    property.community === "Wadeem Gardens" ? "wadeem-adib" : "60-40"
+                  }
+                />
               </div>
             </section>
           )}
         </CurrencyProvider>
 
-        {/* Before & after — the real widget, sample photos/costs. */}
+        {/* Before & after — doesn't apply to an off-plan property with
+            nothing built yet to renovate. */}
+        {property.status !== "off-plan" && (
         <section className="border-t border-slate/10 py-10">
           <h2 className="text-xl font-semibold text-slate">Before &amp; after</h2>
           <div className="mx-auto mt-6 max-w-2xl">
@@ -191,6 +202,7 @@ export default async function PropertyDetailPage({
             />
           </div>
         </section>
+        )}
       </div>
 
       {/* 9. Location — real map, no API key needed. See LocationMap's

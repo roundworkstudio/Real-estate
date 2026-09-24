@@ -6,6 +6,7 @@
  */
 import { developments, developmentStats } from "@/lib/developments";
 import { DevelopmentCard } from "@/components/ui/DevelopmentCard";
+import { Reveal } from "@/components/ui/Reveal";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 
@@ -25,8 +26,10 @@ export default function DevelopmentsPage() {
         </p>
 
         <div className="mt-10 grid grid-cols-1 gap-10 sm:grid-cols-2">
-          {developments.map((d) => (
-            <DevelopmentCard key={d.slug} development={d} stats={developmentStats(d)} />
+          {developments.map((d, i) => (
+            <Reveal key={d.slug} delayMs={i * 100}>
+              <DevelopmentCard development={d} stats={developmentStats(d)} />
+            </Reveal>
           ))}
         </div>
       </section>

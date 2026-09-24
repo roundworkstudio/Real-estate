@@ -11,6 +11,10 @@
  * `useCurrency()` context is scoped to the suite's own components (yield
  * simulator, hold model, payment plan) — the figures the suite computes,
  * not the whole site's existing markup.
+ *
+ * `top-[88px]` (not `top-0`): Nav.tsx is a fixed, always-on-top header now,
+ * measured at 88px tall (py-6 plus its content) — sticking this toolbar at
+ * `top-0` would tuck it directly underneath Nav instead of below it.
  */
 import { CURRENCIES, type CurrencyCode } from "@/lib/currency";
 import { useCurrency } from "@/lib/currency-context";
@@ -20,7 +24,7 @@ export function CurrencyVisaToolbar({ priceAed }: { priceAed: number }) {
   const { currency, setCurrency } = useCurrency();
 
   return (
-    <div className="sticky top-0 z-20 flex flex-col gap-3 border-b border-slate/10 bg-canvas/90 px-4 py-3 backdrop-blur-none sm:flex-row sm:items-center sm:justify-between sm:px-6">
+    <div className="sticky top-[88px] z-20 flex flex-col gap-3 border-b border-slate/10 bg-canvas/90 px-4 py-3 backdrop-blur-none sm:flex-row sm:items-center sm:justify-between sm:px-6">
       <div className="flex flex-wrap gap-1.5">
         {CURRENCIES.map((c: { code: CurrencyCode; label: string }) => (
           <button

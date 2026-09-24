@@ -193,14 +193,37 @@ export function YieldSimulator({ priceAed, sqft }: { priceAed: number; sqft: num
                 color: "white",
               }}
             />
-            <Bar dataKey="Service charge" stackId="a" fill="rgba(255,255,255,0.35)" />
-            <Bar dataKey="Management fee" stackId="a" fill="rgba(255,255,255,0.55)" />
-            <Bar dataKey="DEWA" stackId="a" fill="rgba(255,255,255,0.75)" />
+            {/* Sliders drive these values live — bars "spring" to their new
+                height on every change rather than redrawing from zero, so
+                dragging a slider reads as instant, not a reveal replaying. */}
+            <Bar
+              dataKey="Service charge"
+              stackId="a"
+              fill="rgba(255,255,255,0.35)"
+              animationDuration={200}
+              animationEasing="ease-out"
+            />
+            <Bar
+              dataKey="Management fee"
+              stackId="a"
+              fill="rgba(255,255,255,0.55)"
+              animationDuration={200}
+              animationEasing="ease-out"
+            />
+            <Bar
+              dataKey="DEWA"
+              stackId="a"
+              fill="rgba(255,255,255,0.75)"
+              animationDuration={200}
+              animationEasing="ease-out"
+            />
             <Bar
               dataKey="Net cash flow"
               stackId="a"
               fill="var(--color-sovereign)"
               radius={[0, 4, 4, 0]}
+              animationDuration={200}
+              animationEasing="ease-out"
             />
           </BarChart>
         </ResponsiveContainer>

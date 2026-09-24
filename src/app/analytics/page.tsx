@@ -9,6 +9,7 @@
  * suite, keyed to a property the investor picks from current inventory.
  */
 import { useState } from "react";
+import { TrendingUp, LineChart, Landmark } from "lucide-react";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { sampleProperties } from "@/lib/sample-properties";
@@ -17,6 +18,31 @@ import { CurrencyVisaToolbar } from "@/components/tools/CurrencyVisaToolbar";
 import { YieldSimulator } from "@/components/tools/YieldSimulator";
 import { HoldAppreciationModel } from "@/components/tools/HoldAppreciationModel";
 import { PaymentPlanCalculator } from "@/components/tools/PaymentPlanCalculator";
+import { InsightToolCard } from "@/components/ui/InsightToolCard";
+import { Reveal } from "@/components/ui/Reveal";
+import { ImageBreak } from "@/components/ui/ImageBreak";
+import { GOLDEN_VISA_THRESHOLD_AED } from "@/lib/currency";
+
+const tools = [
+  {
+    icon: TrendingUp,
+    title: "Yield strategy simulator",
+    description: "Short-term let vs. long-term lease, side by side.",
+    href: "#yield-strategy",
+  },
+  {
+    icon: LineChart,
+    title: "5-year hold & appreciation",
+    description: "Project equity growth under a market scenario.",
+    href: "#hold-appreciation",
+  },
+  {
+    icon: Landmark,
+    title: "Payment plan & fees",
+    description: "Capital outlay by milestone, every fee at closing.",
+    href: "#payment-plan",
+  },
+];
 
 export default function AnalyticsPage() {
   const [slug, setSlug] = useState(sampleProperties[0].slug);
@@ -24,6 +50,8 @@ export default function AnalyticsPage() {
   const estimatedAnnualNetCashFlow = Math.round(
     (property.expectedAnnualRentAed ?? property.priceAed * 0.05) * 0.85,
   );
+  const gallery = property.gallery ?? [property.image];
+  const breakImage = (i: number) => gallery[i % gallery.length];
 
   return (
     <main>
@@ -56,13 +84,26 @@ export default function AnalyticsPage() {
           </select>
         </label>
 
+        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
+          {tools.map((t, i) => (
+            <Reveal key={t.title} delayMs={i * 100}>
+              <InsightToolCard
+                icon={t.icon}
+                title={t.title}
+                description={t.description}
+                href={t.href}
+              />
+            </Reveal>
+          ))}
+        </div>
+
         <CurrencyProvider>
-          <div className="mt-8 -mx-6 sm:-mx-10">
+          <div className="mt-10 -mx-6 sm:-mx-10">
             <CurrencyVisaToolbar priceAed={property.priceAed} />
           </div>
 
           <div className="mt-10 space-y-16">
-            <div>
+            <div id="yield-strategy" className="scroll-mt-24">
               <h2 className="text-xl font-semibold text-slate">
                 Yield strategy simulator
               </h2>
@@ -75,7 +116,15 @@ export default function AnalyticsPage() {
               </div>
             </div>
 
-            <div>
+            <ImageBreak
+              src={breakImage(2).src}
+              alt={breakImage(2).alt}
+              eyebrow="Golden Visa"
+              value={`AED ${GOLDEN_VISA_THRESHOLD_AED.toLocaleString("en-AE")}`}
+              label="Purchase price threshold for the 10-year UAE Golden Visa"
+            />
+
+            <div id="hold-appreciation" className="scroll-mt-24">
               <h2 className="text-xl font-semibold text-slate">
                 5-year hold &amp; appreciation model
               </h2>
@@ -91,7 +140,15 @@ export default function AnalyticsPage() {
               </div>
             </div>
 
-            <div>
+            <ImageBreak
+              src={breakImage(4).src}
+              alt={breakImage(4).alt}
+              eyebrow={`${property.community}, ${property.city}`}
+              value={`${property.sqft.toLocaleString("en-AE")} sqft`}
+              label={property.title}
+            />
+
+            <div id="payment-plan" className="scroll-mt-24">
               <h2 className="text-xl font-semibold text-slate">
                 Payment plan &amp; fee transparency
               </h2>
@@ -100,7 +157,13 @@ export default function AnalyticsPage() {
                 closing.
               </p>
               <div className="mt-6">
-                <PaymentPlanCalculator priceAed={property.priceAed} city={property.city} />
+                <PaymentPlanCalculator
+                  priceAed={property.priceAed}
+                  city={property.city}
+                  defaultStructureId={
+                    property.community === "Wadeem Gardens" ? "wadeem-adib" : "60-40"
+                  }
+                />
               </div>
             </div>
           </div>

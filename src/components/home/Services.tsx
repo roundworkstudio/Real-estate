@@ -1,3 +1,5 @@
+import { Reveal } from "@/components/ui/Reveal";
+
 const services = [
   {
     name: "Buying",
@@ -46,18 +48,21 @@ export function Services() {
       />
 
       <div className="relative">
-        <h2 className="text-2xl font-semibold text-white sm:text-3xl">
-          Services
-        </h2>
+        <Reveal>
+          <h2 className="text-2xl font-semibold text-white sm:text-3xl">
+            Services
+          </h2>
+        </Reveal>
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {services.map((s) => (
-            <div
+          {services.map((s, i) => (
+            <Reveal
               key={s.name}
-              className="rounded-2xl border border-white/15 bg-white/10 p-6 backdrop-blur-md"
+              delayMs={i * 100}
+              className="hover-lift rounded-2xl border border-white/15 bg-white/10 p-6 backdrop-blur-md hover:border-royal/50"
             >
               <div className="text-lg font-medium text-white">{s.name}</div>
               <p className="mt-2 text-sm text-white/70">{s.desc}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>

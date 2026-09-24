@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { PropertyCard } from "@/components/ui/PropertyCard";
+import { Reveal } from "@/components/ui/Reveal";
 import type { Property, PropertyStatus, PropertyStrategy } from "@/lib/types";
 
 const strategyLabels: Record<PropertyStrategy, string> = {
@@ -131,8 +132,10 @@ export function PortfolioFilters({ properties }: { properties: Property[] }) {
         </div>
       ) : (
         <div className="mt-10 grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((p) => (
-            <PropertyCard key={p.slug} property={p} />
+          {filtered.map((p, i) => (
+            <Reveal key={p.slug} delayMs={(i % 3) * 100}>
+              <PropertyCard property={p} />
+            </Reveal>
           ))}
         </div>
       )}

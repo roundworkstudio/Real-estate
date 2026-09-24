@@ -7,6 +7,7 @@ import {
   calculateMilestoneSchedule,
   PAYMENT_STRUCTURES,
   totalInitialCapitalRequired,
+  WADEEM_UAE_NATIONAL_REBATE_NOTE,
   type PaymentStructureId,
 } from "@/lib/paymentPlan";
 import { useCurrency } from "@/lib/currency-context";
@@ -16,12 +17,14 @@ const STRUCTURE_IDS = Object.keys(PAYMENT_STRUCTURES) as PaymentStructureId[];
 export function PaymentPlanCalculator({
   priceAed,
   city,
+  defaultStructureId = "60-40",
 }: {
   priceAed: number;
   city: Property["city"];
+  defaultStructureId?: PaymentStructureId;
 }) {
   const { format } = useCurrency();
-  const [structureId, setStructureId] = useState<PaymentStructureId>("60-40");
+  const [structureId, setStructureId] = useState<PaymentStructureId>(defaultStructureId);
 
   const milestones = useMemo(
     () => calculateMilestoneSchedule(priceAed, structureId),
@@ -67,6 +70,9 @@ export function PaymentPlanCalculator({
               </li>
             ))}
           </ol>
+          {structureId === "wadeem-adib" && (
+            <p className="mt-4 text-xs text-slate/50">{WADEEM_UAE_NATIONAL_REBATE_NOTE}</p>
+          )}
         </div>
 
         <div>
@@ -108,9 +114,9 @@ export function PaymentPlanCalculator({
       </div>
 
       <p className="mt-6 text-xs text-slate/40">
-        Illustrative typical-structure estimates, not one specific
-        developer&apos;s or trustee&apos;s published fees — confirm exact
-        terms per deal.
+        {structureId === "wadeem-adib"
+          ? "Payment schedule quoted from the MODON sales pack. Upfront fees (transfer, agency, trustee) are illustrative typical-structure estimates, not published by MODON or the trustee — confirm exact terms per deal."
+          : "Illustrative typical-structure estimates, not one specific developer's or trustee's published fees — confirm exact terms per deal."}
       </p>
     </div>
   );

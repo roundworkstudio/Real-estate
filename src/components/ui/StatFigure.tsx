@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useInView, useCountUp } from "@/lib/motion";
 
 /**
  * Plain stat figure — no card, no border, no shadow. Used for the
@@ -18,11 +18,9 @@ import { useEffect, useRef, useState } from "react";
  *    a client-only flourish layered on top, so a failed/slow script still
  *    leaves the right number on the page, never a stuck zero
  *  - honours prefers-reduced-motion by skipping the animation entirely
+ * See lib/motion.ts's useInView/useCountUp — the same primitives now back
+ * every count-up on the site, not just this component.
  */
-function easeOutCubic(t: number) {
-  return 1 - Math.pow(1 - t, 3);
-}
-
 export function StatFigure({
   label,
   value,
@@ -40,42 +38,8 @@ export function StatFigure({
   format?: (n: number) => string;
 }) {
   const fmt = format ?? ((n: number) => Math.round(n).toLocaleString("en-AE"));
-  const [display, setDisplay] = useState(value);
-  const ref = useRef<HTMLSpanElement>(null);
-  const animated = useRef(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting || animated.current) return;
-        animated.current = true;
-        observer.disconnect();
-
-        const duration = 1400;
-        const start = performance.now();
-
-        function tick(now: number) {
-          const t = Math.min((now - start) / duration, 1);
-          setDisplay(value * easeOutCubic(t));
-          if (t < 1) requestAnimationFrame(tick);
-          else setDisplay(value);
-        }
-        requestAnimationFrame(tick);
-      },
-      { threshold: 0.4 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [value]);
+  const { ref, inView } = useInView<HTMLSpanElement>(0.4);
+  const display = useCountUp(value, inView, 1400);
 
   return (
     <div className="text-center">

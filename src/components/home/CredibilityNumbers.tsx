@@ -1,4 +1,5 @@
 import { StatFigure } from "@/components/ui/StatFigure";
+import { Reveal } from "@/components/ui/Reveal";
 
 /**
  * SITEMAP.md originally specced this as "plain type, no cards, no icons".
@@ -19,15 +20,16 @@ const stats = [
 
 export function CredibilityNumbers() {
   return (
-    <section id="numbers" className="px-6 py-20 sm:px-10">
+    <section id="numbers" className="scroll-mt-24 px-6 py-20 sm:px-10">
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6">
-        {stats.map((s) => (
-          <div
+        {stats.map((s, i) => (
+          <Reveal
             key={s.label}
+            delayMs={i * 100}
             className="rounded-2xl bg-sand p-6 shadow-card sm:aspect-square sm:flex sm:flex-col sm:items-center sm:justify-center"
           >
             <StatFigure {...s} />
-          </div>
+          </Reveal>
         ))}
       </div>
     </section>

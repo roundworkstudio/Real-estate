@@ -31,8 +31,15 @@ export type Property = {
   city: "Abu Dhabi" | "Dubai";
   priceAed: number;
   beds: number;
-  baths: number;
+  /** Optional because it isn't always disclosed by the source (e.g. a
+   * developer brochure that gives bedroom count and GSA but never states
+   * bathroom count) — omit rather than guess a plausible-sounding number,
+   * same rule as leaving grossYield/expectedAnnualRentAed null. */
+  baths?: number;
   sqft: number;
+  /** Plot area, for villas — distinct from `sqft` (gross saleable/built-up
+   * area). Optional: meaningless for an apartment. */
+  plotSqft?: number;
   status: PropertyStatus;
   strategy: PropertyStrategy;
   /** Gross yield, e.g. 0.061 for 6.1%. Null when not yet known for this listing. */

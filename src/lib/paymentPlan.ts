@@ -12,14 +12,39 @@
  */
 import type { Property } from "./types";
 
-export type PaymentStructureId = "60-40" | "50-50" | "post-handover";
+export type PaymentStructureId = "60-40" | "50-50" | "post-handover" | "wadeem-adib";
 
 export type Milestone = { label: string; percentOfPrice: number };
+
+/** UAE Nationals receive a 5% rebate from MODON on this plan
+ * (non-transferable) — stated on the same brochure page as the schedule
+ * below, not modelled into the milestone amounts themselves since it's a
+ * buyer-category discount, not a timing change. */
+export const WADEEM_UAE_NATIONAL_REBATE_NOTE =
+  "UAE Nationals receive a 5% rebate from MODON on this plan (non-transferable).";
 
 export const PAYMENT_STRUCTURES: Record<
   PaymentStructureId,
   { name: string; milestones: Milestone[] }
 > = {
+  /** Wadeem Gardens' actual published structure ("First of its Kind
+   * Financial Solution", Wadeem Gardens.pdf) — 25% of the total price from
+   * the buyer, 75% financed by Abu Dhabi Islamic Bank (ADIB) across
+   * construction and post-handover. Quoted exactly as shown, including the
+   * pack's own "ADB"/"AEB" milestone labels (most likely shorthand for
+   * ADIB-financed construction and post-handover tranches). */
+  "wadeem-adib": {
+    name: "MODON x ADIB plan (Wadeem Gardens)",
+    milestones: [
+      { label: "Down payment", percentOfPrice: 5 },
+      { label: "Month 8", percentOfPrice: 5 },
+      { label: "Month 14", percentOfPrice: 5 },
+      { label: "Month 20", percentOfPrice: 5 },
+      { label: "ADIB construction financing (20%)", percentOfPrice: 20 },
+      { label: "Handover, Month 48", percentOfPrice: 5 },
+      { label: "Post-handover, Month 54 (ADIB financed)", percentOfPrice: 55 },
+    ],
+  },
   "60-40": {
     name: "60/40 construction plan",
     milestones: [
