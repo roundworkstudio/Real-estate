@@ -18,7 +18,7 @@ export default function InvestPage() {
 
       <section className="mx-auto max-w-3xl px-6 py-16 sm:px-10">
         <h1 className="text-3xl font-semibold text-slate sm:text-4xl">
-          Find your match
+          Find <span className="font-accent">your match</span>
         </h1>
         <p className="mt-3 max-w-lg text-slate/70">
           Four questions, matched against current inventory.

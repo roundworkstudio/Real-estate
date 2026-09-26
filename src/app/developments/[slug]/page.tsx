@@ -15,11 +15,13 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { developments, getDevelopment, developmentStats } from "@/lib/developments";
+import { PAYMENT_STRUCTURES, type PaymentStructureId } from "@/lib/paymentPlan";
 import { PropertyCard } from "@/components/ui/PropertyCard";
 import { LocationMap } from "@/components/ui/LocationMap";
 import { DevelopmentAnalytics } from "@/components/tools/DevelopmentAnalytics";
 import { ImageBreak } from "@/components/ui/ImageBreak";
 import { RevealImage } from "@/components/ui/RevealImage";
+import { StatStrip, type StatStripItem } from "@/components/ui/StatStrip";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 
@@ -41,10 +43,39 @@ export default async function DevelopmentDetailPage({
   const breakGallery = development.properties[0].gallery ?? [development.properties[0].image];
   const breakImage = breakGallery[Math.min(2, breakGallery.length - 1)];
 
+  // Same structure choice DevelopmentAnalytics defaults to further down
+  // the page — computed once here so the hero stat strip and the
+  // modelling suite never disagree about which plan this project uses.
+  const paymentStructureId: PaymentStructureId =
+    slug === "wadeem-gardens" ? "wadeem-adib" : "60-40";
+
+  /** "Launch briefing" style stat strip — the facts a buyer needs before
+   * scrolling, modelled on a client-supplied reference page. Only built
+   * where real project metadata exists; a plain community grouping
+   * (Ramhan Island) has no developer-sourced payment plan or EOI dates
+   * to show here, so it skips the hero stat strip entirely rather than
+   * showing a half-empty one. */
+  const heroStats: StatStripItem[] = meta
+    ? [
+        {
+          value: `${stats.unitCount} ${stats.unitCount === 1 ? "type" : "types"}`,
+          label: "Unit types",
+        },
+        {
+          value: `AED ${(stats.minPriceAed / 1_000_000).toFixed(1)}m`,
+          label: "Prices from",
+        },
+        { value: PAYMENT_STRUCTURES[paymentStructureId].splitLabel, label: "Payment plan" },
+        ...(meta.eoiTimeline?.[0]
+          ? [{ value: meta.eoiTimeline[0].date, label: meta.eoiTimeline[0].label }]
+          : []),
+      ]
+    : [];
+
   return (
     <main>
       {meta ? (
-        <section className="relative flex h-[56vh] min-h-[420px] flex-col justify-end overflow-hidden">
+        <section className="relative flex min-h-[640px] flex-col justify-end overflow-hidden sm:h-[68vh] sm:min-h-[560px]">
           <Image
             src={meta.heroImage.src}
             alt={meta.heroImage.alt}
@@ -62,11 +93,16 @@ export default async function DevelopmentDetailPage({
           />
           <Nav />
           <div className="relative px-6 pb-10 sm:px-10 sm:pb-14">
-            <div className="text-sm font-medium text-white/70">{meta.developer}</div>
-            <h1 className="mt-1 text-3xl font-semibold text-white sm:text-4xl">
+            <div className="text-sm font-medium text-white/70">
+              {meta.developer} · {development.city}
+            </div>
+            <h1 className="mt-1 text-4xl font-semibold text-white sm:text-6xl">
               {development.name}
             </h1>
-            <div className="mt-1 text-white/80">{development.city}</div>
+            <p className="mt-3 max-w-2xl text-white/80">{meta.description}</p>
+            <div className="mt-8">
+              <StatStrip theme="dark" items={heroStats} />
+            </div>
           </div>
         </section>
       ) : (
@@ -126,9 +162,7 @@ export default async function DevelopmentDetailPage({
 
       {meta && (
         <section className="mx-auto max-w-5xl px-6 py-10 sm:px-10">
-          <p className="max-w-2xl text-slate/80">{meta.description}</p>
-
-          <div className="mt-10 grid grid-cols-1 gap-10 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
             <div>
               <h2 className="text-lg font-semibold text-slate">Amenities</h2>
               <ul className="mt-4 space-y-2 text-sm text-slate/70">

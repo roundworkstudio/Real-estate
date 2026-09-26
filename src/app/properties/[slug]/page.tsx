@@ -14,7 +14,10 @@
 import { notFound } from "next/navigation";
 import { sampleProperties } from "@/lib/sample-properties";
 import { pricePerSqft } from "@/lib/types";
+import { developments } from "@/lib/developments";
+import { PAYMENT_STRUCTURES, type PaymentStructureId } from "@/lib/paymentPlan";
 import { StatusBadge } from "@/components/ui/Badge";
+import { StatStrip, type StatStripItem } from "@/components/ui/StatStrip";
 import { InvestmentCalculator } from "@/components/tools/InvestmentCalculator";
 import { BeforeAfterSlider } from "@/components/tools/BeforeAfterSlider";
 import { YieldSimulator } from "@/components/tools/YieldSimulator";
@@ -51,6 +54,37 @@ export default async function PropertyDetailPage({
     (property.expectedAnnualRentAed ?? property.priceAed * 0.05) * 0.85,
   );
 
+  // Same default the Payment plan & fee transparency section below uses —
+  // computed once so the hero stat strip and that calculator never
+  // disagree about which structure this listing is on.
+  const paymentStructureId: PaymentStructureId =
+    property.community === "Wadeem Gardens" ? "wadeem-adib" : "60-40";
+
+  // Real EOI/launch date, if this listing's community has one — sourced
+  // from the same developer metadata the /developments/[slug] page uses,
+  // not invented for this page.
+  const development = developments.find(
+    (d) => d.name === property.community && d.city === property.city,
+  );
+  const eoiDate = development?.meta?.eoiTimeline?.[0];
+
+  const heroStats: StatStripItem[] = [
+    { value: `AED ${property.priceAed.toLocaleString("en-AE")}`, label: "Price" },
+    {
+      value: `AED ${pricePerSqft(property).toLocaleString("en-AE")}/sqft`,
+      label: "Price / sqft",
+    },
+    ...(property.status === "off-plan"
+      ? [
+          {
+            value: PAYMENT_STRUCTURES[paymentStructureId].splitLabel,
+            label: "Payment plan",
+          },
+        ]
+      : []),
+    ...(eoiDate ? [{ value: eoiDate.date, label: eoiDate.label }] : []),
+  ];
+
   return (
     <main>
       <div className="relative bg-slate">
@@ -75,23 +109,24 @@ export default async function PropertyDetailPage({
       <div className="mx-auto max-w-5xl px-6 sm:px-10">
         {/* 2. Headline + 3. Key facts */}
         <section className="py-10">
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 text-sm font-medium text-slate/60">
+            <span>
+              {property.community} · {property.city}
+            </span>
             <StatusBadge status={property.status} />
           </div>
-          <h1 className="mt-3 text-3xl font-semibold text-slate sm:text-4xl">
-            AED {property.priceAed.toLocaleString("en-AE")}
+          <h1 className="mt-2 text-3xl font-semibold text-slate sm:text-4xl">
+            {property.title}
           </h1>
-          <div className="mt-1 text-lg text-slate/70">
-            {property.title} · {property.community}, {property.city}
-          </div>
-          <div className="mt-6 flex flex-wrap gap-x-8 gap-y-2 text-sm text-slate/70">
-            <span>{property.beds} bed</span>
-            {property.baths !== undefined && <span>{property.baths} bath</span>}
-            <span>{property.sqft.toLocaleString("en-AE")} sqft</span>
-            {property.plotSqft !== undefined && (
-              <span>{property.plotSqft.toLocaleString("en-AE")} sqft plot</span>
-            )}
-            <span>AED {pricePerSqft(property).toLocaleString("en-AE")}/sqft</span>
+          <p className="mt-2 max-w-2xl text-slate/70">
+            {property.beds} bed
+            {property.baths !== undefined && ` · ${property.baths} bath`} ·{" "}
+            {property.sqft.toLocaleString("en-AE")} sqft
+            {property.plotSqft !== undefined &&
+              ` on a ${property.plotSqft.toLocaleString("en-AE")} sqft plot`}
+          </p>
+          <div className="mt-8">
+            <StatStrip items={heroStats} />
           </div>
         </section>
 
@@ -174,9 +209,7 @@ export default async function PropertyDetailPage({
                 <PaymentPlanCalculator
                   priceAed={property.priceAed}
                   city={property.city}
-                  defaultStructureId={
-                    property.community === "Wadeem Gardens" ? "wadeem-adib" : "60-40"
-                  }
+                  defaultStructureId={paymentStructureId}
                 />
               </div>
             </section>

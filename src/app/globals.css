@@ -2,37 +2,57 @@
 
 /*
  * Colour tokens — PROVISIONAL.
- * "Matcha green" exploration, swapped in 2026-09-24 to try alongside the
- * original "bright fintech" direction. Not yet confirmed by the client.
- * See ../../brand-guidelines.md before treating any of this as final.
- * Do not add a THIRD visual direction alongside this one — see
- * directives/anti-slop-ui.md and docs/what-worked.md ("one visual
- * direction, chosen once"). Token names (royal, sovereign, slate, sand)
- * kept as-is so every component reference still maps correctly; only the
- * hex values changed, per brand-guidelines.md's "easy to swap" intent.
+ * "Warm mono" exploration, swapped in 2026-09-26 from the "Blue Haven"
+ * direction at explicit user request (client-supplied 6-swatch palette,
+ * darkest to lightest: #3A2D28 espresso, #A48374 mocha, #CBAD8D camel,
+ * #D1C7BD greige, #EBE3DB pale cream, #F1EDE6 near-white cream). Not yet
+ * confirmed by the client. See ../../brand-guidelines.md before treating
+ * any of this as final. Do not add a THIRD visual direction alongside this
+ * one — see directives/anti-slop-ui.md and docs/what-worked.md ("one
+ * visual direction, chosen once"). Token names (royal, sovereign, slate,
+ * sand, mist) kept stable across swaps so every component reference still
+ * maps correctly; only the hex values changed, per brand-guidelines.md's
+ * "easy to swap" intent.
+ *
+ * Seventh palette swap this session, and the first genuinely monochromatic
+ * one — no swatch here is a distinct hue, just six points on one
+ * espresso-to-cream ramp. --color-royal (the mocha) is doing more work
+ * than in any prior swap: it's the only warm-mid tone standing in for what
+ * every other palette used a saturated accent colour for. Worth flagging
+ * to the client explicitly if this direction is picked — "no accent
+ * colour at all" is a bigger departure from the brief's fintech-dashboard
+ * mood than any hue swap has been.
  */
 :root {
-  /* Canvas */
-  --color-canvas: #faf8f0;
-  --color-sand: #ece4cc;
+  /* Canvas — the ramp's lightest point. */
+  --color-canvas: #f1ede6;
+  --color-sand: #d1c7bd;
+  /* Light accent surface (badge/chip backgrounds, see Badge.tsx's "new"
+     tone) — sourced directly, sitting between --color-canvas and
+     --color-sand on the ramp. */
+  --color-mist: #ebe3db;
 
-  /* Accent */
-  --color-royal: #6b8e4e;
+  /* Accent — the ramp's mid-tone mocha. Carrying the "interactive colour"
+     role alone this swap, see note above. */
+  --color-royal: #a48374;
   /* Deep panel variant — solid, not a gradient. Used for the "dashboard chrome"
-     surfaces (stat panels, calculators) in the fintech-dashboard direction.
-     A blue-to-purple gradient card is the specific look
-     directives/anti-slop-ui.md bans as a generic SaaS tell — solid deep matcha
-     gets the same weight without that tell. */
-  --color-royal-deep: #263818;
+     surfaces (stat panels, calculators). A blue-to-purple gradient card is the
+     specific look directives/anti-slop-ui.md bans as a generic SaaS tell —
+     solid espresso gets the same weight without that tell. The ramp's
+     darkest point, sourced directly. */
+  --color-royal-deep: #3a2d28;
 
-  /* Investment / growth indicator. Kept visually distinct from --color-royal
-     (brighter, fresher green) since the whole palette now sits in the green
-     family — this one still needs to read as "positive figure", not just
-     "brand colour". */
-  --color-sovereign: #3fa34d;
+  /* Investment / growth indicator. The ramp's camel tone — kept distinct
+     from --color-royal (mocha, darker/more saturated) so it still reads as
+     its own "positive figure" colour. Not green — this palette has no
+     colour outside the espresso/cream ramp at all, continuing the pattern
+     from the last three swaps. */
+  --color-sovereign: #cbad8d;
 
-  /* Text */
-  --color-slate: #2b2e22;
+  /* Text — derived slightly darker than --color-royal-deep (the ramp's
+     own darkest point) rather than reusing it verbatim, so the two tokens
+     don't share one value. */
+  --color-slate: #2e2420;
 
   --background: var(--color-canvas);
   --foreground: var(--color-slate);
@@ -46,6 +66,7 @@
 @theme inline {
   --color-canvas: var(--color-canvas);
   --color-sand: var(--color-sand);
+  --color-mist: var(--color-mist);
   --color-royal: var(--color-royal);
   --color-royal-deep: var(--color-royal-deep);
   --color-sovereign: var(--color-sovereign);
@@ -56,14 +77,27 @@
 
   --shadow-card: var(--shadow-contact), var(--shadow-ambient);
 
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-poppins);
   --font-mono: var(--font-geist-mono);
+  --font-accent: var(--font-lora);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Mixed-type headline accent — upright serif (Lora) for one emphasised
+   phrase inside an otherwise-sans (Poppins) headline. Applied as a
+   <span> around the emphasised words, not the whole heading — see
+   Hero.tsx and other page <h1>s for usage. Upright, not italic — swapped
+   from italic Fraunces at explicit user request to match a
+   client-supplied reference (Kingly Partners). Font weight is baked into
+   the loaded Lora subset (600); only family needs setting here. */
+.font-accent {
+  font-family: var(--font-accent), Georgia, serif;
+  font-weight: 600;
 }
 
 /* Card lift + border-glow hover, used on property/development/tool cards.

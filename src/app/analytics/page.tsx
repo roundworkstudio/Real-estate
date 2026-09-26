@@ -62,7 +62,7 @@ export default function AnalyticsPage() {
 
       <section className="mx-auto max-w-5xl px-6 py-16 sm:px-10">
         <h1 className="text-3xl font-semibold text-slate sm:text-4xl">
-          Analytics &amp; insight suite
+          Analytics &amp; <span className="font-accent">insight suite</span>
         </h1>
         <p className="mt-3 max-w-xl text-slate/70">
           Model a deal against current inventory: yield strategy, five-year

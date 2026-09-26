@@ -25,7 +25,7 @@ export const WADEEM_UAE_NATIONAL_REBATE_NOTE =
 
 export const PAYMENT_STRUCTURES: Record<
   PaymentStructureId,
-  { name: string; milestones: Milestone[] }
+  { name: string; milestones: Milestone[]; splitLabel: string }
 > = {
   /** Wadeem Gardens' actual published structure ("First of its Kind
    * Financial Solution", Wadeem Gardens.pdf) — 25% of the total price from
@@ -35,6 +35,7 @@ export const PAYMENT_STRUCTURES: Record<
    * ADIB-financed construction and post-handover tranches). */
   "wadeem-adib": {
     name: "MODON x ADIB plan (Wadeem Gardens)",
+    splitLabel: "25 / 75",
     milestones: [
       { label: "Down payment", percentOfPrice: 5 },
       { label: "Month 8", percentOfPrice: 5 },
@@ -47,6 +48,7 @@ export const PAYMENT_STRUCTURES: Record<
   },
   "60-40": {
     name: "60/40 construction plan",
+    splitLabel: "60 / 40",
     milestones: [
       { label: "Booking, on signing SPA", percentOfPrice: 10 },
       { label: "20% construction milestone", percentOfPrice: 15 },
@@ -57,6 +59,7 @@ export const PAYMENT_STRUCTURES: Record<
   },
   "50-50": {
     name: "50/50 handover plan",
+    splitLabel: "50 / 50",
     milestones: [
       { label: "Booking, on signing SPA", percentOfPrice: 10 },
       { label: "50% construction milestone", percentOfPrice: 40 },
@@ -65,6 +68,7 @@ export const PAYMENT_STRUCTURES: Record<
   },
   "post-handover": {
     name: "Post-handover plan, 1% monthly",
+    splitLabel: "50 / 50",
     milestones: [
       { label: "Booking, on signing SPA", percentOfPrice: 10 },
       { label: "Construction milestones, to handover", percentOfPrice: 40 },

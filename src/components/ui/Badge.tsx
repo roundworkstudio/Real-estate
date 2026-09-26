@@ -12,8 +12,15 @@ const labels: Record<PropertyStatus, string> = {
   "off-plan": "Off-plan",
 };
 
+/* "new"'s text is --color-slate rather than --color-sovereign deliberately
+ * — a "royal blue + forest" swap this session paired --color-mist and
+ * --color-sovereign so close in lightness (contrast ratio ~1.08, should be
+ * ≥4.5) that the badge text was effectively invisible. --color-slate is
+ * the one token every palette swap has kept genuinely dark, so it's the
+ * only text colour here safe to pair with an arbitrary --color-mist
+ * without re-checking contrast on every future swap. */
 const tones: Record<PropertyStatus, string> = {
-  new: "bg-sovereign/10 text-sovereign",
+  new: "bg-mist/50 text-slate",
   "under-offer": "bg-royal/10 text-royal",
   sold: "bg-slate/10 text-slate",
   "off-plan": "bg-sand text-slate",
