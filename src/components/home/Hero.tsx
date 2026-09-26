@@ -12,6 +12,16 @@ import { AISearchBar } from "./AISearchBar";
  * AI" shell, not functional — see AISearchBar's own note for what that
  * means and why.
  *
+ * Hero clip swapped 2026-09-26: the villa-entrance clip (still used
+ * elsewhere — see Services.tsx and sample-properties.ts's gallery arrays,
+ * which is why that file wasn't deleted) for a golden-hour shot through
+ * the living room's glass doors onto the infinity pool and waterfront,
+ * sourced from the same RAW Footage/Property Visuals set on the SSD
+ * (IMG_1838.mov) and converted at native resolution (PresetHighestQuality,
+ * not the default Preset1920x1080 — that preset's box would have
+ * downscaled this portrait source, the exact mistake HANDOVER.md flagged
+ * for the previous hero clip).
+ *
  * Video source is vertical (1080x1920, see HANDOVER.md — almost all of her
  * footage is). object-cover on a wide hero crops it to a narrow centre
  * strip; that's a known, accepted trade-off here, not an oversight. Swap
@@ -21,8 +31,8 @@ export function Hero() {
   return (
     <section className="relative flex h-[92vh] min-h-[640px] flex-col justify-end overflow-hidden">
       <HeroVideo
-        src="/media/hero/ramhan-villa-hero.mp4"
-        poster="/media/hero/ramhan-villa-hero.jpg"
+        src="/media/hero/ramhan-villa-poolview-hero.mp4"
+        poster="/media/hero/ramhan-villa-poolview-hero.jpg"
       />
       {/* Two-layer scrim: bottom-up for the search bar, left-to-right for
           headline legibility over a bright sky/light-facade photo. */}
@@ -38,7 +48,8 @@ export function Hero() {
 
       <div className="relative px-6 pb-14 pt-24 sm:px-10 sm:pb-16 sm:pt-32">
         <h1 className="max-w-2xl text-4xl font-semibold text-white sm:text-6xl">
-          Abu Dhabi and Dubai real estate, presented like an investment.
+          Abu Dhabi and Dubai real estate,{" "}
+          <span className="font-accent">presented like an investment.</span>
         </h1>
         <p className="mt-4 max-w-xl text-lg text-white/80">
           Yield, price per sqft, and payment terms alongside every listing,
