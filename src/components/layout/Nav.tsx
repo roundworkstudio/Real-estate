@@ -49,6 +49,14 @@ import { PLACEHOLDER_TEL_URL } from "@/lib/site-config";
  * keep at that width). WhatsAppFloatingButton remains as mobile's one
  * persistent top-level contact CTA.
  *
+ * The nine inner pages that wrap this in their own `bg-slate` block (to
+ * centre it vertically — see each page's own `h-28` comment) hide that
+ * wrapper on mobile too (2026-09-27, explicit request — "remove the brown
+ * menu bar from the top" on mobile): `Nav` disappearing below `md` still
+ * left an empty `bg-slate` block behind, since only `Nav` itself had the
+ * `hidden md:grid` — the wrapper didn't know to go with it.
+ *
+
  * Three-column grid, not `flex justify-between` (2026-09-27, fixed after
  * the links visibly sat left-of-centre with a much bigger gap before the
  * button than after the logo). `justify-between` only equalises the *gaps*

@@ -10,7 +10,7 @@ import { sampleProperties } from "@/lib/sample-properties";
 export default function PropertiesPage() {
   return (
     <main>
-      <div className="relative bg-slate">
+      <div className="relative hidden bg-slate md:block">
         <Nav />
         {/* h-28, not h-20 (2026-09-27, explicit request) — the fixed
             Nav pill's own top offset + padding put its vertical centre

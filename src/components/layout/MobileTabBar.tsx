@@ -11,10 +11,13 @@ import { navLinks } from "@/lib/nav-links";
  * why). Only rendered below the `md` breakpoint — desktop keeps the top
  * bar's inline links.
  *
- * Eight links don't fit a fixed-width pill, so unlike the reference (which
- * assumes 3-5 items filling the width evenly), each item here has a fixed
- * min-width and the pill scrolls horizontally instead of squeezing them —
- * see .no-scrollbar in globals.css.
+ * Six links don't fit a fixed-width pill on a narrow phone, so unlike the
+ * reference (which assumes 3-5 items filling the width evenly), the pill
+ * scrolls horizontally instead of squeezing them — see .no-scrollbar in
+ * globals.css. Every tile is the same fixed width (2026-09-27, explicit
+ * request — "make the tiles the same size and even"; each used to be
+ * `min-w-16`, content-width, so "Properties" was visibly wider than
+ * "About") rather than sized to its own label.
  *
  * Edge fades (2026-09-27, explicit request — "not all the icons fit...
  * add a subtle indicator there's more") — `no-scrollbar` hides the
@@ -25,6 +28,13 @@ import { navLinks } from "@/lib/nav-links";
  * plain scroll listener — no library, this bar is the one place on the
  * whole site not already using `motion`, not worth pulling in for a
  * cross-fade this simple.
+ *
+ * The container is also deliberately sized so the last visible tile is
+ * partway cropped rather than landing on a clean edge (2026-09-27,
+ * explicit request — "sneak peek the mobile navbar option so the viewer
+ * knows there's more") — `scroll-pr` below reserves less than one tile's
+ * width at the end of the scroll track, so there's always a sliver of the
+ * next tile showing rather than a hard stop.
  */
 export function MobileTabBar() {
   const pathname = usePathname();
@@ -66,7 +76,7 @@ export function MobileTabBar() {
             <a
               key={l.href}
               href={l.href}
-              className={`flex min-w-16 shrink-0 flex-col items-center gap-1 rounded-full px-3 py-2 text-[11px] font-medium transition-colors ${
+              className={`flex w-[68px] shrink-0 flex-col items-center gap-1 rounded-full px-1 py-2 text-[11px] font-medium whitespace-nowrap transition-colors ${
                 active ? "bg-white/15 text-white" : "text-white/70 active:bg-white/10"
               }`}
             >
