@@ -10,14 +10,25 @@
  * data source decided), similar properties (only two sample listings
  * exist total, so "similar" is meaningless right now), agent card (no
  * headshot/bio — see HANDOVER.md).
+ *
+ * The four deeper, optional tools (yield strategy, hold model, payment
+ * plan, before/after) live under BouncyAccordion now (2026-09-27,
+ * explicit request — "where applicable use this", the bouncy-accordion
+ * block — see that component's own note), one open at a time, instead of
+ * stacked flat — this page was already the longest single scroll on the
+ * site before adding four more full tool sections to it. The primary
+ * Investment analysis calculator stays outside the accordion, unhidden —
+ * it's the one figure most buyers actually want first.
  */
 import { notFound } from "next/navigation";
+import { TrendingUp, LineChart, Landmark, Images } from "lucide-react";
 import { sampleProperties } from "@/lib/sample-properties";
 import { pricePerSqft } from "@/lib/types";
 import { developments } from "@/lib/developments";
 import { PAYMENT_STRUCTURES, type PaymentStructureId } from "@/lib/paymentPlan";
 import { StatusBadge } from "@/components/ui/Badge";
 import { StatStrip, type StatStripItem } from "@/components/ui/StatStrip";
+import { BouncyAccordion, type BouncyAccordionItem } from "@/components/ui/BouncyAccordion";
 import { InvestmentCalculator } from "@/components/tools/InvestmentCalculator";
 import { BeforeAfterSlider } from "@/components/tools/BeforeAfterSlider";
 import { YieldSimulator } from "@/components/tools/YieldSimulator";
@@ -173,83 +184,92 @@ export default async function PropertyDetailPage({
         </section>
 
         {/* Analytics & Insight Suite — yield strategy, 5-year hold model,
-            payment plan and fee transparency. Deeper, optional layer on
-            top of the Investment analysis calculator above, not a
-            replacement for it. */}
+            payment plan and fee transparency, plus before/after. Deeper,
+            optional layer on top of the Investment analysis calculator
+            above, not a replacement for it — collapsed into an accordion,
+            one open at a time, rather than four more full sections
+            stacked onto an already-long page. */}
         <CurrencyProvider>
           <div className="border-t border-slate/10">
             <CurrencyVisaToolbar priceAed={property.priceAed} />
           </div>
 
-          <section className="py-10">
-            <h2 className="text-xl font-semibold text-slate">
-              Yield strategy simulator
-            </h2>
-            <p className="mt-2 max-w-2xl text-sm text-slate/60">
-              Compare a short-term holiday let against a standard long-term
-              lease for this property.
-            </p>
-            <div className="mt-6">
-              <YieldSimulator priceAed={property.priceAed} sqft={property.sqft} />
-            </div>
-          </section>
-
-          <section className="border-t border-slate/10 py-10">
-            <h2 className="text-xl font-semibold text-slate">
-              5-year hold &amp; appreciation model
-            </h2>
-            <p className="mt-2 max-w-2xl text-sm text-slate/60">
-              Project equity growth over a hold period under a market
-              scenario.
-            </p>
-            <div className="mt-6">
-              <HoldAppreciationModel
-                purchasePriceAed={property.priceAed}
-                annualNetCashFlowAed={estimatedAnnualNetCashFlow}
-              />
-            </div>
-          </section>
-
-          {property.status === "off-plan" && (
-            <section className="border-t border-slate/10 py-10">
-              <h2 className="text-xl font-semibold text-slate">
-                Payment plan &amp; fee transparency
-              </h2>
-              <p className="mt-2 max-w-2xl text-sm text-slate/60">
-                Capital outlay by milestone and every upfront fee due at
-                closing.
-              </p>
-              <div className="mt-6">
-                <PaymentPlanCalculator
-                  priceAed={property.priceAed}
-                  city={property.city}
-                  defaultStructureId={paymentStructureId}
-                />
-              </div>
-            </section>
-          )}
-        </CurrencyProvider>
-
-        {/* Before & after — doesn't apply to an off-plan property with
-            nothing built yet to renovate. */}
-        {property.status !== "off-plan" && (
-        <section className="border-t border-slate/10 py-10">
-          <h2 className="text-xl font-semibold text-slate">Before &amp; after</h2>
-          <div className="mx-auto mt-6 max-w-2xl">
-            <BeforeAfterSlider
-              beforeSrc={gallery[1]?.src ?? property.image.src}
-              afterSrc={gallery[0]?.src ?? property.image.src}
-              capex={[
-                { label: "Kitchen refit", amount: 85_000 },
-                { label: "Flooring", amount: 42_000 },
-                { label: "Landscaping", amount: 28_000 },
+          <div className="py-10">
+            <BouncyAccordion
+              defaultValue="yield-strategy"
+              items={[
+                {
+                  id: "yield-strategy",
+                  title: "Yield strategy simulator",
+                  description:
+                    "Compare a short-term holiday let against a standard long-term lease for this property.",
+                  icon: <TrendingUp size={18} strokeWidth={1.75} />,
+                  content: (
+                    <YieldSimulator priceAed={property.priceAed} sqft={property.sqft} />
+                  ),
+                },
+                {
+                  id: "hold-appreciation",
+                  title: "5-year hold & appreciation model",
+                  description:
+                    "Project equity growth over a hold period under a market scenario.",
+                  icon: <LineChart size={18} strokeWidth={1.75} />,
+                  content: (
+                    <HoldAppreciationModel
+                      purchasePriceAed={property.priceAed}
+                      annualNetCashFlowAed={estimatedAnnualNetCashFlow}
+                    />
+                  ),
+                },
+                ...(property.status === "off-plan"
+                  ? [
+                      {
+                        id: "payment-plan",
+                        title: "Payment plan & fee transparency",
+                        description:
+                          "Capital outlay by milestone and every upfront fee due at closing.",
+                        icon: <Landmark size={18} strokeWidth={1.75} />,
+                        content: (
+                          <PaymentPlanCalculator
+                            priceAed={property.priceAed}
+                            city={property.city}
+                            defaultStructureId={paymentStructureId}
+                          />
+                        ),
+                      } satisfies BouncyAccordionItem,
+                    ]
+                  : []),
+                // Before & after doesn't apply to an off-plan property
+                // with nothing built yet to renovate.
+                ...(property.status !== "off-plan"
+                  ? [
+                      {
+                        id: "before-after",
+                        title: "Before & after",
+                        description: "Sample renovation, illustrative only.",
+                        icon: <Images size={18} strokeWidth={1.75} />,
+                        content: (
+                          <div className="max-w-2xl">
+                            <BeforeAfterSlider
+                              beforeSrc={gallery[1]?.src ?? property.image.src}
+                              afterSrc={gallery[0]?.src ?? property.image.src}
+                              capex={[
+                                { label: "Kitchen refit", amount: 85_000 },
+                                { label: "Flooring", amount: 42_000 },
+                                { label: "Landscaping", amount: 28_000 },
+                              ]}
+                              rentIncreaseAed={3_200}
+                              isSample
+                            />
+                          </div>
+                        ),
+                      } satisfies BouncyAccordionItem,
+                    ]
+                  : []),
               ]}
-              rentIncreaseAed={3_200}
-              isSample
             />
           </div>
-        </section>
-        )}
+        </CurrencyProvider>
       </div>
 
       {/* 9. Location — real map, no API key needed. See LocationMap's
