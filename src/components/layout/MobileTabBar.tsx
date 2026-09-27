@@ -36,12 +36,14 @@ import { prefersReducedMotion } from "@/lib/motion";
  *    5.5 tiles: five in full, a sixth cropped clean down the middle,
  *    rather than an incidental few-pixel sliver from whatever the width
  *    happened to divide down to.
- * 3. A one-time scroll nudge — 700ms after mount, if there's anything to
- *    scroll to, the bar eases a few pixels right and back on its own
- *    (native smooth-scroll, no manual animation loop). A still image only
- *    communicates "cropped," not "scrollable"; a single small motion
- *    reads as a gesture hint without nagging on every visit. Skipped
- *    under `prefers-reduced-motion`.
+ * 3. A recurring scroll nudge (2026-09-27, "slide the bar back and forth
+ *    ever so slightly every 5 seconds" — was a one-off on mount before
+ *    this) — every 5s, if there's still anything to scroll to, the bar
+ *    eases 10px in whichever direction has room and back to wherever it
+ *    already was (native smooth-scroll, no manual animation loop or
+ *    library). Relative to the current scroll position rather than a
+ *    fixed 0/28, so it doesn't fight wherever the visitor has actually
+ *    scrolled to. Skipped under `prefers-reduced-motion`.
  */
 export function MobileTabBar() {
   const pathname = usePathname();
@@ -70,19 +72,29 @@ export function MobileTabBar() {
 
   useEffect(() => {
     const el = scrollRef.current;
-    if (!el || prefersReducedMotion()) return;
-    if (el.scrollWidth <= el.clientWidth + 4) return;
+    if (!el) return;
 
+    let cancelled = false;
     let nudgeBack: number;
-    const nudgeOut = window.setTimeout(() => {
-      el.scrollTo({ left: 28, behavior: "smooth" });
+
+    const interval = window.setInterval(() => {
+      if (prefersReducedMotion()) return;
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      if (maxScroll <= 4) return;
+
+      const start = el.scrollLeft;
+      const delta = 10;
+      const target = start + delta <= maxScroll ? start + delta : Math.max(0, start - delta);
+
+      el.scrollTo({ left: target, behavior: "smooth" });
       nudgeBack = window.setTimeout(() => {
-        el.scrollTo({ left: 0, behavior: "smooth" });
+        if (!cancelled) el.scrollTo({ left: start, behavior: "smooth" });
       }, 450);
-    }, 700);
+    }, 5000);
 
     return () => {
-      window.clearTimeout(nudgeOut);
+      cancelled = true;
+      window.clearInterval(interval);
       window.clearTimeout(nudgeBack);
     };
   }, []);
