@@ -27,7 +27,9 @@ export function AboutPreview() {
             copy, once the real bio is supplied.
           </p>
           <div className="mt-5">
-            <Button variant="dark">Read more</Button>
+            <Button href="/about" variant="dark">
+              Read more
+            </Button>
           </div>
         </div>
       </div>

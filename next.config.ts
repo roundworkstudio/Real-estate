@@ -1,6 +1,19 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Insights+Analytics and About+Areas merged into single pages
+  // (2026-09-27, explicit request) — these keep the old nav destinations
+  // working rather than 404ing for anything that already links there.
+  // `permanent: false` (307) deliberately, not 308: everything about this
+  // site's structure is still rough-draft/provisional (see HANDOVER.md),
+  // and a 308 gets cached hard by browsers — reversing course later would
+  // be harder than it needs to be for a redirect this young.
+  async redirects() {
+    return [
+      { source: "/analytics", destination: "/insights#tools", permanent: false },
+      { source: "/areas", destination: "/about#areas", permanent: false },
+    ];
+  },
   images: {
     // The in-app preview browser used during development refuses to render
     // an <img> whose response carries Content-Disposition: attachment —

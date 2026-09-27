@@ -12,13 +12,14 @@
  */
 import { Hero } from "@/components/home/Hero";
 import { CredibilityNumbers } from "@/components/home/CredibilityNumbers";
-import { FeaturedListings } from "@/components/home/FeaturedListings";
+import { FeaturedProjects } from "@/components/home/FeaturedProjects";
 import { VideoTour } from "@/components/home/VideoTour";
 import { AboutPreview } from "@/components/home/AboutPreview";
 import { Services } from "@/components/home/Services";
 import { Testimonials } from "@/components/home/Testimonials";
 import { RecentlySold } from "@/components/home/RecentlySold";
-import { AreasServed } from "@/components/home/AreasServed";
+import { InvestmentToolsTeaser } from "@/components/home/InvestmentToolsTeaser";
+import { InvestorMatchTeaser } from "@/components/home/InvestorMatchTeaser";
 import { ValuationPrompt } from "@/components/home/ValuationPrompt";
 import { WhatsAppBanner } from "@/components/tools/WhatsAppBanner";
 import { ContactSection } from "@/components/home/ContactSection";
@@ -29,13 +30,14 @@ export default function Home() {
     <main>
       <Hero />
       <CredibilityNumbers />
-      <FeaturedListings />
+      <FeaturedProjects />
       <VideoTour />
       <AboutPreview />
       <Services />
       <Testimonials />
       <RecentlySold />
-      <AreasServed />
+      <InvestmentToolsTeaser />
+      <InvestorMatchTeaser />
       <ValuationPrompt />
       <section className="px-6 py-10 sm:px-10">
         <WhatsAppBanner />

@@ -108,7 +108,13 @@ export default async function DevelopmentDetailPage({
       ) : (
         <div className="relative bg-slate">
           <Nav />
-          <div className="h-20" />
+          {/* h-28, not h-20 (2026-09-27, explicit request) — the fixed
+              Nav pill's own top offset + padding put its vertical centre
+              ~57px down from the viewport top (see Nav.tsx's box-height
+              comment), which used to leave it sitting low in this block
+              with almost no margin underneath. This height centres it
+              instead. */}
+          <div className="h-28" />
         </div>
       )}
 

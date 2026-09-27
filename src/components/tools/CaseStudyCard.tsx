@@ -1,4 +1,5 @@
 import { BeforeAfterSlider } from "./BeforeAfterSlider";
+import { DataRow } from "@/components/ui/DataRow";
 
 export type CaseStudy = {
   title: string;
@@ -17,15 +18,6 @@ export type CaseStudy = {
   afterSrc: string;
   isSample?: boolean;
 };
-
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-baseline justify-between border-b border-slate/10 py-3 text-sm last:border-0">
-      <span className="text-slate/60">{label}</span>
-      <span className="font-medium tabular-nums text-slate">{value}</span>
-    </div>
-  );
-}
 
 /**
  * Realized-return case study. Real, closed-deal numbers only — see
@@ -68,27 +60,27 @@ export function CaseStudyCard({ study }: { study: CaseStudy }) {
         </div>
 
         <div className="lg:col-span-2">
-          <Metric
+          <DataRow
             label="Acquisition"
             value={`AED ${study.entryPriceAed.toLocaleString("en-AE")} (${study.entryDate})`}
           />
-          <Metric
+          <DataRow
             label="Capital outlay"
             value={`AED ${study.capitalOutlayAed.toLocaleString("en-AE")}`}
           />
-          <Metric
+          <DataRow
             label="Yield during hold"
             value={`${study.yieldDuringHoldPercent.toFixed(1)}%`}
           />
-          <Metric
+          <DataRow
             label="Exit"
             value={`AED ${study.exitPriceAed.toLocaleString("en-AE")} (${study.exitDate})`}
           />
-          <Metric
+          <DataRow
             label="Equity multiple"
             value={`${study.equityMultiple.toFixed(2)}x`}
           />
-          <Metric label="Net IRR" value={`${study.netIrrPercent.toFixed(1)}%`} />
+          <DataRow label="Net IRR" value={`${study.netIrrPercent.toFixed(1)}%`} />
         </div>
       </div>
     </div>

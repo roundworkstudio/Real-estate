@@ -26,10 +26,15 @@ const services = [
  * the text is a solid gradient, not glass, so contrast holds regardless
  * of what's in the frame — see directives/anti-slop-ui.md's contrast rule.
  *
- * Service cards use a translucent glass fill, which the same directive
- * permits specifically over photography — the case here. This is a
- * deliberate exception to "no container sprawl," scoped to this one
- * section, not a return to boxing every element in a card.
+ * Service cards use a translucent fill, which the same directive permits
+ * specifically over photography — the case here. This is a deliberate
+ * exception to "no container sprawl," scoped to this one section, not a
+ * return to boxing every element in a card.
+ *
+ * No `backdrop-blur` (removed 2026-09-27, explicit request — "remove the
+ * frosted") — the translucent `bg-white/10` fill plus the dark gradient
+ * scrim behind everything still keeps text legible over any photo; the
+ * blur was the only thing making the cards read as "frosted glass."
  */
 export function Services() {
   return (
@@ -57,7 +62,7 @@ export function Services() {
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {services.map((s, i) => (
             <Reveal key={s.name} delayMs={i * 100}>
-              <GlassCard className="rounded-2xl bg-white/10 p-6 backdrop-blur-md hover:border-royal/50">
+              <GlassCard className="rounded-2xl bg-white/10 p-6 hover:border-royal/50">
                 <div className="text-lg font-medium text-white">{s.name}</div>
                 <p className="mt-2 text-sm text-white/70">{s.desc}</p>
               </GlassCard>

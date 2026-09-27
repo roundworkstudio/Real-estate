@@ -130,6 +130,12 @@ export function useScrollingFlag() {
  * it (`strength`), springing back via CSS transition on mouseleave.
  * Applied via ref rather than state so the drag itself doesn't re-render
  * React on every mousemove — only the transform style updates.
+ *
+ * Currently unused — removed 2026-09-27 from Nav's "Book a call" and
+ * WhatsAppFloatingButton (both, at explicit request) after being the only
+ * reason either needed to be a client component. Left defined rather than
+ * deleted since it's a self-contained, reusable primitive, not orphaned
+ * feature code — reattach a ref to bring the effect back on any element.
  */
 export function useMagnetic<T extends HTMLElement>(radius = 60, strength = 0.35) {
   const ref = useRef<T>(null);

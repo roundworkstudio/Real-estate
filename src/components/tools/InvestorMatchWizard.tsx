@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import { PropertyCard } from "@/components/ui/PropertyCard";
 import { sampleProperties } from "@/lib/sample-properties";
@@ -19,10 +19,41 @@ const defaults: Answers = {
   riskTolerance: "moderate",
 };
 
-const steps = ["Budget", "Target yield", "Strategy", "Risk"] as const;
+const TOTAL_STEPS = 4;
 
-function StepShell({
+/**
+ * Progress bar + choice-card layout is shadcn's "Questionnaire" component
+ * pattern (2026-09-27, explicit request — "keep font and theme but use
+ * this style"), rebuilt on this project's own primitives rather than
+ * installed from shadcn: the segmented bar, one-question-per-step shell,
+ * and selectable choice cards are the borrowed shape, restyled in the
+ * warm-mono palette (`royal`/`slate`/`canvas`) and Poppins/`.font-accent`
+ * instead of shadcn's neutral defaults. No external dependency added.
+ */
+function ProgressBar({ step }: { step: number }) {
+  return (
+    <div
+      role="progressbar"
+      aria-valuenow={step + 1}
+      aria-valuemin={1}
+      aria-valuemax={TOTAL_STEPS}
+      className="flex items-center gap-1.5"
+    >
+      {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
+        <div
+          key={i}
+          className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
+            i <= step ? "bg-royal" : "bg-slate/10"
+          }`}
+        />
+      ))}
+    </div>
+  );
+}
+
+function QuestionShell({
   title,
+  description,
   children,
   step,
   onBack,
@@ -30,7 +61,8 @@ function StepShell({
   nextLabel = "Next",
 }: {
   title: string;
-  children: React.ReactNode;
+  description: string;
+  children: ReactNode;
   step: number;
   onBack?: () => void;
   onNext: () => void;
@@ -38,22 +70,69 @@ function StepShell({
 }) {
   return (
     <div>
-      <div className="text-xs font-medium text-slate/50">
-        Step {step + 1} of {steps.length}
+      <ProgressBar step={step} />
+      <div className="mt-5 text-xs font-medium tracking-wide text-slate/40 uppercase">
+        Question {step + 1} of {TOTAL_STEPS}
       </div>
-      <h3 className="mt-2 text-xl font-semibold text-slate">{title}</h3>
-      <div className="mt-6">{children}</div>
-      <div className="mt-8 flex gap-3">
-        {onBack && (
-          <Button variant="dark" onClick={onBack}>
-            Back
-          </Button>
+      <h3 className="mt-2 text-xl font-semibold text-slate sm:text-2xl">
+        {title}
+      </h3>
+      <p className="mt-1 text-sm text-slate/60">{description}</p>
+      <div className="mt-8">{children}</div>
+      <div className="mt-10 flex items-center justify-between">
+        {onBack ? (
+          <button
+            type="button"
+            onClick={onBack}
+            className="text-sm font-medium text-slate/50 transition-colors hover:text-slate"
+          >
+            Previous
+          </button>
+        ) : (
+          <span />
         )}
         <Button variant="primary" onClick={onNext}>
           {nextLabel}
         </Button>
       </div>
     </div>
+  );
+}
+
+function ChoiceCard({
+  label,
+  description,
+  selected,
+  onClick,
+}: {
+  label: string;
+  description?: string;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={selected}
+      className={`w-full rounded-xl border p-4 text-left transition-colors ${
+        selected
+          ? "border-royal bg-royal/5"
+          : "border-slate/15 hover:border-royal/40"
+      }`}
+    >
+      <div className="flex items-center justify-between gap-3">
+        <span className="font-medium text-slate">{label}</span>
+        <span
+          className={`h-4 w-4 shrink-0 rounded-full border transition-colors ${
+            selected ? "border-royal bg-royal" : "border-slate/25"
+          }`}
+        />
+      </div>
+      {description && (
+        <p className="mt-1 text-sm text-slate/60">{description}</p>
+      )}
+    </button>
   );
 }
 
@@ -64,8 +143,20 @@ function StepShell({
  * this demonstrates the mechanism honestly rather than dressing it up as
  * a real portfolio search. Real matching needs real inventory, which is
  * an open client input (docs/client-inputs-required.md).
+ *
+ * `onResultsChange` (optional) tells a caller when the results screen is
+ * showing — InvestorMatchTeaser uses it to drop its outer GlassCard tilt
+ * while PropertyCard's own hover/tilt is active on the matches grid
+ * (2026-09-27, explicit request — "remove the hover effect on the match
+ * your criteria section"): two nested pointer-tracked tilt elements, one
+ * reacting to the mouse position across the whole big card and one per
+ * listing inside it, fought each other and read as broken, not luxurious.
  */
-export function InvestorMatchWizard() {
+export function InvestorMatchWizard({
+  onResultsChange,
+}: {
+  onResultsChange?: (showingResults: boolean) => void;
+} = {}) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>(defaults);
   const [done, setDone] = useState(false);
@@ -77,10 +168,11 @@ export function InvestorMatchWizard() {
 
     return (
       <div>
-        <div className="text-xs font-medium text-slate/50">
+        <ProgressBar step={TOTAL_STEPS - 1} />
+        <div className="mt-5 text-xs font-medium tracking-wide text-slate/40 uppercase">
           Sample match — illustrative only, see component note
         </div>
-        <h3 className="mt-2 text-xl font-semibold text-slate">
+        <h3 className="mt-2 text-xl font-semibold text-slate sm:text-2xl">
           {matches.length > 0
             ? `${matches.length} listing${matches.length > 1 ? "s" : ""} match your criteria`
             : "No current listings match — Janvi will reach out directly"}
@@ -90,24 +182,30 @@ export function InvestorMatchWizard() {
             <PropertyCard key={p.slug} property={p} />
           ))}
         </div>
-        <Button
-          variant="dark"
-          className="mt-8"
+        <button
+          type="button"
           onClick={() => {
             setStep(0);
             setAnswers(defaults);
             setDone(false);
+            onResultsChange?.(false);
           }}
+          className="mt-8 text-sm font-medium text-slate/50 transition-colors hover:text-slate"
         >
           Start over
-        </Button>
+        </button>
       </div>
     );
   }
 
   if (step === 0) {
     return (
-      <StepShell title="What's your budget?" step={step} onNext={() => setStep(1)}>
+      <QuestionShell
+        title="What's your budget?"
+        description="Drag to set the ceiling — this sets the range we'll match against."
+        step={step}
+        onNext={() => setStep(1)}
+      >
         <input
           type="range"
           min={500_000}
@@ -117,19 +215,20 @@ export function InvestorMatchWizard() {
           onChange={(e) =>
             setAnswers((a) => ({ ...a, budgetAed: Number(e.target.value) }))
           }
-          className="h-1.5 w-full max-w-md cursor-pointer appearance-none rounded-full bg-slate/10 accent-royal"
+          className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-slate/10 accent-royal"
         />
-        <div className="mt-2 text-2xl font-semibold tabular-nums text-slate">
+        <div className="mt-3 text-2xl font-semibold tabular-nums text-slate">
           AED {answers.budgetAed.toLocaleString("en-AE")}
         </div>
-      </StepShell>
+      </QuestionShell>
     );
   }
 
   if (step === 1) {
     return (
-      <StepShell
+      <QuestionShell
         title="What yield are you targeting?"
+        description="Net rental yield, before financing costs."
         step={step}
         onBack={() => setStep(0)}
         onNext={() => setStep(2)}
@@ -146,65 +245,81 @@ export function InvestorMatchWizard() {
               targetYieldPercent: Number(e.target.value),
             }))
           }
-          className="h-1.5 w-full max-w-md cursor-pointer appearance-none rounded-full bg-slate/10 accent-royal"
+          className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-slate/10 accent-royal"
         />
-        <div className="mt-2 text-2xl font-semibold tabular-nums text-slate">
+        <div className="mt-3 text-2xl font-semibold tabular-nums text-slate">
           {answers.targetYieldPercent.toFixed(1)}%
         </div>
-      </StepShell>
+      </QuestionShell>
     );
   }
 
   if (step === 2) {
     return (
-      <StepShell
+      <QuestionShell
         title="Turnkey, or open to a rehab project?"
+        description="Value-add deals need more hands-on involvement in exchange for a lower entry price."
         step={step}
         onBack={() => setStep(1)}
         onNext={() => setStep(3)}
       >
-        <div className="flex gap-3">
-          {(["turnkey", "value-add"] as const).map((opt) => (
-            <button
-              key={opt}
-              onClick={() => setAnswers((a) => ({ ...a, strategy: opt }))}
-              className={`rounded-full px-5 py-2.5 text-sm font-medium transition-colors ${
-                answers.strategy === opt
-                  ? "bg-royal text-white"
-                  : "bg-slate/5 text-slate hover:bg-slate/10"
-              }`}
-            >
-              {opt === "turnkey" ? "Turnkey" : "Value-add / rehab"}
-            </button>
-          ))}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <ChoiceCard
+            label="Turnkey"
+            description="Move-in or rent-ready on completion."
+            selected={answers.strategy === "turnkey"}
+            onClick={() => setAnswers((a) => ({ ...a, strategy: "turnkey" }))}
+          />
+          <ChoiceCard
+            label="Value-add / rehab"
+            description="Lower entry price, upside from repositioning."
+            selected={answers.strategy === "value-add"}
+            onClick={() =>
+              setAnswers((a) => ({ ...a, strategy: "value-add" }))
+            }
+          />
         </div>
-      </StepShell>
+      </QuestionShell>
     );
   }
 
   return (
-    <StepShell
+    <QuestionShell
       title="Risk tolerance?"
+      description="How much volatility in price and timeline are you comfortable with?"
       step={step}
       onBack={() => setStep(2)}
-      onNext={() => setDone(true)}
+      onNext={() => {
+        setDone(true);
+        onResultsChange?.(true);
+      }}
       nextLabel="See matches"
     >
-      <div className="flex flex-wrap gap-3">
-        {(["conservative", "moderate", "aggressive"] as const).map((opt) => (
-          <button
-            key={opt}
-            onClick={() => setAnswers((a) => ({ ...a, riskTolerance: opt }))}
-            className={`rounded-full px-5 py-2.5 text-sm font-medium capitalize transition-colors ${
-              answers.riskTolerance === opt
-                ? "bg-royal text-white"
-                : "bg-slate/5 text-slate hover:bg-slate/10"
-            }`}
-          >
-            {opt}
-          </button>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        {(
+          [
+            {
+              value: "conservative",
+              description: "Stable, established areas.",
+            },
+            { value: "moderate", description: "Balanced growth and stability." },
+            {
+              value: "aggressive",
+              description: "Emerging areas, higher upside.",
+            },
+          ] as const
+        ).map((opt) => (
+          <ChoiceCard
+            key={opt.value}
+            label={opt.value[0].toUpperCase() + opt.value.slice(1)}
+            description={opt.description}
+            selected={answers.riskTolerance === opt.value}
+            onClick={() =>
+              setAnswers((a) => ({ ...a, riskTolerance: opt.value }))
+            }
+          />
         ))}
       </div>
-    </StepShell>
+    </QuestionShell>
   );
 }

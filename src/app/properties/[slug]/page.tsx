@@ -29,6 +29,7 @@ import { LocationMap } from "@/components/ui/LocationMap";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
+import { PLACEHOLDER_TEL_URL } from "@/lib/site-config";
 
 export function generateStaticParams() {
   return sampleProperties.map((p) => ({ slug: p.slug }));
@@ -89,11 +90,24 @@ export default async function PropertyDetailPage({
     <main>
       <div className="relative bg-slate">
         <Nav />
-        <div className="h-20" />
+        {/* h-28, not h-20 (2026-09-27, explicit request) — the fixed
+            Nav pill's own top offset + padding put its vertical centre
+            ~57px down from the viewport top (see Nav.tsx's box-height
+            comment), which used to leave it sitting low in this block
+            with almost no margin underneath. This height centres it
+            instead. */}
+        <div className="h-28" />
       </div>
 
       {/* 1. Gallery — full-bleed images, lightbox/keyboard nav not built
-          yet (rough fidelity). */}
+          yet (rough fidelity). Only the first (spanning) image sets an
+          explicit aspect ratio at `sm:`+ — it's the tallest cell in the
+          row, so it's what determines the row's height. The others used
+          to carry their own `aspect-[4/3]`, which computes a fixed height
+          from their own width and ignores the grid's stretched row height
+          entirely — shorter than the spanning image, it left a visible gap
+          below them. `sm:h-full` instead stretches each to the row's
+          actual height, with `object-cover` doing the crop. */}
       <section className="grid grid-cols-1 gap-1 sm:grid-cols-3">
         {gallery.map((img, i) => (
           // eslint-disable-next-line @next/next/no-img-element
@@ -101,7 +115,7 @@ export default async function PropertyDetailPage({
             key={i}
             src={img.src}
             alt={img.alt}
-            className={`aspect-[4/3] w-full object-cover ${i === 0 ? "sm:col-span-2 sm:aspect-[8/5]" : ""}`}
+            className={`aspect-[4/3] w-full object-cover sm:aspect-auto sm:h-full ${i === 0 ? "sm:col-span-2 sm:aspect-[8/5] sm:h-auto" : ""}`}
           />
         ))}
       </section>
@@ -249,7 +263,8 @@ export default async function PropertyDetailPage({
         <p className="mt-4 max-w-2xl text-sm text-slate/70">
           Placeholder neighbourhood notes — schools, transport, and amenity
           copy for {property.community} goes here, pulled from the
-          matching /areas page once it exists.
+          matching /areas guide once per-area content exists (the /areas
+          index itself is built, but every card on it is still a dead end).
         </p>
       </section>
 
@@ -259,7 +274,9 @@ export default async function PropertyDetailPage({
             Interested in this property?
           </h2>
           <div className="mt-4">
-            <Button variant="primary">Book a call</Button>
+            <Button href={PLACEHOLDER_TEL_URL} variant="primary">
+              Book a call
+            </Button>
           </div>
         </div>
       </section>

@@ -15,6 +15,13 @@ export type StatStripItem = {
  *
  * `theme="dark"` is for use over a hero image (white text, translucent
  * divider); `theme="light"` for the page's own background.
+ *
+ * A fixed two-column grid below `sm`, reverting to a free-flowing row
+ * above it — fixed 2026-09-27 (mobile alignment audit). With 4-5 items of
+ * uneven width, plain `flex flex-wrap` let each row's own content push its
+ * second column to a different x position (a long price range in row one,
+ * a short value in row two), so the two "columns" never actually lined up
+ * — a grid forces both rows to share the same column width instead.
  */
 export function StatStrip({
   items,
@@ -31,7 +38,7 @@ export function StatStrip({
 
   return (
     <div
-      className={`flex flex-wrap gap-x-8 gap-y-4 border-t ${borderColor} pt-6 ${className}`}
+      className={`grid grid-cols-2 gap-x-8 gap-y-4 border-t sm:flex sm:flex-wrap ${borderColor} pt-6 ${className}`}
     >
       {items.map((item) => (
         <div key={item.label}>

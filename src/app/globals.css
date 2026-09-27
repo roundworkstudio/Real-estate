@@ -213,3 +213,106 @@ html.is-scrolling .glass-tilt {
     inset 0 1px 0 rgb(255 255 255 / 0.2),
     inset 0 -1px 0 rgb(255 255 255 / 0.08);
 }
+
+/* Desktop nav-link hover treatment — pill fill, diagonal shine sweep, and
+   a slight lift, adapted from a pasted reference navbar (CodeByMurad-style
+   glass pill nav) at the user's request 2026-09-27. Colour swapped for
+   this project's nude palette (white-tinted overlays, since Nav.tsx keeps
+   link text white in both its transparent and scrolled states) and fonts
+   left as this project's own (Poppins) rather than the reference's Arial —
+   the ask was "this style," not this exact CSS. The reference's own navbar
+   container (centered pill, backdrop-filter, no logo/CTA) wasn't adopted —
+   Nav.tsx's existing full-width bar with logo + CTA stays; this only
+   changes the individual links' hover behaviour. No backdrop-filter here
+   either, consistent with .glass-nav above and anti-slop-ui.md's fixed-
+   element ban — the shine sweep is a plain gradient, not blur. */
+.nav-link {
+  position: relative;
+  overflow: hidden;
+  border-radius: 9999px;
+  transition:
+    color 0.3s ease,
+    background-color 0.3s ease,
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s ease;
+}
+.nav-link::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 0.25),
+    transparent
+  );
+  transition: left 0.5s ease;
+  pointer-events: none;
+}
+.nav-link:hover::before {
+  left: 100%;
+}
+.nav-link:hover {
+  background-color: rgb(255 255 255 / 0.14);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgb(0 0 0 / 0.18);
+}
+html.is-scrolling .nav-link {
+  transition: none;
+}
+html.is-scrolling .nav-link:hover {
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-link,
+  .nav-link:hover {
+    transition: none;
+    transform: none !important;
+  }
+  .nav-link::before {
+    display: none;
+  }
+}
+
+/* Green pulsing "live" dot — WhatsApp-scoped exception to the palette's
+   no-green rule (2026-09-27, explicit request), the same exception
+   WhatsAppBanner's own comment already claimed but never actually used —
+   its dot was sovereign/camel, not green. Colour is set by whatever
+   `bg-*` class the element carries (`background: inherit` on the ring), so
+   this stays a plain animation utility rather than hard-coding WhatsApp's
+   brand green here; see each call site for the actual colour.
+   Reserved for genuinely live/real-time state (an available chat channel),
+   not static computed facts like GoldenVisaBadge's eligibility dot or
+   PaymentPlanCalculator's timeline markers — pulsing those would claim a
+   "happening right now" quality neither one has. */
+.pulse-dot {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+.pulse-dot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: inherit;
+  animation: pulse-dot-ring 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes pulse-dot-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pulse-dot::before {
+    display: none;
+  }
+}

@@ -11,6 +11,7 @@ import {
   type PaymentStructureId,
 } from "@/lib/paymentPlan";
 import { useCurrency } from "@/lib/currency-context";
+import { DataRow } from "@/components/ui/DataRow";
 
 const STRUCTURE_IDS = Object.keys(PAYMENT_STRUCTURES) as PaymentStructureId[];
 
@@ -77,30 +78,16 @@ export function PaymentPlanCalculator({
 
         <div>
           <h3 className="text-sm font-medium text-slate">Upfront fee transparency</h3>
-          <dl className="mt-4 space-y-3 text-sm">
-            <div className="flex items-baseline justify-between">
-              <dt className="text-slate/70">{fees.transferFeeLabel}</dt>
-              <dd className="tabular-nums text-slate">{format(fees.transferFeeAed)}</dd>
-            </div>
-            <div className="flex items-baseline justify-between">
-              <dt className="text-slate/70">Transfer admin fee</dt>
-              <dd className="tabular-nums text-slate">{format(fees.transferAdminFeeAed)}</dd>
-            </div>
-            <div className="flex items-baseline justify-between">
-              <dt className="text-slate/70">Agency fee (2%)</dt>
-              <dd className="tabular-nums text-slate">{format(fees.agencyFeeAed)}</dd>
-            </div>
-            <div className="flex items-baseline justify-between">
-              <dt className="text-slate/70">VAT on agency fee (5%)</dt>
-              <dd className="tabular-nums text-slate">{format(fees.agencyVatAed)}</dd>
-            </div>
-            <div className="flex items-baseline justify-between">
-              <dt className="text-slate/70">Trustee &amp; registration fees</dt>
-              <dd className="tabular-nums text-slate">
-                {format(fees.trusteeRegistrationFeeAed)}
-              </dd>
-            </div>
-          </dl>
+          <div className="mt-4">
+            <DataRow label={fees.transferFeeLabel} value={format(fees.transferFeeAed)} />
+            <DataRow label="Transfer admin fee" value={format(fees.transferAdminFeeAed)} />
+            <DataRow label="Agency fee (2%)" value={format(fees.agencyFeeAed)} />
+            <DataRow label="VAT on agency fee (5%)" value={format(fees.agencyVatAed)} />
+            <DataRow
+              label="Trustee & registration fees"
+              value={format(fees.trusteeRegistrationFeeAed)}
+            />
+          </div>
 
           <div className="mt-6 rounded-2xl bg-royal-deep p-5 text-white">
             <div className="text-xs text-white/60">

@@ -17,6 +17,13 @@ import { GlassCard } from "./GlassCard";
  * GlassCard gives it the 3D tilt + glass sheen treatment — pointer-tracked
  * rotation and a moving highlight, on top of the shadow-card lift it
  * already had.
+ *
+ * The icon block's shadow was still `rgba(107,142,78,…)` — a green tint
+ * left over from the Uiverse.io source, never actually recoloured despite
+ * the rest of the card being adapted to this palette. Swapped 2026-09-27
+ * for a plain neutral shadow, matching globals.css's own rule ("neutral
+ * near-black only… a tinted shadow over the sand/canvas surfaces reads as
+ * a colour halo, not shade").
  */
 export function InsightToolCard({
   icon: Icon,
@@ -32,7 +39,7 @@ export function InsightToolCard({
   return (
     <GlassCard className="flex flex-col justify-between overflow-hidden rounded-2xl bg-canvas shadow-card">
       <div className="p-4">
-        <div className="flex h-32 items-center justify-center rounded-xl bg-royal shadow-[0_10px_15px_-3px_rgba(107,142,78,0.4),0_4px_6px_-4px_rgba(107,142,78,0.4)]">
+        <div className="flex h-32 items-center justify-center rounded-xl bg-royal shadow-card">
           <Icon size={32} className="text-white" strokeWidth={1.75} />
         </div>
         <div className="mt-5 text-center">

@@ -15,7 +15,7 @@ export function ValuationPrompt() {
               automated estimate.
             </p>
           </div>
-          <Button variant="light" className="shrink-0">
+          <Button href="/valuation" variant="light" className="shrink-0">
             Request a valuation
           </Button>
         </div>

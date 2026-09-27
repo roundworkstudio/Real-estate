@@ -1,14 +1,16 @@
 import { Button } from "@/components/ui/Button";
+import { PLACEHOLDER_PHONE_NUMBER_DISPLAY } from "@/lib/site-config";
 
 /**
  * Form UI only, not wired to send anywhere yet — no backend/endpoint
- * decided. Phone/WhatsApp use an all-zeros placeholder number (real UAE
- * format for layout width, impossible to mistake for a real line) rather
- * than a fabricated number that could pass as genuine.
+ * decided. Phone/WhatsApp use the shared all-zeros placeholder number
+ * (lib/site-config.ts — real UAE format for layout width, impossible to
+ * mistake for a real line) rather than a fabricated number that could pass
+ * as genuine.
  */
 export function ContactSection() {
   return (
-    <section className="px-6 py-20 sm:px-10">
+    <section id="contact" className="px-6 py-20 sm:px-10">
       <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
         <div>
           <h2 className="text-2xl font-semibold text-slate sm:text-3xl">
@@ -19,8 +21,8 @@ export function ContactSection() {
             before you view it.
           </p>
           <div className="mt-6 space-y-1 text-sm text-slate/60">
-            <div>Phone: +971 50 000 0000</div>
-            <div>WhatsApp: +971 50 000 0000</div>
+            <div>Phone: {PLACEHOLDER_PHONE_NUMBER_DISPLAY}</div>
+            <div>WhatsApp: {PLACEHOLDER_PHONE_NUMBER_DISPLAY}</div>
           </div>
         </div>
 
