@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { animate } from "motion";
 import { navLinks } from "@/lib/nav-links";
 import { prefersReducedMotion } from "@/lib/motion";
 
@@ -40,10 +41,20 @@ import { prefersReducedMotion } from "@/lib/motion";
  *    ever so slightly every 5 seconds" — was a one-off on mount before
  *    this) — every 5s, if there's still anything to scroll to, the bar
  *    eases 10px in whichever direction has room and back to wherever it
- *    already was (native smooth-scroll, no manual animation loop or
- *    library). Relative to the current scroll position rather than a
+ *    already was. Relative to the current scroll position rather than a
  *    fixed 0/28, so it doesn't fight wherever the visitor has actually
  *    scrolled to. Skipped under `prefers-reduced-motion`.
+ *
+ *    Animated with `motion`'s standalone `animate()` (2026-09-27, "more
+ *    jiggly — more smooth less rigid — like a glide") driving `scrollLeft`
+ *    directly, not `element.scrollTo({behavior:"smooth"})` — the native
+ *    smooth-scroll only offers one fixed browser-defined ease curve, no
+ *    spring/bounce control, which read as mechanical rather than a glide.
+ *    A soft, underdamped spring (low stiffness, low damping) gives it a
+ *    slight organic overshoot on both legs instead. Worth the import
+ *    here specifically since this is the one motion this bar needed
+ *    physics-like easing for — everywhere else on the bar stayed plain
+ *    CSS transitions.
  */
 export function MobileTabBar() {
   const pathname = usePathname();
@@ -74,8 +85,8 @@ export function MobileTabBar() {
     const el = scrollRef.current;
     if (!el) return;
 
-    let cancelled = false;
-    let nudgeBack: number;
+    const spring = { type: "spring", stiffness: 200, damping: 14, mass: 0.6 } as const;
+    let controls: ReturnType<typeof animate> | undefined;
 
     const interval = window.setInterval(() => {
       if (prefersReducedMotion()) return;
@@ -86,16 +97,25 @@ export function MobileTabBar() {
       const delta = 10;
       const target = start + delta <= maxScroll ? start + delta : Math.max(0, start - delta);
 
-      el.scrollTo({ left: target, behavior: "smooth" });
-      nudgeBack = window.setTimeout(() => {
-        if (!cancelled) el.scrollTo({ left: start, behavior: "smooth" });
-      }, 450);
+      controls = animate(start, target, {
+        ...spring,
+        onUpdate: (v) => {
+          el.scrollLeft = v;
+        },
+        onComplete: () => {
+          controls = animate(target, start, {
+            ...spring,
+            onUpdate: (v) => {
+              el.scrollLeft = v;
+            },
+          });
+        },
+      });
     }, 5000);
 
     return () => {
-      cancelled = true;
       window.clearInterval(interval);
-      window.clearTimeout(nudgeBack);
+      controls?.stop();
     };
   }, []);
 
