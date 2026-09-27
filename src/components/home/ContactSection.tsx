@@ -1,12 +1,13 @@
-import { Button } from "@/components/ui/Button";
 import { PLACEHOLDER_PHONE_NUMBER_DISPLAY } from "@/lib/site-config";
+import { ContactForm } from "./ContactForm";
 
 /**
- * Form UI only, not wired to send anywhere yet — no backend/endpoint
- * decided. Phone/WhatsApp use the shared all-zeros placeholder number
+ * Phone/WhatsApp use the shared all-zeros placeholder number
  * (lib/site-config.ts — real UAE format for layout width, impossible to
  * mistake for a real line) rather than a fabricated number that could pass
- * as genuine.
+ * as genuine. The form itself is ContactForm — see that component's own
+ * note on why a valid submit hands off to `mailto:` instead of faking a
+ * "message sent" state against a form with no backend.
  */
 export function ContactSection() {
   return (
@@ -26,27 +27,7 @@ export function ContactSection() {
           </div>
         </div>
 
-        <form className="flex flex-col gap-4">
-          <input
-            disabled
-            placeholder="Name"
-            className="rounded-lg border border-slate/15 bg-canvas px-4 py-3 text-sm placeholder:text-slate/40"
-          />
-          <input
-            disabled
-            placeholder="Email"
-            className="rounded-lg border border-slate/15 bg-canvas px-4 py-3 text-sm placeholder:text-slate/40"
-          />
-          <textarea
-            disabled
-            placeholder="What are you looking for?"
-            rows={4}
-            className="rounded-lg border border-slate/15 bg-canvas px-4 py-3 text-sm placeholder:text-slate/40"
-          />
-          <Button variant="primary" className="self-start" disabled>
-            Send
-          </Button>
-        </form>
+        <ContactForm />
       </div>
     </section>
   );
