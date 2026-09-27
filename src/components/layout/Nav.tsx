@@ -56,7 +56,10 @@ import { PLACEHOLDER_TEL_URL } from "@/lib/site-config";
  * left an empty `bg-slate` block behind, since only `Nav` itself had the
  * `hidden md:grid` — the wrapper didn't know to go with it.
  *
-
+ * Filters out `mobileOnly` entries (the "Home" link, 2026-09-27 — see
+ * nav-links.ts's own note) — the logo already links home here, so this
+ * bar doesn't need a second link that does the same thing.
+ *
  * Three-column grid, not `flex justify-between` (2026-09-27, fixed after
  * the links visibly sat left-of-centre with a much bigger gap before the
  * button than after the logo). `justify-between` only equalises the *gaps*
@@ -111,7 +114,7 @@ export function Nav() {
         Janvi
       </Link>
       <nav className="hidden h-10 items-center gap-1 md:flex">
-        {navLinks.map((l) => (
+        {navLinks.filter((l) => !l.mobileOnly).map((l) => (
           <a
             key={l.href}
             href={l.href}

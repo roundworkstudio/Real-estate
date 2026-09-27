@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { navLinks } from "@/lib/nav-links";
+import { prefersReducedMotion } from "@/lib/motion";
 
 /**
  * Bottom pill nav for mobile, adapted from a Uiverse.io menu by mymiamo —
@@ -11,30 +12,35 @@ import { navLinks } from "@/lib/nav-links";
  * why). Only rendered below the `md` breakpoint — desktop keeps the top
  * bar's inline links.
  *
- * Six links don't fit a fixed-width pill on a narrow phone, so unlike the
- * reference (which assumes 3-5 items filling the width evenly), the pill
- * scrolls horizontally instead of squeezing them — see .no-scrollbar in
+ * Seven links (six on desktop — see nav-links.ts's "Home" note) don't fit
+ * a fixed-width pill on a narrow phone, so unlike the reference (which
+ * assumes 3-5 items filling the width evenly), the pill scrolls
+ * horizontally instead of squeezing them — see .no-scrollbar in
  * globals.css. Every tile is the same fixed width (2026-09-27, explicit
  * request — "make the tiles the same size and even"; each used to be
  * `min-w-16`, content-width, so "Properties" was visibly wider than
  * "About") rather than sized to its own label.
  *
- * Edge fades (2026-09-27, explicit request — "not all the icons fit...
- * add a subtle indicator there's more") — `no-scrollbar` hides the
- * scrollbar entirely, which left nothing at all suggesting the bar
- * scrolls once the links overflowed past a couple more items. Two thin
- * gradient overlays, faded to the bar's own `royal-deep` tint, sit over
- * whichever edge still has hidden items and track scroll position via a
- * plain scroll listener — no library, this bar is the one place on the
- * whole site not already using `motion`, not worth pulling in for a
- * cross-fade this simple.
- *
- * The container is also deliberately sized so the last visible tile is
- * partway cropped rather than landing on a clean edge (2026-09-27,
- * explicit request — "sneak peek the mobile navbar option so the viewer
- * knows there's more") — `scroll-pr` below reserves less than one tile's
- * width at the end of the scroll track, so there's always a sliver of the
- * next tile showing rather than a hard stop.
+ * Three ways this bar signals "there's more" past the visible edge, all
+ * from the same explicit requests ("not all the icons fit... add a
+ * subtle indicator", then "sneak peak... a gesture to scroll across"):
+ * 1. Edge fades — `no-scrollbar` hides the scrollbar entirely, which left
+ *    nothing suggesting the bar scrolls. Two thin gradient overlays,
+ *    faded to the bar's own `royal-deep` tint, sit over whichever edge
+ *    still has hidden items and track scroll position via a plain scroll
+ *    listener — no library, this bar is the one place on the whole site
+ *    not already using `motion`, not worth pulling in for a fade this
+ *    simple.
+ * 2. A genuine sneak peek — the fixed tile width and gap don't divide
+ *    evenly into a typical phone's width, so the last tile before the
+ *    fold is left partly cropped rather than landing on a clean edge, a
+ *    literal sliver of the next icon showing through.
+ * 3. A one-time scroll nudge — 700ms after mount, if there's anything to
+ *    scroll to, the bar eases a few pixels right and back on its own
+ *    (native smooth-scroll, no manual animation loop). A still image only
+ *    communicates "cropped," not "scrollable"; a single small motion
+ *    reads as a gesture hint without nagging on every visit. Skipped
+ *    under `prefers-reduced-motion`.
  */
 export function MobileTabBar() {
   const pathname = usePathname();
@@ -58,6 +64,25 @@ export function MobileTabBar() {
     return () => {
       el.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || prefersReducedMotion()) return;
+    if (el.scrollWidth <= el.clientWidth + 4) return;
+
+    let nudgeBack: number;
+    const nudgeOut = window.setTimeout(() => {
+      el.scrollTo({ left: 28, behavior: "smooth" });
+      nudgeBack = window.setTimeout(() => {
+        el.scrollTo({ left: 0, behavior: "smooth" });
+      }, 450);
+    }, 700);
+
+    return () => {
+      window.clearTimeout(nudgeOut);
+      window.clearTimeout(nudgeBack);
     };
   }, []);
 
