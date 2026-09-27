@@ -31,10 +31,11 @@ import { prefersReducedMotion } from "@/lib/motion";
  *    listener — no library, this bar is the one place on the whole site
  *    not already using `motion`, not worth pulling in for a fade this
  *    simple.
- * 2. A genuine sneak peek — the fixed tile width and gap don't divide
- *    evenly into a typical phone's width, so the last tile before the
- *    fold is left partly cropped rather than landing on a clean edge, a
- *    literal sliver of the next icon showing through.
+ * 2. A genuine sneak peek — tile width + gap are tuned (2026-09-27,
+ *    "make it show 5 1/2 icons") so a 375px-wide phone shows exactly
+ *    5.5 tiles: five in full, a sixth cropped clean down the middle,
+ *    rather than an incidental few-pixel sliver from whatever the width
+ *    happened to divide down to.
  * 3. A one-time scroll nudge — 700ms after mount, if there's anything to
  *    scroll to, the bar eases a few pixels right and back on its own
  *    (native smooth-scroll, no manual animation loop). A still image only
@@ -91,7 +92,7 @@ export function MobileTabBar() {
       <nav
         ref={scrollRef}
         aria-label="Primary"
-        className="glass-nav flex gap-1 overflow-x-auto rounded-full border border-white/10 bg-royal-deep/90 p-1.5 no-scrollbar"
+        className="glass-nav flex gap-0.5 overflow-x-auto rounded-full border border-white/10 bg-royal-deep/90 p-1.5 no-scrollbar"
         style={{ paddingBottom: "calc(0.375rem + env(safe-area-inset-bottom))" }}
       >
         {navLinks.map((l) => {
@@ -101,7 +102,7 @@ export function MobileTabBar() {
             <a
               key={l.href}
               href={l.href}
-              className={`flex w-[68px] shrink-0 flex-col items-center gap-1 rounded-full px-1 py-2 text-[11px] font-medium whitespace-nowrap transition-colors ${
+              className={`flex w-[61px] shrink-0 flex-col items-center gap-1 rounded-full py-2 text-[11px] font-medium whitespace-nowrap transition-colors ${
                 active ? "bg-white/15 text-white" : "text-white/70 active:bg-white/10"
               }`}
             >
