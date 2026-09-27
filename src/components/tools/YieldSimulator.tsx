@@ -14,13 +14,13 @@ function Output({ label, value, tone }: { label: string; value: string; tone?: "
   return (
     <div>
       <div
-        className={`text-2xl font-semibold tabular-nums sm:text-3xl ${
+        className={`text-lg font-semibold leading-none tabular-nums sm:text-2xl ${
           tone === "positive" ? "text-sovereign" : "text-white"
         }`}
       >
         {value}
       </div>
-      <div className="mt-1 text-xs text-white/60">{label}</div>
+      <div className="mt-1.5 text-xs text-white/60">{label}</div>
     </div>
   );
 }
@@ -83,11 +83,11 @@ export function YieldSimulator({ priceAed, sqft }: { priceAed: number; sqft: num
 
   return (
     <div className="rounded-2xl bg-royal-deep p-6 text-white shadow-card sm:p-8">
-      <div className="flex gap-2">
+      <div className="grid grid-cols-2 gap-2">
         <button
           type="button"
           onClick={() => switchStrategy("str")}
-          className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+          className={`rounded-full px-4 py-2.5 text-sm font-medium transition-colors ${
             strategy === "str" ? "bg-white text-royal-deep" : "bg-white/10 text-white/70 hover:text-white"
           }`}
         >
@@ -96,7 +96,7 @@ export function YieldSimulator({ priceAed, sqft }: { priceAed: number; sqft: num
         <button
           type="button"
           onClick={() => switchStrategy("long-term")}
-          className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+          className={`rounded-full px-4 py-2.5 text-sm font-medium transition-colors ${
             strategy === "long-term"
               ? "bg-white text-royal-deep"
               : "bg-white/10 text-white/70 hover:text-white"
@@ -106,7 +106,7 @@ export function YieldSimulator({ priceAed, sqft }: { priceAed: number; sqft: num
         </button>
       </div>
 
-      <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2">
+      <div className="mt-6 grid grid-cols-1 gap-6 sm:mt-8 sm:grid-cols-2 sm:gap-8">
         <div className="space-y-6">
           {strategy === "str" ? (
             <RangeSlider
@@ -158,7 +158,7 @@ export function YieldSimulator({ priceAed, sqft }: { priceAed: number; sqft: num
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-6 border-t border-white/10 pt-6 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-5 border-t border-white/10 pt-5 sm:gap-6 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0">
           <Output label="Gross yield" value={`${results.grossYieldPercent.toFixed(1)}%`} />
           <Output
             label="Net yield"
@@ -170,7 +170,7 @@ export function YieldSimulator({ priceAed, sqft }: { priceAed: number; sqft: num
         </div>
       </div>
 
-      <div className="mt-8 h-56 border-t border-white/10 pt-6">
+      <div className="mt-6 h-44 border-t border-white/10 pt-5 sm:mt-8 sm:h-56">
         <div className="mb-2 text-xs text-white/60">
           Gross income vs. operating expenses vs. net cash flow
         </div>
@@ -180,8 +180,13 @@ export function YieldSimulator({ priceAed, sqft }: { priceAed: number; sqft: num
             <XAxis
               type="number"
               stroke="rgba(255,255,255,0.4)"
-              tick={{ fill: "rgba(255,255,255,0.6)", fontSize: 11 }}
-              tickFormatter={(v) => format(v)}
+              tick={{ fill: "rgba(255,255,255,0.6)", fontSize: 10 }}
+              tickFormatter={(v) => {
+                const n = Number(v);
+                if (Math.abs(n) >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+                if (Math.abs(n) >= 1_000) return `${(n / 1_000).toFixed(0)}K`;
+                return String(n);
+              }}
             />
             <YAxis type="category" dataKey="name" hide />
             <Tooltip
@@ -191,7 +196,12 @@ export function YieldSimulator({ priceAed, sqft }: { priceAed: number; sqft: num
                 border: "1px solid rgba(255,255,255,0.1)",
                 borderRadius: 8,
                 color: "white",
+                fontSize: 12,
+                padding: "8px 12px",
               }}
+              itemStyle={{ fontSize: 12, paddingTop: 2, paddingBottom: 2 }}
+              labelStyle={{ fontSize: 12, fontWeight: 600 }}
+              wrapperStyle={{ zIndex: 10 }}
             />
             {/* Sliders drive these values live — bars "spring" to their new
                 height on every change rather than redrawing from zero, so

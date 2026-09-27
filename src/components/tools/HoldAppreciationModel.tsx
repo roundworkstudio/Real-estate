@@ -16,8 +16,8 @@ const HOLD_YEAR_OPTIONS = [3, 5, 7, 10] as const;
 function Output({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-2xl font-semibold tabular-nums text-slate sm:text-3xl">{value}</div>
-      <div className="mt-1 text-xs text-slate/60">{label}</div>
+      <div className="text-lg font-semibold leading-none tabular-nums text-slate sm:text-2xl">{value}</div>
+      <div className="mt-1.5 text-xs text-slate/60">{label}</div>
     </div>
   );
 }
@@ -77,7 +77,7 @@ export function HoldAppreciationModel({
         ))}
       </div>
 
-      <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2">
+      <div className="mt-6 grid grid-cols-1 gap-6 sm:mt-8 sm:grid-cols-2 sm:gap-8">
         <div className="space-y-6">
           <RangeSlider
             label="Expected annual market growth"
@@ -121,7 +121,7 @@ export function HoldAppreciationModel({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-6 border-t border-slate/10 pt-6 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-5 border-t border-slate/10 pt-5 sm:gap-6 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0">
           <Output label="Projected exit value" value={format(results.projectedExitValueAed)} />
           <Output label="Total equity created" value={format(results.totalEquityCreatedAed)} />
           <Output
@@ -132,18 +132,24 @@ export function HoldAppreciationModel({
         </div>
       </div>
 
-      <div className="mt-8 h-64 border-t border-slate/10 pt-6">
+      <div className="mt-6 h-48 border-t border-slate/10 pt-5 sm:mt-8 sm:h-64">
         <div className="mb-2 text-xs text-slate/60">
           Cumulative cash flow stacked on asset appreciation, {holdYears}-year hold
         </div>
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData} margin={{ left: -12, right: 8 }}>
+          <AreaChart data={chartData} margin={{ left: 2, right: 8 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(30,41,34,0.08)" vertical={false} />
-            <XAxis dataKey="year" stroke="rgba(30,41,34,0.4)" tick={{ fontSize: 11 }} />
+            <XAxis dataKey="year" stroke="rgba(30,41,34,0.4)" tick={{ fontSize: 10 }} />
             <YAxis
               stroke="rgba(30,41,34,0.4)"
-              tick={{ fontSize: 11 }}
-              tickFormatter={(v) => format(v)}
+              tick={{ fontSize: 10 }}
+              tickFormatter={(v) => {
+                const n = Number(v);
+                if (Math.abs(n) >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+                if (Math.abs(n) >= 1_000) return `${(n / 1_000).toFixed(0)}K`;
+                return String(n);
+              }}
+              width={36}
             />
             <Tooltip
               formatter={(value) => format(Number(value))}
@@ -151,7 +157,11 @@ export function HoldAppreciationModel({
                 background: "var(--color-canvas)",
                 border: "1px solid rgba(30,41,34,0.1)",
                 borderRadius: 8,
+                fontSize: 12,
+                padding: "8px 12px",
               }}
+              itemStyle={{ fontSize: 12, paddingTop: 2, paddingBottom: 2 }}
+              labelStyle={{ fontSize: 12, fontWeight: 600 }}
             />
             {/* Draws itself left to right on first reveal (Recharts'
                 default mount animation); redraws faster on input change so

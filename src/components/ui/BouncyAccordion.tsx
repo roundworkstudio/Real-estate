@@ -74,11 +74,11 @@ export function BouncyAccordion({
               type="button"
               onClick={() => toggle(item.id)}
               aria-expanded={isOpen}
-              className="flex w-full items-center gap-4 py-6 text-left"
+              className="flex w-full items-center gap-3 py-4 text-left sm:gap-4 sm:py-5"
             >
               {item.icon && (
                 <span
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors ${
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors sm:h-10 sm:w-10 ${
                     isOpen ? "bg-royal text-white" : "bg-slate/5 text-slate/60"
                   }`}
                 >
@@ -86,7 +86,7 @@ export function BouncyAccordion({
                 </span>
               )}
               <span className="flex-1">
-                <span className="block text-lg font-semibold text-slate">{item.title}</span>
+                <span className="block text-base font-semibold text-slate sm:text-lg">{item.title}</span>
                 {item.description && (
                   <span className="mt-0.5 block text-sm text-slate/60">{item.description}</span>
                 )}

@@ -5,6 +5,7 @@
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { PortfolioFilters } from "@/components/tools/PortfolioFilters";
+import { InsightCalculatorsAccordion } from "@/components/tools/InsightCalculatorsAccordion";
 import { sampleProperties } from "@/lib/sample-properties";
 
 export default function PropertiesPage() {
@@ -32,6 +33,8 @@ export default function PropertiesPage() {
         <div className="mt-10">
           <PortfolioFilters properties={sampleProperties} />
         </div>
+
+        <InsightCalculatorsAccordion />
       </section>
 
       <Footer />
