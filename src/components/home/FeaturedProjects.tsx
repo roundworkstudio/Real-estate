@@ -20,7 +20,7 @@ export function FeaturedProjects() {
         </h2>
       </Reveal>
 
-      <div className="mt-10 grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-x-8 sm:gap-y-12 lg:grid-cols-3">
         {developments.map((d, i) => (
           <Reveal key={d.slug} delayMs={i * 100}>
             <ProjectCard development={d} stats={developmentStats(d)} />
@@ -28,7 +28,7 @@ export function FeaturedProjects() {
         ))}
 
         <Reveal delayMs={developments.length * 100}>
-          <div className="flex aspect-[4/3] flex-col items-center justify-center rounded-2xl border border-dashed border-slate/20 p-6 text-center text-sm text-slate/50 sm:aspect-auto sm:h-full">
+          <div className="flex aspect-[4/3] flex-col items-center justify-center rounded-2xl border border-dashed border-slate/20 p-3 text-center text-xs text-slate/50 sm:aspect-auto sm:h-full sm:p-6 sm:text-sm">
             More projects pending real inventory
           </div>
         </Reveal>

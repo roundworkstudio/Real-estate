@@ -37,23 +37,23 @@ export function ProjectCard({
             src={cover.src}
             alt={cover.alt}
             fill
-            sizes="(min-width: 640px) 33vw, 100vw"
+            sizes="(min-width: 1024px) 33vw, 50vw"
             className={`object-cover transition-transform duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 ${
               inView ? "scale-100" : "scale-[1.08]"
             }`}
           />
         </div>
 
-        <div className="p-4 sm:p-5">
-          <div className="flex items-baseline justify-between">
-            <span className="text-lg font-semibold text-slate">
+        <div className="p-3 sm:p-5">
+          <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between">
+            <span className="text-sm font-semibold leading-snug text-slate sm:text-lg">
               {development.name}
             </span>
-            <span className="text-sm text-slate/60">
+            <span className="mt-1 text-xs text-slate/60 sm:mt-0 sm:text-sm">
               {stats.unitCount} {stats.unitCount === 1 ? "listing" : "listings"}
             </span>
           </div>
-          <div className="mt-1 text-sm text-slate/60">
+          <div className="mt-1 text-xs leading-relaxed text-slate/60 sm:text-sm">
             {development.city} · {priceRange}
           </div>
         </div>
