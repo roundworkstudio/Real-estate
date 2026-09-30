@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Poppins, Lora } from "next/font/google";
-import { WhatsAppFloatingButton } from "@/components/ui/WhatsAppFloatingButton";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { SmoothScrollProvider } from "@/components/layout/SmoothScrollProvider";
 import "./globals.css";
@@ -52,7 +51,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <SmoothScrollProvider>
           {children}
-          <WhatsAppFloatingButton />
           <MobileTabBar />
         </SmoothScrollProvider>
       </body>
