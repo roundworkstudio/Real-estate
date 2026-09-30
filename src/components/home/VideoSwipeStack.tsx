@@ -181,9 +181,13 @@ export function VideoSwipeStack({ clips }: { clips: Clip[] }) {
 
   return (
     <div ref={containerRef} className="select-none">
-      {/* Stack — extra bottom margin to give room for peeking back cards */}
+      {/* A fixed backing card frames the moving portrait video stack. */}
       <div className="relative mx-auto w-full max-w-[240px]">
-        <div className="relative mb-14 aspect-[9/16]">
+        <div className="relative mb-20 aspect-[9/16]">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -inset-x-3 -top-3 -bottom-14 z-0 rounded-[1.65rem] border border-royal/20 bg-mist shadow-card"
+          />
           {orderedByDepth.map(({ clip, index, stackPos }) => (
             <StackCard
               key={clip.src}
