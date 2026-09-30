@@ -5,7 +5,7 @@ import Link from "next/link";
 export function MobileTopBar() {
   return (
     <header className="glass-nav fixed inset-x-3 top-2 z-50 rounded-full border border-white/10 bg-royal-deep/80 shadow-card md:hidden">
-      <Link href="/" className="flex h-10 items-center justify-center px-4">
+      <Link href="/" className="flex h-12 items-center justify-center px-4">
         <Image
           src="/brand/logo-mobile-light.svg"
           alt="Property with Janvi"

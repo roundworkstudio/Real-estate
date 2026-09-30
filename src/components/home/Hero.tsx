@@ -82,7 +82,7 @@ const HERO_CLIPS = [
 
 export function Hero() {
   return (
-    <section className="relative flex h-[calc(92vh+3.5rem)] min-h-[696px] flex-col justify-end overflow-hidden sm:h-[92vh] sm:min-h-[640px]">
+    <section className="relative flex h-[calc(92vh+4rem)] min-h-[704px] flex-col justify-end overflow-hidden sm:h-[92vh] sm:min-h-[640px]">
       <HeroVideo clips={HERO_CLIPS} />
       {/* Two-layer scrim: bottom-up for the search bar, left-to-right for
           headline legibility over a bright sky/light-facade photo. */}
