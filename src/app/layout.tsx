@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Poppins, Lora } from "next/font/google";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
+import { MobileTopBar } from "@/components/layout/MobileTopBar";
 import { SmoothScrollProvider } from "@/components/layout/SmoothScrollProvider";
 import "./globals.css";
 
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <SmoothScrollProvider>
+          <MobileTopBar />
           {children}
           <MobileTabBar />
         </SmoothScrollProvider>

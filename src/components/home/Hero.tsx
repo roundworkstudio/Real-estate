@@ -82,7 +82,7 @@ const HERO_CLIPS = [
 
 export function Hero() {
   return (
-    <section className="relative flex h-[92vh] min-h-[640px] flex-col justify-end overflow-hidden">
+    <section className="relative flex h-[calc(92vh+3.5rem)] min-h-[696px] flex-col justify-end overflow-hidden sm:h-[92vh] sm:min-h-[640px]">
       <HeroVideo clips={HERO_CLIPS} />
       {/* Two-layer scrim: bottom-up for the search bar, left-to-right for
           headline legibility over a bright sky/light-facade photo. */}
@@ -96,7 +96,7 @@ export function Hero() {
 
       <Nav />
 
-      <div className="relative px-6 pb-14 pt-24 sm:px-10 sm:pb-16 sm:pt-32">
+      <div className="relative px-6 pb-14 pt-24 sm:px-10 sm:pb-10 sm:pt-32">
         <h1 className="max-w-2xl text-4xl font-semibold text-white sm:text-6xl">
           Abu Dhabi and Dubai real estate,{" "}
           <span className="font-accent">presented like an investment.</span>

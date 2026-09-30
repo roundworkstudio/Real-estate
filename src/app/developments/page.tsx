@@ -2,7 +2,7 @@
  * Developments index — groups current listings by project. SITEMAP.md
  * plans `/developments/[slug]` but not an index; adding one here since
  * browsing by project is the actual ask, same "not yet in SITEMAP.md, flag
- * it" pattern as /invest and /analytics.
+ * it" pattern used for other provisional routes.
  *
  * Redesigned 2026-09-24 from a plain title + small card grid to a
  * full-bleed hero and alternating editorial rows — the small-card version

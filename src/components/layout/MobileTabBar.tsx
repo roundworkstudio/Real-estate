@@ -13,9 +13,7 @@ import { prefersReducedMotion } from "@/lib/motion";
  * why). Only rendered below the `md` breakpoint — desktop keeps the top
  * bar's inline links.
  *
- * Seven links (six on desktop — see nav-links.ts's "Home" note) don't fit
- * a fixed-width pill on a narrow phone, so unlike the reference (which
- * assumes 3-5 items filling the width evenly), the pill scrolls
+ * The five links fit on most phones. On narrower screens the pill scrolls
  * horizontally instead of squeezing them — see .no-scrollbar in
  * globals.css. Every tile is the same fixed width (2026-09-27, explicit
  * request — "make the tiles the same size and even"; each used to be
@@ -32,11 +30,8 @@ import { prefersReducedMotion } from "@/lib/motion";
  *    listener — no library, this bar is the one place on the whole site
  *    not already using `motion`, not worth pulling in for a fade this
  *    simple.
- * 2. A genuine sneak peek — tile width + gap are tuned (2026-09-27,
- *    "make it show 5 1/2 icons") so a 375px-wide phone shows exactly
- *    5.5 tiles: five in full, a sixth cropped clean down the middle,
- *    rather than an incidental few-pixel sliver from whatever the width
- *    happened to divide down to.
+ * 2. Equal tile widths keep the labels aligned and allow a partial next
+ *    tab to show when the viewport is too narrow for all five.
  * 3. A recurring scroll nudge (2026-09-27, "slide the bar back and forth
  *    ever so slightly every 5 seconds" — was a one-off on mount before
  *    this) — every 5s, if there's still anything to scroll to, the bar
@@ -124,7 +119,7 @@ export function MobileTabBar() {
       <nav
         ref={scrollRef}
         aria-label="Primary"
-        className="glass-nav flex gap-0.5 overflow-x-auto rounded-full border border-white/10 bg-royal-deep/90 p-1.5 no-scrollbar"
+        className="glass-nav flex gap-0.5 overflow-x-auto rounded-full border border-white/10 bg-royal-deep/90 p-1.5 no-scrollbar min-[350px]:justify-center"
         style={{ paddingBottom: "calc(0.375rem + env(safe-area-inset-bottom))" }}
       >
         {navLinks.map((l) => {

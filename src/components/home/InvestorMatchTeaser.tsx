@@ -6,8 +6,8 @@ import { GlassCard } from "@/components/ui/GlassCard";
 import { Reveal } from "@/components/ui/Reveal";
 
 /**
- * Homepage teaser for the /invest quiz (2026-09-27, explicit request) —
- * embeds InvestorMatchWizard directly rather than linking out, same "surface
+ * Homepage investor-matching quiz (2026-09-27, explicit request) —
+ * embeds InvestorMatchWizard directly, same "surface
  * the real tool, don't just tease it" approach InvestmentToolsTeaser already
  * established for the analytics suite. Placed after that section and before
  * ValuationPrompt: tools to model a deal, then a quiz to narrow down which
@@ -16,8 +16,7 @@ import { Reveal } from "@/components/ui/Reveal";
  *
  * The wizard itself assumes a light page background (`text-slate` etc., no
  * wrapper of its own — unlike YieldSimulator/HoldAppreciationModel, which
- * bake in their own dark `bg-royal-deep` panel) since that's how /invest
- * already uses it. Wrapped in a plain light card here instead of a dark
+ * bake in their own dark `bg-royal-deep` panel). Wrapped in a light card
  * DeepPanel for that reason, rather than recolouring the wizard itself.
  *
  * "Glassy luxury finish" (2026-09-27, explicit request) — no backdrop-blur

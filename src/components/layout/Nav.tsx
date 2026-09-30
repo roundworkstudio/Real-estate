@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { useScrollingFlag } from "@/lib/motion";
 import { navLinks } from "@/lib/nav-links";
@@ -56,9 +57,7 @@ import { PLACEHOLDER_TEL_URL } from "@/lib/site-config";
  * left an empty `bg-slate` block behind, since only `Nav` itself had the
  * `hidden md:grid` — the wrapper didn't know to go with it.
  *
- * Filters out `mobileOnly` entries (the "Home" link, 2026-09-27 — see
- * nav-links.ts's own note) — the logo already links home here, so this
- * bar doesn't need a second link that does the same thing.
+ * The wordmark links home, so the page links do not repeat it.
  *
  * Three-column grid, not `flex justify-between` (2026-09-27, fixed after
  * the links visibly sat left-of-centre with a much bigger gap before the
@@ -69,15 +68,8 @@ import { PLACEHOLDER_TEL_URL } from "@/lib/site-config";
  * left after the (auto-width) nav column, so the links land in the actual
  * centre of the bar regardless of how the logo and button compare in width.
  *
- * Logo, links, and the button all pinned to the same `h-10` box
- * (2026-09-27, "still not aligned height" — `items-center` on the grid row
- * already centred all three on the same axis, geometrically, but their own
- * boxes were three different heights: the button's py-2.5 made it 40px,
- * plain nav-link text with py-2 came to 36px, and the bare logo text with
- * no padding at all was just its line-height, ~28px. Centring same-height
- * midpoints on different-height boxes still leaves every edge staggered,
- * which is what actually read as "misaligned" — matching the box heights
- * outright removes that regardless of each one's own padding/line-height.
+ * The stacked wordmark occupies the left column. The nav links and CTA
+ * remain centred against it in the 80px-tall header.
  *
  * "Book a call" carries the green pulsing dot now, not WhatsAppFloating
  * Button (2026-09-27, explicit request — moved from one to the other).
@@ -103,18 +95,24 @@ export function Nav() {
 
   return (
     <header
-      className={`fixed inset-x-3 top-3 z-30 hidden border px-6 py-5 transition-[border-radius,background-color,border-color,box-shadow] duration-300 sm:inset-x-6 sm:top-4 sm:px-8 md:grid md:grid-cols-[1fr_auto_1fr] md:items-center ${
+      className={`fixed inset-x-3 top-3 z-30 hidden border px-6 py-2 transition-[border-radius,background-color,border-color,box-shadow] duration-300 sm:inset-x-6 sm:top-4 sm:px-8 md:grid md:grid-cols-[1fr_auto_1fr] md:items-center ${
         scrolled
           ? "glass-nav rounded-full border-white/10 bg-royal-deep/85 shadow-card"
           : "rounded-2xl border-transparent bg-transparent"
       }`}
     >
-      {/* Wordmark placeholder — real logo pending, see brand-guidelines.md */}
-      <Link href="/" className="flex h-10 items-center text-lg font-semibold text-white">
-        Janvi
+      <Link href="/" className="flex h-16 items-center">
+        <Image
+          src="/brand/logo-desktop-light.svg"
+          alt="Property with Janvi"
+          width={600}
+          height={315}
+          priority
+          className="h-16 w-auto"
+        />
       </Link>
       <nav className="hidden h-10 items-center gap-1 md:flex">
-        {navLinks.filter((l) => !l.mobileOnly).map((l) => (
+        {navLinks.map((l) => (
           <a
             key={l.href}
             href={l.href}
