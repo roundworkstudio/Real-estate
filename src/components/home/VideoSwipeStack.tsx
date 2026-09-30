@@ -182,7 +182,7 @@ export function VideoSwipeStack({ clips }: { clips: Clip[] }) {
   return (
     <div ref={containerRef} className="select-none">
       {/* A fixed backing card frames the moving portrait video stack. */}
-      <div className="relative mx-auto w-full max-w-[240px]">
+      <div className="relative mx-auto w-[80vw] max-w-[320px]">
         <div className="relative mb-20 aspect-[9/16]">
           <div
             aria-hidden="true"
