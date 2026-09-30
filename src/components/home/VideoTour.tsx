@@ -23,6 +23,7 @@
  */
 import { useInView } from "@/lib/motion";
 import { Reveal } from "@/components/ui/Reveal";
+import { VideoSwipeStack } from "@/components/home/VideoSwipeStack";
 
 const clips = [
   {
@@ -71,7 +72,13 @@ export function VideoTour() {
         </p>
       </Reveal>
 
-      <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
+      {/* Mobile: swipe stack */}
+      <div className="mt-10 sm:hidden">
+        <VideoSwipeStack clips={clips} />
+      </div>
+
+      {/* Desktop: 3-column grid with native controls */}
+      <div className="mt-10 hidden sm:grid sm:grid-cols-3 sm:gap-6">
         {clips.map((c, i) => (
           <Reveal
             key={c.src}
