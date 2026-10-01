@@ -16,15 +16,13 @@
  * mount so the redirected `/areas` → `/about#areas` link still opens on
  * the areas tab rather than the bio one.
  *
- * Bio, headshot, and credentials are all pending from the client
+ * The full biography, reasons-to-work-with-me, and testimonials section was
+ * moved here from the homepage so the landing page stays property-led. Bio,
+ * headshot, credentials, and testimonials are still pending from the client
  * (docs/client-inputs-required.md); the "9 years active" figure reuses
  * CredibilityNumbers' own placeholder rather than inventing a second,
- * inconsistent one. Avatar is a plain initial, not a fabricated photo —
- * same choice AboutPreview made. The area list is the same illustrative
- * one the old homepage AreasServed section used before it was replaced by
- * InvestmentToolsTeaser — real UAE place names as generic filler, not a
- * coverage claim; "how many communities she covers" is still an open
- * client input that decides whether this is three cards or fifteen.
+ * inconsistent one. The area list is illustrative rather than a coverage
+ * claim; its final size depends on client input.
  */
 "use client";
 
@@ -34,6 +32,7 @@ import { Footer } from "@/components/layout/Footer";
 import { PLACEHOLDER_TEL_URL } from "@/lib/site-config";
 import { Button } from "@/components/ui/Button";
 import { MorphingTabs } from "@/components/ui/MorphingTabs";
+import { WhyWorkWithMe } from "@/components/home/WhyWorkWithMe";
 
 const areas = [
   "Saadiyat Island",
@@ -70,26 +69,10 @@ export default function AboutPage() {
         <div className="h-28" />
       </div>
 
-      <section className="mx-auto max-w-3xl px-6 py-16 sm:px-10">
-        <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:items-start sm:text-left">
-          <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-full bg-sand text-3xl font-semibold text-slate">
-            J
-          </div>
-          <div>
-            <h1 className="text-3xl font-semibold text-slate sm:text-4xl">
-              About
-            </h1>
-            <p className="mt-4 text-slate/70">
-              Placeholder bio copy, standing in for the real one. Covers
-              years active, specialism, and what makes her approach
-              different, in her own words rather than generated copy, once
-              the real bio is supplied — see docs/client-inputs-required.md.
-            </p>
-          </div>
-        </div>
+      <WhyWorkWithMe />
 
+      <section className="mx-auto max-w-3xl px-6 py-16 sm:px-10">
         <MorphingTabs
-          className="mt-12"
           ariaLabel="About sections"
           value={tab}
           onValueChange={(id) => setTab(id as "about" | "areas")}

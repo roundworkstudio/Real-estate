@@ -15,7 +15,6 @@ import { CredibilityNumbers } from "@/components/home/CredibilityNumbers";
 import { FeaturedProjects } from "@/components/home/FeaturedProjects";
 import { VideoTour } from "@/components/home/VideoTour";
 import { AreasPreview } from "@/components/home/AreasPreview";
-import { WhyWorkWithMe } from "@/components/home/WhyWorkWithMe";
 import { RecentlySold } from "@/components/home/RecentlySold";
 import { InvestmentToolsTeaser } from "@/components/home/InvestmentToolsTeaser";
 import { InvestorMatchTeaser } from "@/components/home/InvestorMatchTeaser";
@@ -32,7 +31,6 @@ export default function Home() {
       <FeaturedProjects />
       <VideoTour />
       <AreasPreview />
-      <WhyWorkWithMe />
       <RecentlySold />
       <InvestmentToolsTeaser />
       <InvestorMatchTeaser />

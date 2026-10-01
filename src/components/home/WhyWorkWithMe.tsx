@@ -85,7 +85,7 @@ export function WhyWorkWithMe() {
                   J
                 </div>
                 <div>
-                  <div className="text-lg font-semibold text-white">Janvi</div>
+                  <h1 className="text-lg font-semibold text-white">Janvi</h1>
                   <div className="mt-0.5 text-sm text-white/60">
                     Licensed real estate consultant · UAE
                   </div>
