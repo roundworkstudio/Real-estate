@@ -3,6 +3,7 @@ import { Nav } from "@/components/layout/Nav";
 import { Button } from "@/components/ui/Button";
 import { PLACEHOLDER_TEL_URL } from "@/lib/site-config";
 import { HeroVideo } from "./HeroVideo";
+import { HeroShimmerHeading } from "./HeroShimmerHeading";
 import { AISearchBar } from "./AISearchBar";
 
 /**
@@ -97,10 +98,7 @@ export function Hero() {
       <Nav />
 
       <div className="relative px-6 pb-14 pt-24 sm:px-10 sm:pb-10 sm:pt-32">
-        <h1 className="max-w-2xl text-4xl font-semibold text-white sm:text-6xl">
-          Abu Dhabi and Dubai real estate,{" "}
-          <span className="font-accent">presented like an investment.</span>
-        </h1>
+        <HeroShimmerHeading />
         <p className="mt-4 max-w-xl text-lg text-white/80">
           Yield, price per sqft, and payment terms alongside every listing,
           not buried in a PDF.
