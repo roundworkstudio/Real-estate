@@ -15,12 +15,16 @@ import { prefersReducedMotion } from "@/lib/motion";
  * session (InsightToolCard's "Explore", the hero's scroll-down chevron)
  * the same eased motion instead of an instant snap.
  *
- * Does nothing under prefers-reduced-motion — native scroll takes over,
- * same as every other animation on this site.
+ * Does nothing under prefers-reduced-motion or on touch-first devices —
+ * native scrolling is both smoother and more reliable there, especially
+ * around the mobile video stack's horizontal swipe gesture.
  */
 export function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    if (prefersReducedMotion()) return;
+    const usesTouch =
+      window.matchMedia("(pointer: coarse)").matches ||
+      navigator.maxTouchPoints > 0;
+    if (prefersReducedMotion() || usesTouch) return;
 
     const lenis = new Lenis({
       duration: 1.1,

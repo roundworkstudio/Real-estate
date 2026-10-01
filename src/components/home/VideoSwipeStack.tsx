@@ -55,7 +55,12 @@ function StackCard({
   function startGesture(event: ReactPointerEvent<HTMLDivElement>) {
     if (!isInteractive || event.button !== 0) return;
     pointerStart.current = { x: event.clientX, y: event.clientY, id: event.pointerId };
-    event.currentTarget.setPointerCapture(event.pointerId);
+    // Touch already stays associated with its pointer stream. Explicitly
+    // capturing it can compete with native vertical scrolling in Safari
+    // after a horizontal swipe, so capture only mouse input.
+    if (event.pointerType === "mouse") {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
   }
 
   function finishGesture(event: ReactPointerEvent<HTMLDivElement>) {

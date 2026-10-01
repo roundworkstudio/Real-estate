@@ -3,6 +3,7 @@ import { Geist_Mono, Poppins, Lora } from "next/font/google";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { MobileTopBar } from "@/components/layout/MobileTopBar";
 import { SmoothScrollProvider } from "@/components/layout/SmoothScrollProvider";
+import "lenis/dist/lenis.css";
 import "./globals.css";
 
 /** Base sans, sitewide body/heading font — see brand-guidelines.md's
