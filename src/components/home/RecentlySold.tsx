@@ -39,12 +39,12 @@ export function RecentlySold() {
           Recently sold
         </h2>
       </Reveal>
-      <div className="mt-10 grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3">
+      <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-x-8 sm:gap-y-10">
         {soldExamples.map((s, i) => (
-          <Reveal key={s.address} delayMs={i * 100}>
+          <Reveal key={s.address} delayMs={i * 100} className="h-full">
             <GlassCard
               maxDeg={5}
-              className="overflow-hidden rounded-2xl bg-canvas shadow-card"
+              className="h-full overflow-hidden rounded-2xl bg-canvas shadow-card"
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-sand">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
