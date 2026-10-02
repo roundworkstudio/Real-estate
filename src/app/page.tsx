@@ -34,7 +34,7 @@ export default function Home() {
       <RecentlySold />
       <InvestmentToolsTeaser />
       <InvestorMatchTeaser />
-      <section className="px-6 py-10 sm:px-10">
+      <section className="px-6 py-6 sm:px-10 sm:py-10">
         <WhatsAppBanner />
       </section>
       <ValuationPrompt />

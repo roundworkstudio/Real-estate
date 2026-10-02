@@ -33,7 +33,7 @@ const soldExamples = [
 
 export function RecentlySold() {
   return (
-    <section className="px-6 py-20 sm:px-10">
+    <section className="px-6 py-14 sm:px-10 sm:py-20">
       <Reveal>
         <h2 className="text-2xl font-semibold text-slate sm:text-3xl">
           Recently sold
