@@ -34,6 +34,7 @@ export interface SliderOptions {
   /** Announced instead of the raw number — pass one when the value carries a
    * unit or a suffix ("72.5 kg", "35%"); a bare number needs no valueText. */
   formatValueText?: (value: number) => string;
+  orientation?: "horizontal" | "vertical";
 }
 
 /**
@@ -50,7 +51,8 @@ export function useSlider({
   step = 1,
   disabled = false,
   "aria-label": ariaLabel,
-  formatValueText,
+    formatValueText,
+    orientation = "horizontal",
 }: SliderOptions) {
   const trackRef = useRef<HTMLDivElement>(null);
   const sliderEl = useRef<HTMLElement | null>(null);
@@ -78,14 +80,15 @@ export function useSlider({
     [controlled, onValueChange, lo, hi, stride],
   );
 
-  const commitFromX = useCallback(
-    (clientX: number) => {
+  const commitFromPoint = useCallback(
+    (clientX: number, clientY: number) => {
       const rect = trackRef.current?.getBoundingClientRect();
       if (!rect || rect.width === 0) return;
-      const ratio = clamp((clientX - rect.left) / rect.width, 0, 1);
+      const ratio = orientation === "vertical"
+        ? clamp((rect.bottom - clientY) / rect.height, 0, 1)
+        : clamp((clientX - rect.left) / rect.width, 0, 1);
       commit(lo + ratio * (hi - lo));
-    },
-    [commit, lo, hi],
+    }, [commit, lo, hi, orientation],
   );
 
   const onPointerDown = useCallback(
@@ -99,17 +102,17 @@ export function useSlider({
       capturePointer(event.currentTarget, event.pointerId);
       // A click on the track should land keyboard focus on the handle.
       sliderEl.current?.focus({ preventScroll: true });
-      commitFromX(event.clientX);
+      commitFromPoint(event.clientX, event.clientY);
     },
-    [disabled, commitFromX],
+    [disabled, commitFromPoint],
   );
 
   const onPointerMove = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
       if (!draggingRef.current || disabled) return;
-      commitFromX(event.clientX);
+      commitFromPoint(event.clientX, event.clientY);
     },
-    [disabled, commitFromX],
+    [disabled, commitFromPoint],
   );
 
   const endDrag = useCallback((event: PointerEvent<HTMLDivElement>) => {

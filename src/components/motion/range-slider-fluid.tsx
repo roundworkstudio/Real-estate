@@ -24,6 +24,7 @@ export interface FluidSliderProps extends SliderOptions {
   className?: string;
   /** Colour context for the same pill slider on light or deep panels. */
   tone?: "dark" | "light";
+  orientation?: "horizontal" | "vertical";
 }
 
 /**
@@ -38,11 +39,13 @@ export function FluidSlider({
   format = (v) => `${v}%`,
   className,
   tone = "light",
+  orientation = "horizontal",
   ...options
 }: FluidSliderProps) {
   const reduce = useReducedMotion();
   const { percent, current, dragging, trackProps, sliderProps } = useSlider({
     ...options,
+    orientation,
     formatValueText: options.formatValueText ?? format,
   });
 
@@ -56,7 +59,9 @@ export function FluidSlider({
   // width: at 0% the clip is empty, so no hairline of a sub-pixel-wide box is
   // left behind, and the label inside is never scaled or re-laid out.
   const uncovered = useTransform(pos, (v) => 100 - v);
-  const clipPath = useMotionTemplate`inset(0 ${uncovered}% 0 0 round 9999px)`;
+  const horizontalClipPath = useMotionTemplate`inset(0 ${uncovered}% 0 0 round 9999px)`;
+  const verticalClipPath = useMotionTemplate`inset(${uncovered}% 0 0 0 round 9999px)`;
+  const clipPath = orientation === "vertical" ? verticalClipPath : horizontalClipPath;
 
   const row = (
     <>
@@ -71,7 +76,7 @@ export function FluidSlider({
       animate={reduce ? undefined : { scale: dragging ? 1.03 : 1 }}
       transition={SPRING_PRESS}
       className={cn(
-        "relative flex h-12 w-full touch-none overflow-hidden rounded-full shadow-[inset_0_1px_2px_rgb(46_36_32_/_0.08)]",
+        orientation === "vertical" ? "relative flex h-48 w-14 touch-none overflow-hidden rounded-full shadow-[inset_0_1px_2px_rgb(46_36_32_/_0.08)]" : "relative flex h-12 w-full touch-none overflow-hidden rounded-full shadow-[inset_0_1px_2px_rgb(46_36_32_/_0.08)]",
         tone === "dark" ? "bg-white/10" : "bg-slate/10",
         TOUCH_GESTURE_CLASS,
         options.disabled
@@ -81,7 +86,7 @@ export function FluidSlider({
       )}
     >
       {/* uncovered label — sits on the muted track */}
-      <div className={cn("pointer-events-none absolute inset-0 flex items-center justify-between px-5 text-sm font-medium", tone === "dark" ? "text-white/75" : "text-slate")}>
+      <div className={cn("pointer-events-none absolute inset-0 flex items-center justify-between text-sm font-medium", orientation === "vertical" ? "flex-col px-1 py-3 text-center text-[10px] leading-tight" : "px-5", tone === "dark" ? "text-white/75" : "text-slate")}>
         {row}
       </div>
 
@@ -90,7 +95,7 @@ export function FluidSlider({
           underneath. The clip's rounded right edge is the liquid cap. */}
       <motion.div className="absolute inset-0" style={{ clipPath }}>
         <div className="absolute inset-0 bg-gradient-to-r from-royal to-sovereign" />
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-5 text-sm font-medium text-white">
+        <div className={cn("pointer-events-none absolute inset-0 flex items-center justify-between text-sm font-medium text-white", orientation === "vertical" ? "flex-col px-1 py-3 text-center text-[10px] leading-tight" : "px-5")}>
           {row}
         </div>
       </motion.div>

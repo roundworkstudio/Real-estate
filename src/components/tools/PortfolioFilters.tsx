@@ -1,15 +1,19 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Building2, ChevronRight, CircleDollarSign, House, MapPin, Search, SlidersHorizontal, Sparkles, TrendingUp, X } from "lucide-react";
 import { PropertyCard } from "@/components/ui/PropertyCard";
+import { FluidSlider } from "@/components/motion/range-slider-fluid";
 import type { Property, PropertyStatus, PropertyStrategy } from "@/lib/types";
 
 const strategyLabels: Record<PropertyStrategy, string> = { yield: "Yield", "off-plan": "Off-plan", "value-add": "Value-add", str: "Short stay", commercial: "Commercial" };
 const statusLabels: Record<PropertyStatus, string> = { new: "New", "under-offer": "Under offer", sold: "Sold", "off-plan": "Off-plan" };
 
-function FilterPill({ active, children, onClick }: { active: boolean; children: React.ReactNode; onClick: () => void }) {
-  return <button type="button" onClick={onClick} className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition ${active ? "bg-royal-deep text-white shadow-sm" : "bg-white/70 text-slate/65 hover:bg-white"}`}>{children}</button>;
+function FilterPill({ active, children, icon, onClick }: { active: boolean; children: React.ReactNode; icon?: React.ReactNode; onClick: () => void }) {
+  return <button type="button" onClick={onClick} className={`inline-flex shrink-0 items-center gap-2 rounded-full border border-white/75 px-3 py-2 text-sm font-medium shadow-[inset_0_1px_2px_rgba(255,255,255,.75)] backdrop-blur-md transition ${active ? "bg-royal-deep/90 text-white shadow-sm" : "bg-white/50 text-slate/65 hover:bg-white/75"}`}>
+    {icon && <span className={`flex h-6 w-6 items-center justify-center rounded-full ${active ? "bg-white/15 text-white" : "bg-white/70 text-royal-deep/70"}`}>{icon}</span>}
+    {children}
+  </button>;
 }
 
 export function PortfolioFilters({ properties }: { properties: Property[] }) {
@@ -17,24 +21,74 @@ export function PortfolioFilters({ properties }: { properties: Property[] }) {
   const [status, setStatus] = useState<PropertyStatus | "all">("all");
   const [community, setCommunity] = useState<string | "all">("all");
   const [query, setQuery] = useState("");
+  const [showMoreFilters, setShowMoreFilters] = useState(false);
+  const [minPriceAed, setMinPriceAed] = useState(500_000);
+  const [maxPriceAed, setMaxPriceAed] = useState(15_000_000);
+  const [minBeds, setMinBeds] = useState(1);
+  const [maxBeds, setMaxBeds] = useState(8);
+  const [sortBy, setSortBy] = useState<"featured" | "price-low" | "price-high" | "beds-high">("featured");
   const communities = useMemo(() => Array.from(new Set(properties.map((p) => p.community))), [properties]);
-  const filtered = properties.filter((p) => {
-    const text = `${p.title} ${p.community} ${p.city}`.toLowerCase();
-    return (strategy === "all" || p.strategy === strategy) && (status === "all" || p.status === status) && (community === "all" || p.community === community) && (!query || text.includes(query.toLowerCase()));
-  });
+  const sorted = useMemo(() => {
+    const searchTerms = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const filtered = properties.filter((property) => {
+      const searchableText = [
+        property.title,
+        property.community,
+        property.city,
+        property.status,
+        property.strategy,
+        `${property.beds} bedroom`,
+        `${property.sqft} sqft`,
+      ].join(" ").toLowerCase();
+      const matchesSearch = searchTerms.every((term) => searchableText.includes(term));
+
+      return (
+        (strategy === "all" || property.strategy === strategy) &&
+        (status === "all" || property.status === status) &&
+        (community === "all" || property.community === community) &&
+        property.priceAed >= minPriceAed &&
+        property.priceAed <= maxPriceAed &&
+        property.beds >= minBeds &&
+        property.beds <= maxBeds &&
+        matchesSearch
+      );
+    });
+
+    return [...filtered].sort((a, b) => {
+      if (sortBy === "price-low") return a.priceAed - b.priceAed;
+      if (sortBy === "price-high") return b.priceAed - a.priceAed;
+      if (sortBy === "beds-high") return b.beds - a.beds;
+      return 0;
+    });
+  }, [community, maxBeds, maxPriceAed, minBeds, minPriceAed, properties, query, sortBy, status, strategy]);
 
   return (
     <div>
-      <div className="rounded-[2rem] border border-white/70 bg-mist/55 p-3 shadow-[0_18px_45px_-35px_rgba(58,45,40,.7)] sm:p-4">
+      <div className="rounded-[2rem] border border-white/80 bg-white/35 p-3 shadow-[0_18px_45px_-35px_rgba(58,45,40,.35)] backdrop-blur-md sm:p-4">
         <div className="flex gap-2">
-          <label className="flex min-w-0 flex-1 items-center gap-2 rounded-full bg-white/80 px-4 py-3 text-slate/55"><Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search homes, communities..." className="min-w-0 flex-1 bg-transparent text-sm text-slate outline-none placeholder:text-slate/45" /></label>
-          <button type="button" aria-label="Show filters" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/80 text-slate transition hover:bg-white"><SlidersHorizontal size={18} /></button>
+          <label className="flex min-w-0 flex-1 items-center gap-2 rounded-full border border-white/85 bg-white/60 px-4 py-3 text-slate/55 shadow-[inset_0_1px_2px_rgba(255,255,255,.85),0_5px_18px_rgba(58,45,40,.06)] backdrop-blur-md"><Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search homes, communities..." className="min-w-0 flex-1 bg-transparent text-sm text-slate outline-none placeholder:text-slate/45" /></label>
+          <button type="button" aria-label="Show more filters" aria-expanded={showMoreFilters} onClick={() => setShowMoreFilters(true)} className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/85 text-slate shadow-[inset_0_1px_2px_rgba(255,255,255,.85),0_5px_18px_rgba(58,45,40,.06)] backdrop-blur-md transition hover:bg-white/80 ${showMoreFilters ? "bg-royal-deep text-white" : "bg-white/60"}`}><SlidersHorizontal size={18} /></button>
         </div>
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-1 no-scrollbar"><FilterPill active={strategy === "all"} onClick={() => setStrategy("all")}>All homes</FilterPill>{Array.from(new Set(properties.map((p) => p.strategy))).map((value) => <FilterPill key={value} active={strategy === value} onClick={() => setStrategy(value)}>{strategyLabels[value]}</FilterPill>)}</div>
-        <div className="mt-2 flex gap-2 overflow-x-auto pb-1 no-scrollbar"><FilterPill active={community === "all"} onClick={() => setCommunity("all")}>All locations</FilterPill>{communities.map((value) => <FilterPill key={value} active={community === value} onClick={() => setCommunity(value)}>{value}</FilterPill>)}{Array.from(new Set(properties.map((p) => p.status))).map((value) => <FilterPill key={value} active={status === value} onClick={() => setStatus(value)}>{statusLabels[value]}</FilterPill>)}</div>
+        <div className="relative mt-3"><div className="flex gap-2 overflow-x-auto pb-1 pr-8 no-scrollbar"><FilterPill icon={<House size={13} />} active={strategy === "all"} onClick={() => setStrategy("all")}>All homes</FilterPill>{Array.from(new Set(properties.map((p) => p.strategy))).map((value) => <FilterPill key={value} icon={value === "yield" ? <TrendingUp size={13} /> : <Building2 size={13} />} active={strategy === value} onClick={() => setStrategy(value)}>{strategyLabels[value]}</FilterPill>)}</div><div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 flex w-10 items-center justify-end bg-gradient-to-l from-white/70 via-white/45 to-transparent pl-3 text-royal"><ChevronRight size={16} /></div></div>
+        <div className="relative mt-2"><div className="flex gap-2 overflow-x-auto pb-1 pr-8 no-scrollbar"><FilterPill icon={<MapPin size={13} />} active={community === "all"} onClick={() => setCommunity("all")}>All locations</FilterPill>{communities.map((value) => <FilterPill key={value} icon={<MapPin size={13} />} active={community === value} onClick={() => setCommunity(value)}>{value}</FilterPill>)}{Array.from(new Set(properties.map((p) => p.status))).map((value) => <FilterPill key={value} icon={value === "new" ? <Sparkles size={13} /> : value === "off-plan" ? <Building2 size={13} /> : <CircleDollarSign size={13} />} active={status === value} onClick={() => setStatus(value)}>{statusLabels[value]}</FilterPill>)}</div><div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 flex w-10 items-center justify-end bg-gradient-to-l from-white/70 via-white/45 to-transparent pl-3 text-royal"><ChevronRight size={16} /></div></div>
+        <div className="mt-2 flex items-center justify-end gap-1 pr-1 text-[10px] font-medium uppercase tracking-[0.14em] text-slate/40 sm:hidden"><span>Swipe for more</span><ChevronRight size={11} /></div>
       </div>
-      <div className="mt-10 flex items-end justify-between gap-4"><div><p className="text-xs font-medium uppercase tracking-[0.18em] text-royal">Curated for you</p><h2 className="mt-1 text-2xl font-semibold text-slate sm:text-3xl">Top properties</h2></div><span className="text-sm text-slate/50">{filtered.length} results</span></div>
-      {filtered.length === 0 ? <div className="py-16 text-center text-sm text-slate/50">No listings match — try a different filter.</div> : <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{filtered.map((property, index) => <PropertyCard key={property.slug} property={property} featured={index === 0} />)}</div>}
+      {showMoreFilters && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate/20 p-4 backdrop-blur-sm sm:items-center" role="presentation" onClick={() => setShowMoreFilters(false)}>
+          <div role="dialog" aria-modal="true" aria-labelledby="more-filters-title" onClick={(event) => event.stopPropagation()} className="w-full max-w-md rounded-[2rem] border border-white/85 bg-white/75 p-5 shadow-[0_24px_80px_-30px_rgba(46,36,32,.45)] backdrop-blur-2xl sm:p-6">
+            <div className="flex items-center justify-between"><div><p className="text-xs font-medium uppercase tracking-[0.16em] text-royal">Refine your search</p><h3 id="more-filters-title" className="mt-1 text-2xl font-semibold text-slate">More filters</h3></div><button type="button" aria-label="Close filters" onClick={() => setShowMoreFilters(false)} className="flex h-10 w-10 items-center justify-center rounded-full bg-white/70 text-slate transition hover:bg-white"><X size={18} /></button></div>
+            <div className="mt-6 space-y-6">
+              <label className="flex items-center justify-between gap-3 rounded-full border border-white/80 bg-white/60 px-4 py-2.5 text-sm font-medium text-slate shadow-[inset_0_1px_2px_rgba(255,255,255,.8)]"><span>Order listings</span><select value={sortBy} onChange={(event) => setSortBy(event.target.value as typeof sortBy)} className="bg-transparent text-right text-sm font-medium text-royal-deep outline-none"><option value="featured">Featured</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="beds-high">Most bedrooms</option></select></label>
+              <div><p className="mb-3 text-sm font-medium text-slate">Price & location</p><div className="grid grid-cols-[auto_1fr] gap-5"><div className="relative flex items-end gap-3 pl-8"><div className="absolute inset-y-0 left-0 flex flex-col justify-between py-1 text-[9px] font-medium text-slate/45"><span>AED 15m</span><span>AED 10m</span><span>AED 5m</span><span>AED 0.5m</span></div><FluidSlider orientation="vertical" min={500_000} max={15_000_000} step={100_000} value={minPriceAed} onValueChange={(value) => setMinPriceAed(Math.min(value, maxPriceAed))} aria-label="Minimum price" format={(value) => `Min AED ${(value / 1_000_000).toFixed(1)}m`} /><FluidSlider orientation="vertical" min={500_000} max={15_000_000} step={100_000} value={maxPriceAed} onValueChange={(value) => setMaxPriceAed(Math.max(value, minPriceAed))} aria-label="Maximum price" format={(value) => `Max AED ${(value / 1_000_000).toFixed(1)}m`} /></div><div className="flex flex-col gap-2"><FilterPill icon={<MapPin size={13} />} active={community === "all"} onClick={() => setCommunity("all")}>All locations</FilterPill>{communities.map((value) => <FilterPill key={value} icon={<MapPin size={13} />} active={community === value} onClick={() => setCommunity(value)}>{value}</FilterPill>)}</div></div></div>
+              <div><p className="mb-3 text-sm font-medium text-slate">Bedrooms</p><div className="space-y-3"><FluidSlider min={1} max={8} step={1} value={minBeds} onValueChange={(value) => setMinBeds(Math.min(value, maxBeds))} aria-label="Minimum bedrooms" format={(value) => `From ${value} beds`} /><FluidSlider min={1} max={8} step={1} value={maxBeds} onValueChange={(value) => setMaxBeds(Math.max(value, minBeds))} aria-label="Maximum bedrooms" format={(value) => `Up to ${value} beds`} /></div></div>
+              <div><p className="mb-3 text-sm font-medium text-slate">Listing status</p><div className="flex flex-wrap gap-2">{Array.from(new Set(properties.map((p) => p.status))).map((value) => <FilterPill key={value} icon={value === "new" ? <Sparkles size={13} /> : value === "off-plan" ? <Building2 size={13} /> : <CircleDollarSign size={13} />} active={status === value} onClick={() => setStatus(value)}>{statusLabels[value]}</FilterPill>)}</div></div>
+            </div>
+            <button type="button" onClick={() => setShowMoreFilters(false)} className="mt-7 flex w-full items-center justify-center rounded-full bg-royal-deep px-5 py-3 text-sm font-medium text-white transition hover:bg-royal">Show results</button>
+          </div>
+        </div>
+      )}
+      <div className="mt-10 flex items-end justify-between gap-4"><div><h2 className="text-2xl font-semibold text-slate sm:text-3xl">Top properties</h2></div><span className="text-sm text-slate/50">{sorted.length} results</span></div>
+      {sorted.length === 0 ? <div className="py-16 text-center text-sm text-slate/50">No listings match — try a different filter.</div> : <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{sorted.map((property, index) => <PropertyCard key={property.slug} property={property} featured={index === 0} />)}</div>}
     </div>
   );
 }
