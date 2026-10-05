@@ -68,16 +68,18 @@ export function VideoTour() {
       </div>
 
       {/* Desktop: 3-column grid with native controls */}
-      <div className="mt-10 hidden sm:grid sm:grid-cols-3 sm:gap-6">
-        {clips.map((c, i) => (
-          <Reveal
-            key={c.src}
-            delayMs={i * 100}
-            className="hover-lift mx-auto w-full max-w-xs overflow-hidden rounded-2xl shadow-card"
-          >
-            <TourClip src={c.src} poster={c.poster} />
-          </Reveal>
-        ))}
+      <div className="mt-10 hidden rounded-3xl bg-slate/5 p-8 sm:block lg:p-12">
+        <div className="grid grid-cols-3 gap-6 lg:gap-8">
+          {clips.map((c, i) => (
+            <Reveal
+              key={c.src}
+              delayMs={i * 100}
+              className="hover-lift overflow-hidden rounded-2xl shadow-card"
+            >
+              <TourClip src={c.src} poster={c.poster} />
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   );
