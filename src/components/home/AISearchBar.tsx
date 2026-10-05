@@ -66,7 +66,7 @@ export function AISearchBar() {
           <button
             key={label}
             onClick={() => setQuery(q)}
-            className="inline-flex items-center gap-1.5 rounded-full bg-slate/5 px-3.5 py-1.5 text-sm text-slate transition-colors hover:bg-slate/10"
+            className="inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm px-3.5 py-1.5 text-sm text-slate transition-all hover:bg-white/20 hover:border-white/30"
           >
             <Icon size={14} className="text-slate/50" />
             {label}
