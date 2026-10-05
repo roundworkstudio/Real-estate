@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Poppins, Lora } from "next/font/google";
+import type { ReactNode } from "react";
+import { Poppins, Lora } from "next/font/google";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { MobileTopBar } from "@/components/layout/MobileTopBar";
 import { SmoothScrollProvider } from "@/components/layout/SmoothScrollProvider";
@@ -34,21 +35,16 @@ const lora = Lora({
   display: "block",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
   title: "Janvi Real Estate",
   description: "Abu Dhabi and Dubai real estate.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
-      className={`${poppins.variable} ${lora.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${poppins.variable} ${lora.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <SmoothScrollProvider>

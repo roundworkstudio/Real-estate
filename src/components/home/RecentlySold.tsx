@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Reveal } from "@/components/ui/Reveal";
 
@@ -33,7 +34,7 @@ const soldExamples = [
 
 export function RecentlySold() {
   return (
-    <section className="px-6 py-14 sm:px-10 sm:py-20">
+    <section className="px-6 py-10 sm:px-10 sm:py-20">
       <Reveal>
         <h2 className="text-2xl font-semibold text-slate sm:text-3xl">
           Recently sold
@@ -47,11 +48,12 @@ export function RecentlySold() {
               className="h-full overflow-hidden rounded-2xl bg-canvas shadow-card"
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-sand">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={s.image}
                   alt={s.address}
-                  className="h-full w-full object-cover"
+                  fill
+                  sizes="(max-width: 639px) 50vw, 33vw"
+                  className="object-cover"
                 />
                 <div className="absolute left-3 top-3 rounded-full bg-slate/80 px-2.5 py-1 text-xs font-medium text-white">
                   Sold

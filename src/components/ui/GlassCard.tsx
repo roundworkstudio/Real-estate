@@ -16,18 +16,20 @@ export function GlassCard({
   className = "",
   maxDeg = 8,
   pane = true,
+  disabled = false,
 }: {
   children: React.ReactNode;
   className?: string;
   maxDeg?: number;
   pane?: boolean;
+  disabled?: boolean;
 }) {
-  const ref = useTilt3D<HTMLDivElement>(maxDeg);
+  const ref = useTilt3D<HTMLDivElement>(maxDeg, disabled);
 
   return (
     <div
       ref={ref}
-      className={`glass-tilt relative ${pane ? "glass-pane" : ""} ${className}`}
+      className={`${disabled ? "" : "glass-tilt"} relative ${pane ? "glass-pane" : ""} ${className}`}
     >
       {children}
       <div className="glass-sheen" />

@@ -1,5 +1,3 @@
-"use client";
-
 /**
  * Real footage is vertical (see HANDOVER.md and directives/prepare_media.md)
  * — this section is built around that shape rather than fighting it:
@@ -13,15 +11,11 @@
  * IMG_1829.mov and IMG_1845.mov — see directives/prepare_media.md for the
  * conversion tool and where source footage lives.
  *
- * `autoPlay`/`preload` gated on `useInView` (2026-09-27, load-speed
- * cleanup pass before pushing live) — this section sits well below the
- * fold, but all three clips (6.2–14MB, ~33MB combined) previously carried
- * a bare `autoPlay`, which starts a video downloading and playing the
- * instant it's in the DOM, whether or not it's ever scrolled into view.
- * `controls` stays regardless, so a visitor can still play a clip by hand
- * before it scrolls in.
+ * Desktop videos show their posters and load metadata until a visitor
+ * chooses one to play. Starting three portrait videos together cost both
+ * network and decoding time. Mobile keeps ambient autoplay for only the
+ * one card at the front of the swipe stack.
  */
-import { useInView } from "@/lib/motion";
 import { Reveal } from "@/components/ui/Reveal";
 import { VideoSwipeStack } from "@/components/home/VideoSwipeStack";
 
@@ -41,19 +35,15 @@ const clips = [
 ];
 
 function TourClip({ src, poster }: { src: string; poster: string }) {
-  const { ref, inView } = useInView<HTMLVideoElement>();
-
   return (
     <video
-      ref={ref}
       className="aspect-[9/16] w-full object-cover"
       src={src}
       poster={poster}
       muted
       loop
       playsInline
-      autoPlay={inView}
-      preload={inView ? "auto" : "none"}
+      preload="metadata"
       controls
     />
   );
@@ -61,7 +51,7 @@ function TourClip({ src, poster }: { src: string; poster: string }) {
 
 export function VideoTour() {
   return (
-    <section className="px-6 py-14 sm:px-10 sm:py-20">
+    <section className="px-6 py-10 sm:px-10 sm:py-20">
       <Reveal>
         <h2 className="text-2xl font-semibold text-slate sm:text-3xl">
           See it before you visit

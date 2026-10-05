@@ -1,5 +1,5 @@
-import { MessageCircle } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
+import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { PLACEHOLDER_WHATSAPP_URL } from "@/lib/site-config";
 import { AreaGuideCard, type AreaGuide } from "./AreaGuideCard";
 import { MobileAreasCarousel } from "./MobileAreasCarousel";
@@ -81,7 +81,7 @@ const areas: AreaGuide[] = [
 
 export function AreasPreview() {
   return (
-    <section className="px-6 py-14 sm:px-10 sm:py-20">
+    <section className="px-6 py-10 sm:px-10 sm:py-20">
       <Reveal>
         <h2 className="text-2xl font-semibold text-slate sm:text-3xl">
           Area guides
@@ -107,14 +107,14 @@ export function AreasPreview() {
           <p className="text-sm text-slate/60">
             Researching a community or building not shown here?
           </p>
-          <a
+          <WhatsAppButton
             href={PLACEHOLDER_WHATSAPP_URL}
-            className="inline-flex shrink-0 items-center gap-2 rounded-full border border-slate/15 bg-white px-4 py-2 text-sm font-medium text-slate shadow-sm transition-colors hover:border-slate/25"
+            variant="light"
+            compact
+            className="shrink-0"
           >
-            <span className="pulse-dot h-2 w-2 rounded-full bg-[#25D366]" />
-            <MessageCircle size={15} className="text-slate/60" />
             Ask on WhatsApp
-          </a>
+          </WhatsAppButton>
         </div>
       </Reveal>
 

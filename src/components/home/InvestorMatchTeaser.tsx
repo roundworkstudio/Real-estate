@@ -31,17 +31,18 @@ import { Reveal } from "@/components/ui/Reveal";
  *
  * Tilt drops out on the results screen (2026-09-27, explicit request —
  * see InvestorMatchWizard's `onResultsChange` note for why) — the
- * gradient ring and gradient fill stay either way, just plain `div`s
- * instead of `GlassCard` once results are showing, so PropertyCard's own
- * hover/tilt is the only one active.
+ * gradient ring and gradient fill stay either way. GlassCard remains
+ * mounted so the wizard keeps its answers, while its `disabled` prop drops
+ * the outer tilt once results are showing and leaves PropertyCard as the
+ * only interactive card.
  */
 export function InvestorMatchTeaser() {
   const [showingResults, setShowingResults] = useState(false);
   const cardClassName =
-    "rounded-2xl bg-gradient-to-br from-white/90 to-canvas p-6 sm:p-10";
+    "mobile-static-card rounded-2xl bg-gradient-to-br from-white/90 to-canvas p-6 sm:p-10";
 
   return (
-    <section className="px-6 py-14 sm:px-10 sm:py-20">
+    <section className="px-6 py-10 sm:px-10 sm:py-20">
       <Reveal>
         <h2 className="text-2xl font-semibold text-slate sm:text-3xl">
           Not sure what fits? Find your match
@@ -51,15 +52,13 @@ export function InvestorMatchTeaser() {
         </p>
       </Reveal>
       <div className="mx-auto mt-10 max-w-2xl rounded-2xl bg-gradient-to-br from-sovereign/50 via-white/40 to-royal/30 p-px shadow-card">
-        {showingResults ? (
-          <div className={cardClassName}>
-            <InvestorMatchWizard onResultsChange={setShowingResults} />
-          </div>
-        ) : (
-          <GlassCard pane={false} className={cardClassName}>
-            <InvestorMatchWizard onResultsChange={setShowingResults} />
-          </GlassCard>
-        )}
+        <GlassCard
+          pane={false}
+          disabled={showingResults}
+          className={cardClassName}
+        >
+          <InvestorMatchWizard onResultsChange={setShowingResults} />
+        </GlassCard>
       </div>
     </section>
   );

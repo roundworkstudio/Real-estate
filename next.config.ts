@@ -23,7 +23,9 @@ const nextConfig: NextConfig = {
     // Revisit before launch: Vercel's own image optimization in production
     // is a separate code path and may not have this issue — test there
     // before assuming this restriction still applies.
-    unoptimized: true,
+    // Keep the workaround only in the local preview. Production on Vercel
+    // should resize, compress, and cache these multi-megabyte source photos.
+    unoptimized: process.env.NODE_ENV === "development",
   },
 };
 

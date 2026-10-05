@@ -19,7 +19,15 @@ import { useInView } from "@/lib/motion";
  * GlassCard gives the whole thing the 3D tilt + glass sheen + glass-pane
  * edge, not just the photo — see that component's note.
  */
-export function PropertyCard({ property }: { property: Property }) {
+export function PropertyCard({
+  property,
+  compactOnMobile = false,
+  minimal = false,
+}: {
+  property: Property;
+  compactOnMobile?: boolean;
+  minimal?: boolean;
+}) {
   const { ref, inView } = useInView<HTMLDivElement>();
 
   return (
@@ -30,34 +38,54 @@ export function PropertyCard({ property }: { property: Property }) {
             src={property.image.src}
             alt={property.image.alt}
             fill
-            sizes="(min-width: 640px) 33vw, 100vw"
+            sizes={
+              compactOnMobile
+                ? "(min-width: 640px) 33vw, 50vw"
+                : "(min-width: 640px) 33vw, 100vw"
+            }
             className={`object-cover transition-transform duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 ${
               inView ? "scale-100" : "scale-[1.08]"
             }`}
           />
-          <div className="absolute left-3 top-3">
-            <StatusBadge status={property.status} />
-          </div>
+          {!minimal && (
+            <div className="absolute left-3 top-3">
+              <StatusBadge status={property.status} />
+            </div>
+          )}
         </div>
 
-        <div className="p-4 sm:p-5">
-          <div className="flex items-baseline justify-between">
-            <span className="text-lg font-semibold tabular-nums text-slate">
+        <div className={compactOnMobile ? "p-3 sm:p-5" : "p-4 sm:p-5"}>
+          <div
+            className={`flex justify-between gap-1 ${compactOnMobile ? "flex-col sm:flex-row sm:items-baseline" : "items-baseline"}`}
+          >
+            <span
+              className={`${compactOnMobile ? "text-sm sm:text-lg" : "text-lg"} font-semibold tabular-nums text-slate`}
+            >
               AED {property.priceAed.toLocaleString("en-AE")}
             </span>
-            {property.grossYield !== null && (
-              <span className="text-sm font-medium tabular-nums text-sovereign">
+            {!minimal && property.grossYield !== null && (
+              <span
+                className={`${compactOnMobile ? "text-xs sm:text-sm" : "text-sm"} font-medium tabular-nums text-sovereign`}
+              >
                 {(property.grossYield * 100).toFixed(1)}% yield
               </span>
             )}
           </div>
-          <div className="mt-1 text-slate">{property.title}</div>
-          <div className="mt-1 text-sm text-slate/60">
-            {property.community}, {property.city} · {property.beds} bed
-            {property.baths !== undefined && ` · ${property.baths} bath`} ·{" "}
-            {property.sqft.toLocaleString("en-AE")} sqft · AED{" "}
-            {pricePerSqft(property).toLocaleString("en-AE")}/sqft
+          <div
+            className={`mt-1 text-slate ${compactOnMobile ? "text-sm sm:text-base" : ""}`}
+          >
+            {property.title}
           </div>
+          {!minimal && (
+            <div
+              className={`mt-1 text-slate/60 ${compactOnMobile ? "text-xs sm:text-sm" : "text-sm"}`}
+            >
+              {property.community}, {property.city} · {property.beds} bed
+              {property.baths !== undefined && ` · ${property.baths} bath`} ·{" "}
+              {property.sqft.toLocaleString("en-AE")} sqft · AED{" "}
+              {pricePerSqft(property).toLocaleString("en-AE")}/sqft
+            </div>
+          )}
         </div>
       </GlassCard>
     </a>

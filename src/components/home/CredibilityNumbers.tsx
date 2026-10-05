@@ -22,7 +22,7 @@ const stats = [
 
 export function CredibilityNumbers() {
   return (
-    <section id="numbers" className="scroll-mt-24 px-6 py-14 sm:px-10 sm:py-20">
+    <section id="numbers" className="scroll-mt-24 px-6 py-10 sm:px-10 sm:py-20">
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6">
         {stats.map((s, i) => (
           <Reveal key={s.label} delayMs={i * 100}>

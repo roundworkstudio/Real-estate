@@ -78,7 +78,6 @@
   --shadow-card: var(--shadow-contact), var(--shadow-ambient);
 
   --font-sans: var(--font-poppins);
-  --font-mono: var(--font-geist-mono);
   --font-accent: var(--font-lora);
 }
 
@@ -167,6 +166,18 @@ html.is-scrolling .glass-tilt {
   opacity: 1;
 }
 
+@media (max-width: 639px) {
+  .mobile-static-card.glass-tilt,
+  .mobile-static-card.glass-tilt:hover {
+    transform: none !important;
+    box-shadow: var(--shadow-card);
+  }
+
+  .mobile-static-card > .glass-sheen {
+    display: none;
+  }
+}
+
 /* Glass-pane edge: a bright inner top highlight, the way light catches
    the top edge of a real pane of glass, plus a faint border. Purely a
    gradient/border treatment, no backdrop-filter — safe to use on an
@@ -176,6 +187,20 @@ html.is-scrolling .glass-tilt {
 .glass-pane {
   border: 1px solid rgb(255 255 255 / 0.15);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35);
+}
+
+/* Raised metal edge for the insight tool cards. The lower champagne layer
+   reads as the card's physical side while the broad shadow lifts it clear
+   of the page. All highlights and shadows sit outside the surface so the
+   card feels raised rather than pressed into a frame. */
+.metal-edge {
+  border: 1px solid #ded5cc;
+  background: var(--color-canvas);
+  box-shadow:
+    0 1px 0 #fffdf9,
+    0 7px 0 #c7b8ad,
+    0 18px 34px -10px rgb(46 36 32 / 0.34);
+  transform: translateY(-3px);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -314,5 +339,148 @@ html.is-scrolling .nav-link:hover {
 @media (prefers-reduced-motion: reduce) {
   .pulse-dot::before {
     display: none;
+  }
+}
+
+/* WhatsApp CTAs share the expanding-circle interaction from the supplied
+   reference. Each placement keeps its existing colour character while the
+   icon bubble blooms across the pill on hover or keyboard focus. */
+.whatsapp-action {
+  --wa-fill: #25d366;
+  --wa-overlay: #128c4a;
+  --wa-text: #ffffff;
+  --wa-hover-text: #ffffff;
+  --wa-icon-bg: rgb(255 255 255 / 0.18);
+  --wa-icon: #ffffff;
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  min-height: 54px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  background: var(--wa-fill);
+  padding: 5px 6px 5px 22px;
+  color: var(--wa-text);
+  box-shadow: var(--shadow-card);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  transition:
+    color 0.45s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.whatsapp-action__text,
+.whatsapp-action__icon {
+  position: relative;
+  z-index: 2;
+}
+
+.whatsapp-action__icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  place-items: center;
+  border-radius: 9999px;
+  background: var(--wa-icon-bg);
+  color: var(--wa-icon);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.whatsapp-action__overlay {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  right: 6px;
+  width: 42px;
+  height: 42px;
+  border-radius: 9999px;
+  background: var(--wa-overlay);
+  transform: translateY(-50%) scale(0);
+  transform-origin: center;
+  transition: transform 0.58s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.whatsapp-action:hover,
+.whatsapp-action:focus-visible {
+  color: var(--wa-hover-text);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgb(18 140 74 / 0.22);
+}
+
+.whatsapp-action:hover .whatsapp-action__overlay,
+.whatsapp-action:focus-visible .whatsapp-action__overlay {
+  transform: translateY(-50%) scale(12);
+}
+
+.whatsapp-action:hover .whatsapp-action__icon,
+.whatsapp-action:focus-visible .whatsapp-action__icon {
+  transform: translateX(-2px) scale(1.04);
+}
+
+.whatsapp-action:focus-visible {
+  outline: 2px solid #25d366;
+  outline-offset: 3px;
+}
+
+.whatsapp-action--light {
+  --wa-fill: #ffffff;
+  --wa-overlay: #dcf8e5;
+  --wa-text: #1f2933;
+  --wa-hover-text: #0d703a;
+  --wa-icon-bg: rgb(37 211 102 / 0.13);
+  --wa-icon: #128c4a;
+  border-color: rgb(31 41 51 / 0.14);
+  box-shadow: 0 4px 16px rgb(31 41 51 / 0.08);
+}
+
+.whatsapp-action--translucent {
+  --wa-fill: rgb(255 255 255 / 0.1);
+  --wa-overlay: rgb(37 211 102 / 0.25);
+  --wa-text: #ffffff;
+  --wa-hover-text: #ffffff;
+  --wa-icon-bg: rgb(255 255 255 / 0.14);
+  --wa-icon: #ffffff;
+  border-color: rgb(255 255 255 / 0.14);
+  box-shadow: none;
+}
+
+.whatsapp-action--compact {
+  min-height: 44px;
+  gap: 13px;
+  padding: 4px 5px 4px 17px;
+  font-weight: 500;
+}
+
+.whatsapp-action--compact .whatsapp-action__icon,
+.whatsapp-action--compact .whatsapp-action__overlay {
+  width: 34px;
+  height: 34px;
+}
+
+.whatsapp-action--compact .whatsapp-action__icon {
+  flex-basis: 34px;
+}
+
+.whatsapp-action--compact .whatsapp-action__overlay {
+  right: 5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-action,
+  .whatsapp-action__icon,
+  .whatsapp-action__overlay {
+    transition: none;
+  }
+
+  .whatsapp-action:hover,
+  .whatsapp-action:focus-visible {
+    transform: none;
   }
 }

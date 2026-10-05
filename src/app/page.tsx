@@ -20,7 +20,6 @@ import { InvestmentToolsTeaser } from "@/components/home/InvestmentToolsTeaser";
 import { InvestorMatchTeaser } from "@/components/home/InvestorMatchTeaser";
 import { ValuationPrompt } from "@/components/home/ValuationPrompt";
 import { WhatsAppBanner } from "@/components/tools/WhatsAppBanner";
-import { ContactSection } from "@/components/home/ContactSection";
 import { Footer } from "@/components/layout/Footer";
 
 export default function Home() {
@@ -34,11 +33,10 @@ export default function Home() {
       <RecentlySold />
       <InvestmentToolsTeaser />
       <InvestorMatchTeaser />
-      <section className="px-6 py-6 sm:px-10 sm:py-10">
+      <section className="px-6 py-4 sm:px-10 sm:py-10">
         <WhatsAppBanner />
       </section>
       <ValuationPrompt />
-      <ContactSection />
       <Footer />
     </main>
   );

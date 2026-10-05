@@ -1,6 +1,6 @@
-import { MessageCircle } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { GlassCard } from "@/components/ui/GlassCard";
+import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { PLACEHOLDER_WHATSAPP_URL } from "@/lib/site-config";
 
 /**
@@ -97,14 +97,14 @@ export function WhyWorkWithMe() {
                 approach different, in her own words rather than generated copy,
                 once the real bio is supplied.
               </p>
-              <a
+              <WhatsAppButton
                 href={PLACEHOLDER_WHATSAPP_URL}
-                className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-white/20"
+                variant="translucent"
+                compact
+                className="w-fit"
               >
-                <span className="pulse-dot h-2 w-2 rounded-full bg-[#25D366]" />
-                <MessageCircle size={16} />
                 Book a call
-              </a>
+              </WhatsAppButton>
             </div>
           </Reveal>
 

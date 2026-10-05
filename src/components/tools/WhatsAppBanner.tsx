@@ -1,5 +1,5 @@
-import { MessageCircle } from "lucide-react";
 import { PLACEHOLDER_WHATSAPP_URL } from "@/lib/site-config";
+import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 
 /**
  * WhatsApp lead-gen banner. Green here is a scoped exception to
@@ -36,13 +36,14 @@ export function WhatsAppBanner() {
       </div>
 
       <div className="flex justify-center sm:justify-end">
-        <a
+        <WhatsAppButton
           href={PLACEHOLDER_WHATSAPP_URL}
-          className="inline-flex items-center gap-2.5 rounded-full bg-sovereign px-7 py-4 text-base font-semibold text-white shadow-card transition-colors hover:bg-sovereign/90"
+          variant="green"
+          className="w-full max-w-[260px] sm:w-auto sm:max-w-none"
         >
-          <MessageCircle size={22} />
-          Chat on WhatsApp now
-        </a>
+          <span className="sm:hidden">Chat on WhatsApp</span>
+          <span className="hidden sm:inline">Chat on WhatsApp now</span>
+        </WhatsAppButton>
       </div>
     </div>
   );

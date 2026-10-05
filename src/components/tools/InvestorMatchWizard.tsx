@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
+import { FluidSlider } from "@/components/motion/range-slider-fluid";
 import { PropertyCard } from "@/components/ui/PropertyCard";
 import { sampleProperties } from "@/lib/sample-properties";
 
@@ -177,9 +178,14 @@ export function InvestorMatchWizard({
             ? `${matches.length} listing${matches.length > 1 ? "s" : ""} match your criteria`
             : "No current listings match — Janvi will reach out directly"}
         </h3>
-        <div className="mt-8 grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2">
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-x-8 sm:gap-y-12">
           {matches.map((p) => (
-            <PropertyCard key={p.slug} property={p} />
+            <PropertyCard
+              key={p.slug}
+              property={p}
+              compactOnMobile
+              minimal
+            />
           ))}
         </div>
         <button
@@ -206,20 +212,18 @@ export function InvestorMatchWizard({
         step={step}
         onNext={() => setStep(1)}
       >
-        <input
-          type="range"
+        <FluidSlider
+          label="Budget"
           min={500_000}
           max={15_000_000}
           step={100_000}
           value={answers.budgetAed}
-          onChange={(e) =>
-            setAnswers((a) => ({ ...a, budgetAed: Number(e.target.value) }))
+          onValueChange={(budgetAed) =>
+            setAnswers((a) => ({ ...a, budgetAed }))
           }
-          className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-slate/10 accent-royal"
+          aria-label="Maximum budget"
+          format={(value) => `AED ${value.toLocaleString("en-AE")}`}
         />
-        <div className="mt-3 text-2xl font-semibold tabular-nums text-slate">
-          AED {answers.budgetAed.toLocaleString("en-AE")}
-        </div>
       </QuestionShell>
     );
   }
@@ -233,23 +237,18 @@ export function InvestorMatchWizard({
         onBack={() => setStep(0)}
         onNext={() => setStep(2)}
       >
-        <input
-          type="range"
+        <FluidSlider
+          label="Target yield"
           min={2}
           max={12}
           step={0.5}
           value={answers.targetYieldPercent}
-          onChange={(e) =>
-            setAnswers((a) => ({
-              ...a,
-              targetYieldPercent: Number(e.target.value),
-            }))
+          onValueChange={(targetYieldPercent) =>
+            setAnswers((a) => ({ ...a, targetYieldPercent }))
           }
-          className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-slate/10 accent-royal"
+          aria-label="Target net rental yield"
+          format={(value) => `${value.toFixed(1)}%`}
         />
-        <div className="mt-3 text-2xl font-semibold tabular-nums text-slate">
-          {answers.targetYieldPercent.toFixed(1)}%
-        </div>
       </QuestionShell>
     );
   }

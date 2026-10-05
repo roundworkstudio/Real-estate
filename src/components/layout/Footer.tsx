@@ -9,11 +9,6 @@ import Link from "next/link";
  * uses an obviously-fake street name instead, since that carries no such
  * risk and layout benefits from real text width.
  *
- * "Contact" links to the homepage's own #contact section rather than a
- * separate /contact page (SITEMAP.md lists one, but ContactSection already
- * covers the same content — a second, thinner copy of the same form
- * wasn't worth building) — dead-link cleanup 2026-09-27, see /privacy for
- * the page that did get built instead.
  */
 export function Footer() {
   return (
@@ -28,9 +23,6 @@ export function Footer() {
         <div className="flex gap-6">
           <Link href="/privacy" className="hover:text-slate">
             Privacy
-          </Link>
-          <Link href="/#contact" className="hover:text-slate">
-            Contact
           </Link>
         </div>
       </div>

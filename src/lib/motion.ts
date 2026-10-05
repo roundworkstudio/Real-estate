@@ -125,56 +125,6 @@ export function useScrollingFlag() {
 }
 
 /**
- * "Magnetic" button pull: while the pointer is within `radius` px of the
- * element's centre, the element translates a fraction of the way toward
- * it (`strength`), springing back via CSS transition on mouseleave.
- * Applied via ref rather than state so the drag itself doesn't re-render
- * React on every mousemove — only the transform style updates.
- *
- * Currently unused — removed 2026-09-27 from Nav's "Book a call" and
- * WhatsAppFloatingButton (both, at explicit request) after being the only
- * reason either needed to be a client component. Left defined rather than
- * deleted since it's a self-contained, reusable primitive, not orphaned
- * feature code — reattach a ref to bring the effect back on any element.
- */
-export function useMagnetic<T extends HTMLElement>(radius = 60, strength = 0.35) {
-  const ref = useRef<T>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || prefersReducedMotion()) return;
-
-    function reset() {
-      if (el) el.style.transform = "";
-    }
-
-    function onMove(e: MouseEvent) {
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const dx = e.clientX - cx;
-      const dy = e.clientY - cy;
-      const dist = Math.hypot(dx, dy);
-      if (dist < radius + rect.width / 2) {
-        el.style.transform = `translate(${dx * strength}px, ${dy * strength}px)`;
-      } else {
-        reset();
-      }
-    }
-
-    window.addEventListener("mousemove", onMove);
-    el.addEventListener("mouseleave", reset);
-    return () => {
-      window.removeEventListener("mousemove", onMove);
-      el.removeEventListener("mouseleave", reset);
-    };
-  }, [radius, strength]);
-
-  return ref;
-}
-
-/**
  * 3D tilt + glass "sheen" tracking: the element rotates toward the
  * pointer (perspective + rotateX/rotateY) and a highlight follows it via
  * two CSS custom properties (`--sheen-x`/`--sheen-y`), which globals.css's
@@ -185,12 +135,20 @@ export function useMagnetic<T extends HTMLElement>(radius = 60, strength = 0.35)
  * the only form of card this project's anti-slop rule allows for property
  * and development listings).
  */
-export function useTilt3D<T extends HTMLElement>(maxDeg = 8) {
+export function useTilt3D<T extends HTMLElement>(maxDeg = 8, disabled = false) {
   const ref = useRef<T>(null);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || prefersReducedMotion()) return;
+    if (!el) return;
+
+    const touchFirst = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+    if (disabled || prefersReducedMotion() || touchFirst) {
+      el.style.transform = "";
+      el.style.removeProperty("--sheen-x");
+      el.style.removeProperty("--sheen-y");
+      return;
+    }
 
     function onMove(e: MouseEvent) {
       if (!el) return;
@@ -214,7 +172,7 @@ export function useTilt3D<T extends HTMLElement>(maxDeg = 8) {
       el.removeEventListener("mousemove", onMove);
       el.removeEventListener("mouseleave", reset);
     };
-  }, [maxDeg]);
+  }, [maxDeg, disabled]);
 
   return ref;
 }

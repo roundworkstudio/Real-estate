@@ -47,8 +47,7 @@ import { PLACEHOLDER_TEL_URL } from "@/lib/site-config";
  * covers every link from the same `lib/nav-links.ts` list at the bottom of
  * the screen, so this top bar was redundant chrome on mobile (just the
  * logo + a "Book a call" button neither of which had room to earn their
- * keep at that width). WhatsAppFloatingButton remains as mobile's one
- * persistent top-level contact CTA.
+ * keep at that width). Contact actions remain available in the page content.
  *
  * The nine inner pages that wrap this in their own `bg-slate` block (to
  * centre it vertically — see each page's own `h-28` comment) hide that

@@ -50,16 +50,10 @@ export type HeroClip = {
  * facade approach and the pool/waterfront-with-flag shot) were added to the
  * loop. See Hero.tsx for the actual sequence and why.
  *
- * `preload` is scoped to just the active clip and the one queued up next
- * (2026-09-27, load-speed cleanup pass before pushing live) — all five
- * `<video>` elements used to carry `preload="auto"` unconditionally, which
- * told the browser to start eagerly downloading every clip on first paint,
- * not just the one actually playing. With Hero.tsx's current five clips
- * (16.7–52MB each, ~124MB combined — the courtyard clip alone is ~52MB,
- * see that file's own note on why it's so much heavier than the rest),
- * that was ~124MB of video fetched on homepage load for ~8-40s of
- * actually-visible footage. The rest now sit at `preload="none"` until
- * they're one clip away from playing.
+ * `preload` is scoped to the active clip and the one queued next. Hidden
+ * clips carry neither a poster request nor an active decoder; the five web
+ * files are trimmed/compressed fast-start H.264 rather than the original
+ * full-duration camera exports.
  */
 export function HeroVideo({ clips }: { clips: HeroClip[] }) {
   const refs = useRef<(HTMLVideoElement | null)[]>([]);
@@ -73,6 +67,12 @@ export function HeroVideo({ clips }: { clips: HeroClip[] }) {
 
     const goToNext = () => setActive((i) => (i + 1) % clips.length);
 
+    // A clip that switches early can have many seconds left. Pause every
+    // hidden element before starting the next one so it no longer decodes
+    // video frames behind the visible hero.
+    refs.current.forEach((candidate, index) => {
+      if (candidate && index !== active) candidate.pause();
+    });
     video.currentTime = 0;
     playWhenReady(video);
 
@@ -100,7 +100,7 @@ export function HeroVideo({ clips }: { clips: HeroClip[] }) {
           className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
           style={{ opacity: active === i ? 1 : 0 }}
           src={clip.src}
-          poster={clip.poster}
+          poster={active === i ? clip.poster : undefined}
           muted
           playsInline
           preload={i === active || i === next ? "auto" : "none"}

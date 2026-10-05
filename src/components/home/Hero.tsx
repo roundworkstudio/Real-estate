@@ -38,13 +38,9 @@ import { AISearchBar } from "./AISearchBar";
  * capped at 8s in the loop via `switchAt`, same as the poolview clip.
  *
  * Fifth clip added 2026-09-27: IMG_1851.mov (side courtyard/annex, open
- * door), same source set, converted the same way. Its source is 39s — by
- * far the longest of the five — but still capped at 8s via `switchAt` for
- * consistency with the rest of the loop; the file itself is correspondingly
- * heavier (~52MB) than the others, a known trade-off of this project's
- * "ship the full source, cap playback in JS" pattern (see
- * directives/prepare_media.md — avconvert has no trim controls, so cutting
- * the file itself isn't an option on this machine).
+ * door), same source set. The web copy is physically trimmed to the eight
+ * seconds used in this loop and all hero sources are fast-start H.264 at
+ * 1080x1920, avoiding the original 149MB aggregate media payload.
  *
  * Current loop order: interior poolview -> facade approach -> side
  * courtyard -> front entrance -> pool/flag waterfront -> back to poolview.
