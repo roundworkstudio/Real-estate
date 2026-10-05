@@ -40,11 +40,11 @@ function TourClip({ src, poster }: { src: string; poster: string }) {
       className="aspect-[9/16] w-full object-cover"
       src={src}
       poster={poster}
+      autoPlay
       muted
       loop
       playsInline
       preload="metadata"
-      controls
     />
   );
 }
