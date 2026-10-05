@@ -64,7 +64,7 @@ export function Footer() {
             className="inline-flex items-center gap-2 text-slate/60 hover:text-slate transition-colors"
             title="Send an email"
           >
-            <Mail size={20} />
+            <Mail size={20} className="text-blue-500" />
             <span>{PLACEHOLDER_EMAIL}</span>
           </a>
         </div>
