@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Sparkles, TrendingUp, KeyRound, Landmark } from "lucide-react";
+import { Sparkles, TrendingUp, KeyRound, Landmark, Search } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 /**
@@ -51,28 +51,27 @@ export function AISearchBar() {
             placeholder="Ask AI: &lsquo;Find off-market deals in Palm Jumeirah with 8%+ net yield under AED 5M&rsquo;…"
             className="w-full bg-transparent text-sm text-slate placeholder:text-slate/50 focus:outline-none sm:text-base"
           />
-          <Button
-            variant="primary"
-            className="shrink-0"
+          <button
             disabled
             title="Not wired yet — needs an LLM integration and real inventory to search over"
+            className="shrink-0 inline-flex items-center gap-2 rounded-full bg-sand/30 text-slate/70 hover:bg-sand/40 border border-sand/50 px-4 py-2.5 text-sm font-medium transition-colors"
           >
-            Search
-          </Button>
+            <Search size={18} />
+          </button>
         </div>
+      </div>
 
-        <div className="mt-4 flex flex-wrap gap-2 border-t border-slate/10 pt-4">
-          {quickFilters.map(({ icon: Icon, label, query: q }) => (
-            <button
-              key={label}
-              onClick={() => setQuery(q)}
-              className="inline-flex items-center gap-1.5 rounded-full bg-slate/5 px-3.5 py-1.5 text-sm text-slate transition-colors hover:bg-slate/10"
-            >
-              <Icon size={14} className="text-slate/50" />
-              {label}
-            </button>
-          ))}
-        </div>
+      <div className="mt-3 flex flex-wrap gap-2 px-0">
+        {quickFilters.map(({ icon: Icon, label, query: q }) => (
+          <button
+            key={label}
+            onClick={() => setQuery(q)}
+            className="inline-flex items-center gap-1.5 rounded-full bg-slate/5 px-3.5 py-1.5 text-sm text-slate transition-colors hover:bg-slate/10"
+          >
+            <Icon size={14} className="text-slate/50" />
+            {label}
+          </button>
+        ))}
       </div>
     </div>
   );
