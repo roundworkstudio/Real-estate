@@ -1,42 +1,19 @@
-/**
- * Listings index — first rough draft. Also fixes the Nav's "Properties"
- * link, which 404'd until now.
- */
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { PortfolioFilters } from "@/components/tools/PortfolioFilters";
-import { InsightCalculatorsAccordion } from "@/components/tools/InsightCalculatorsAccordion";
 import { sampleProperties } from "@/lib/sample-properties";
 
 export default function PropertiesPage() {
   return (
-    <main>
-      <div className="relative hidden bg-slate md:block">
-        <Nav />
-        {/* h-28, not h-20 (2026-09-27, explicit request) — the fixed
-            Nav pill's own top offset + padding put its vertical centre
-            ~57px down from the viewport top (see Nav.tsx's box-height
-            comment), which used to leave it sitting low in this block
-            with almost no margin underneath. This height centres it
-            instead. */}
-        <div className="h-28" />
-      </div>
-
-      <section className="mx-auto max-w-6xl px-6 py-16 sm:px-10">
-        <h1 className="text-3xl font-semibold text-slate sm:text-4xl">
-          Properties
-        </h1>
-        <p className="mt-3 max-w-lg text-slate/70">
-          Filter by strategy, status, or community.
-        </p>
-
-        <div className="mt-10">
-          <PortfolioFilters properties={sampleProperties} />
+    <main className="min-h-screen bg-canvas">
+      <div className="relative hidden bg-slate md:block"><Nav /><div className="h-28" /></div>
+      <section className="relative overflow-hidden bg-gradient-to-b from-mist/75 via-canvas to-canvas pt-28 md:pt-10">
+        <div className="pointer-events-none absolute -right-24 top-10 h-64 w-64 rounded-full bg-sovereign/20 blur-3xl" />
+        <div className="mx-auto max-w-6xl px-5 pb-14 sm:px-10 sm:pb-20">
+          <div className="max-w-3xl"><p className="text-sm font-medium text-royal">Property with Janvi</p><h1 className="mt-3 text-4xl font-semibold leading-[1.08] tracking-tight text-slate sm:text-5xl lg:text-6xl">Explore modern living spaces <span className="font-accent">near you.</span></h1><p className="mt-5 max-w-xl text-base leading-relaxed text-slate/65 sm:text-lg">A considered collection of homes, villas and investment opportunities across Abu Dhabi and Dubai.</p></div>
+          <div className="mt-10"><PortfolioFilters properties={sampleProperties} /></div>
         </div>
-
-        <InsightCalculatorsAccordion />
       </section>
-
       <Footer />
     </main>
   );

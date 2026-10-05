@@ -1,27 +1,10 @@
 /**
- * Property detail page — first rough draft. Section order follows
- * docs/property-page-spec.md at rough fidelity (per docs/what-worked.md,
- * "breadth before depth" — this page didn't exist before; it's roughed in
- * now specifically to host the two real tools requested: the investment
- * calculator and the before/after slider, both of which the spec places
- * here, not on the homepage).
- *
- * Not built yet, honestly stubbed rather than faked: location map (no geo
- * data source decided), similar properties (only two sample listings
- * exist total, so "similar" is meaningless right now), agent card (no
- * headshot/bio — see HANDOVER.md).
- *
- * The four deeper, optional tools (yield strategy, hold model, payment
- * plan, before/after) live under BouncyAccordion now (2026-09-27,
- * explicit request — "where applicable use this", the bouncy-accordion
- * block — see that component's own note), one open at a time, instead of
- * stacked flat — this page was already the longest single scroll on the
- * site before adding four more full tool sections to it. The primary
- * Investment analysis calculator stays outside the accordion, unhidden —
- * it's the one figure most buyers actually want first.
+ * Property detail page — modern design with investment tools.
+ * Features full-bleed hero image, modern stat strips, and investment analysis tools.
  */
 import { notFound } from "next/navigation";
-import { TrendingUp, LineChart, Landmark, Images } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft, Bath, BedDouble, Heart, Images, Landmark, LineChart, MapPin, MessageCircle, MoveUpRight, Phone, Ruler, TrendingUp } from "lucide-react";
 import { sampleProperties } from "@/lib/sample-properties";
 import { pricePerSqft } from "@/lib/types";
 import { developments } from "@/lib/developments";
@@ -59,22 +42,13 @@ export default async function PropertyDetailPage({
   const estimatedMonthlyRent = property.expectedAnnualRentAed
     ? Math.round(property.expectedAnnualRentAed / 12)
     : Math.round(property.priceAed * 0.05) / 12;
-  // Rough net-of-opex estimate for the hold model's flat cash-flow
-  // assumption (15% opex ratio) — not a per-listing figure, see
-  // lib/holdAppreciation.ts's simplification note.
   const estimatedAnnualNetCashFlow = Math.round(
     (property.expectedAnnualRentAed ?? property.priceAed * 0.05) * 0.85,
   );
 
-  // Same default the Payment plan & fee transparency section below uses —
-  // computed once so the hero stat strip and that calculator never
-  // disagree about which structure this listing is on.
   const paymentStructureId: PaymentStructureId =
     property.community === "Wadeem Gardens" ? "wadeem-adib" : "60-40";
 
-  // Real EOI/launch date, if this listing's community has one — sourced
-  // from the same developer metadata the /developments/[slug] page uses,
-  // not invented for this page.
   const development = developments.find(
     (d) => d.name === property.community && d.city === property.city,
   );
@@ -97,85 +71,82 @@ export default async function PropertyDetailPage({
     ...(eoiDate ? [{ value: eoiDate.date, label: eoiDate.label }] : []),
   ];
 
+  const priceInMillions = property.priceAed / 1_000_000;
+  const priceDisplay = priceInMillions >= 1
+    ? `AED ${priceInMillions.toFixed(1)}m`
+    : `AED ${(property.priceAed / 1000).toFixed(0)}k`;
+
   return (
-    <main>
+    <main className="min-h-screen bg-canvas">
       <div className="relative hidden bg-slate md:block">
         <Nav />
-        {/* h-28, not h-20 (2026-09-27, explicit request) — the fixed
-            Nav pill's own top offset + padding put its vertical centre
-            ~57px down from the viewport top (see Nav.tsx's box-height
-            comment), which used to leave it sitting low in this block
-            with almost no margin underneath. This height centres it
-            instead. */}
         <div className="h-28" />
       </div>
 
-      {/* 1. Gallery — full-bleed images, lightbox/keyboard nav not built
-          yet (rough fidelity). Only the first (spanning) image sets an
-          explicit aspect ratio at `sm:`+ — it's the tallest cell in the
-          row, so it's what determines the row's height. The others used
-          to carry their own `aspect-[4/3]`, which computes a fixed height
-          from their own width and ignores the grid's stretched row height
-          entirely — shorter than the spanning image, it left a visible gap
-          below them. `sm:h-full` instead stretches each to the row's
-          actual height, with `object-cover` doing the crop. */}
-      <section className="grid grid-cols-1 gap-1 sm:grid-cols-3">
-        {gallery.map((img, i) => (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            key={i}
-            src={img.src}
-            alt={img.alt}
-            className={`aspect-[4/3] w-full object-cover sm:aspect-auto sm:h-full ${i === 0 ? "sm:col-span-2 sm:aspect-[8/5] sm:h-auto" : ""}`}
-          />
-        ))}
-      </section>
-
-      <div className="mx-auto max-w-5xl px-6 sm:px-10">
-        {/* 2. Headline + 3. Key facts */}
-        <section className="py-10">
-          <div className="flex flex-wrap items-center gap-3 text-sm font-medium text-slate/60">
-            <span>
-              {property.community} · {property.city}
-            </span>
+      <section className="bg-gradient-to-b from-mist/70 to-canvas pt-28 md:pt-8">
+        <div className="mx-auto max-w-6xl px-5 pb-8 sm:px-10 sm:pb-12">
+          <div className="mb-5 flex items-center justify-between">
+            <Link href="/properties" className="inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-sm text-slate transition hover:bg-white"><ArrowLeft size={16} /> Back to properties</Link>
             <StatusBadge status={property.status} />
           </div>
-          <h1 className="mt-2 text-3xl font-semibold text-slate sm:text-4xl">
-            {property.title}
-          </h1>
-          <p className="mt-2 max-w-2xl text-slate/70">
-            {property.beds} bed
-            {property.baths !== undefined && ` · ${property.baths} bath`} ·{" "}
-            {property.sqft.toLocaleString("en-AE")} sqft
-            {property.plotSqft !== undefined &&
-              ` on a ${property.plotSqft.toLocaleString("en-AE")} sqft plot`}
-          </p>
-          <div className="mt-8">
-            <StatStrip items={heroStats} />
+          <div className="relative overflow-hidden rounded-[2rem] bg-slate shadow-[0_25px_65px_-35px_rgba(58,45,40,.8)] sm:rounded-[2.5rem]">
+            <div className="relative aspect-[4/5] max-h-[680px] sm:aspect-[16/9]">
+              <img src={gallery[0]?.src ?? property.image.src} alt={gallery[0]?.alt ?? property.image.alt} className="h-full w-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate/90 via-slate/10 to-transparent" />
+              <button type="button" aria-label="Add to wishlist" className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-canvas/85 text-slate backdrop-blur-sm sm:right-6 sm:top-6"><Heart size={19} /></button>
+              <div className="absolute bottom-5 left-5 right-5 text-white sm:bottom-8 sm:left-8 sm:right-8">
+                <div className="mb-2 flex items-center gap-1.5 text-sm text-white/75"><MapPin size={15} /> {property.community}, {property.city}</div>
+                <h1 className="max-w-3xl text-3xl font-semibold leading-tight sm:text-5xl">{property.title}</h1>
+                <div className="mt-4 flex flex-wrap gap-2 text-sm text-white/90"><span className="rounded-full bg-white/15 px-3 py-2 backdrop-blur-sm"><BedDouble className="mr-1 inline" size={15} /> {property.beds} beds</span>{property.baths !== undefined && <span className="rounded-full bg-white/15 px-3 py-2 backdrop-blur-sm"><Bath className="mr-1 inline" size={15} /> {property.baths} baths</span>}<span className="rounded-full bg-white/15 px-3 py-2 backdrop-blur-sm"><Ruler className="mr-1 inline" size={15} /> {property.sqft.toLocaleString("en-AE")} sqft</span></div>
+              </div>
+            </div>
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">{[...gallery.slice(1, 4)].map((img) => <img key={img.src} src={img.src} alt={img.alt} className="h-24 w-full rounded-2xl object-cover sm:h-32" />)}</div>
+        </div>
+      </section>
+
+      <div className="mx-auto max-w-6xl px-5 sm:px-10">
+        <section className="grid gap-5 border-b border-slate/10 py-5 sm:grid-cols-[1fr_auto] sm:items-center sm:py-8">
+          <div><p className="text-sm text-slate/55">Guide price</p><p className="mt-1 text-3xl font-semibold text-slate sm:text-4xl">{priceDisplay}</p></div>
+          <a href="#investment" className="inline-flex items-center justify-center gap-2 rounded-full bg-royal-deep px-5 py-3 text-sm font-medium text-white transition hover:bg-royal">View investment tools <MoveUpRight size={16} /></a>
+        </section>
+
+
+        {/* Stats Section */}
+        <section className="py-10 border-b border-slate/10">
+          <StatStrip items={heroStats} />
+        </section>
+
+        {/* Gallery Grid */}
+        <section className="py-10">
+          <h2 className="text-2xl font-semibold text-slate mb-6">Inside the property</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {gallery.slice(1).map((img, i) => (
+              <img
+                key={i}
+                src={img.src}
+                alt={img.alt}
+                className="w-full aspect-[4/3] object-cover rounded-2xl shadow-md"
+              />
+            ))}
           </div>
         </section>
 
-        {/* 4. Description — LAYOUT FILLER, not the agent's own words. See
-            CONTENT-CHECKLIST.md for the real copy this stands in for. */}
-        <section className="border-t border-slate/10 py-10">
-          <h2 className="text-xl font-semibold text-slate">Description</h2>
-          <p className="mt-3 max-w-2xl text-sm text-slate/70">
-            Placeholder description text standing in for the agent&apos;s
-            own words — three or four sentences covering the property, the
-            building, and what makes it worth viewing, at roughly the
-            length the real copy is expected to run.
+        {/* Description */}
+        <section id="investment" className="border-t border-slate/10 py-10">
+          <h2 className="text-xl font-semibold text-slate">About this property</h2>
+          <p className="mt-4 max-w-2xl text-base text-slate/70 leading-relaxed">
+            Placeholder description text standing in for the agent&apos;s own words — three or four sentences covering the property, the building, and what makes it worth viewing, at roughly the length the real copy is expected to run.
           </p>
         </section>
 
-        {/* 6. Investment analysis — the real tool. */}
+        {/* Investment Analysis */}
         <section className="border-t border-slate/10 py-10">
-          <h2 className="text-xl font-semibold text-slate">
-            Investment analysis
-          </h2>
+          <h2 className="text-xl font-semibold text-slate">Investment analysis</h2>
           <p className="mt-2 max-w-2xl text-sm text-slate/60">
             Adjust the assumptions — every figure below recalculates live.
           </p>
-          <div className="mt-6">
+          <div className="mt-8">
             <InvestmentCalculator
               priceAed={property.priceAed}
               estimatedMonthlyRentAed={estimatedMonthlyRent}
@@ -183,12 +154,7 @@ export default async function PropertyDetailPage({
           </div>
         </section>
 
-        {/* Analytics & Insight Suite — yield strategy, 5-year hold model,
-            payment plan and fee transparency, plus before/after. Deeper,
-            optional layer on top of the Investment analysis calculator
-            above, not a replacement for it — collapsed into an accordion,
-            one open at a time, rather than four more full sections
-            stacked onto an already-long page. */}
+        {/* Tools & Insights */}
         <CurrencyProvider>
           <div className="border-t border-slate/10">
             <CurrencyVisaToolbar priceAed={property.priceAed} />
@@ -239,8 +205,6 @@ export default async function PropertyDetailPage({
                       } satisfies BouncyAccordionItem,
                     ]
                   : []),
-                // Before & after doesn't apply to an off-plan property
-                // with nothing built yet to renovate.
                 ...(property.status !== "off-plan"
                   ? [
                       {
@@ -272,31 +236,38 @@ export default async function PropertyDetailPage({
         </CurrencyProvider>
       </div>
 
-      {/* 9. Location — real map, no API key needed. See LocationMap's
-          note: this is a stopgap embed, swap for Mapbox once there's a
-          token. */}
-      <section className="mx-auto max-w-5xl px-6 py-10 sm:px-10">
+      {/* Location */}
+      <section className="mx-auto max-w-5xl px-6 py-10 sm:px-10 border-t border-slate/10">
         <h2 className="text-xl font-semibold text-slate">Location</h2>
         <div className="mt-6">
           <LocationMap query={`${property.community}, ${property.city}`} />
         </div>
         <p className="mt-4 max-w-2xl text-sm text-slate/70">
-          Placeholder neighbourhood notes — schools, transport, and amenity
-          copy for {property.community} goes here, pulled from the
-          matching /areas guide once per-area content exists (the /areas
-          index itself is built, but every card on it is still a dead end).
+          Placeholder neighbourhood notes — schools, transport, and amenity copy for {property.community} goes here.
         </p>
       </section>
 
-      <section className="mx-auto max-w-5xl px-6 py-10 sm:px-10">
-        <div className="rounded-2xl bg-sand p-8 text-center">
-          <h2 className="text-xl font-semibold text-slate">
-            Interested in this property?
-          </h2>
-          <div className="mt-4">
-            <Button href={PLACEHOLDER_TEL_URL} variant="primary">
-              Book a call
-            </Button>
+      {/* CTA Section - Modern Design */}
+      <section className="mx-auto max-w-5xl px-6 py-16 sm:px-10">
+        <div className="rounded-3xl bg-gradient-to-br from-royal-deep/10 to-royal/5 border border-royal/20 p-10 sm:p-12">
+          <div className="max-w-2xl">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate mb-2">
+              Interested in this property?
+            </h2>
+            <p className="text-slate/70 mb-8">
+              Let&apos;s discuss how this investment fits your portfolio. Schedule a call or reach out on WhatsApp for immediate assistance.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button href={PLACEHOLDER_TEL_URL} variant="primary" className="flex items-center justify-center gap-2">
+                <Phone size={18} />
+                <span>Book a call</span>
+              </Button>
+              <Button href="https://wa.me/971555881148" variant="light" className="flex items-center justify-center gap-2">
+                <MessageCircle size={18} />
+                <span>Chat on WhatsApp</span>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
