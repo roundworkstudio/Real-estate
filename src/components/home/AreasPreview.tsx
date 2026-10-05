@@ -81,7 +81,7 @@ const areas: AreaGuide[] = [
 
 export function AreasPreview() {
   return (
-    <section className="px-6 py-10 sm:px-10 sm:py-20">
+    <section className="px-6 py-6 sm:px-10 sm:py-20">
       <Reveal>
         <h2 className="text-2xl font-semibold text-slate sm:text-3xl">
           Area guides

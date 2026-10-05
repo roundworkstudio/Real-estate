@@ -13,7 +13,7 @@ import { developments, developmentStats } from "@/lib/developments";
  */
 export function FeaturedProjects() {
   return (
-    <section className="px-6 py-10 sm:px-10 sm:py-20">
+    <section className="px-6 py-6 sm:px-10 sm:py-20">
       <Reveal as="div">
         <h2 className="text-2xl font-semibold text-slate sm:text-3xl">
           Featured projects

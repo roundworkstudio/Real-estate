@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/Button";
 
 export function ValuationPrompt() {
   return (
-    <section className="px-6 py-10 sm:px-10 sm:py-20">
+    <section className="px-6 py-6 sm:px-10 sm:py-20">
       <DeepPanel>
         <div className="flex flex-col items-start gap-6 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <div>

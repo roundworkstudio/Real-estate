@@ -51,7 +51,7 @@ function TourClip({ src, poster }: { src: string; poster: string }) {
 
 export function VideoTour() {
   return (
-    <section className="px-6 py-10 sm:px-10 sm:py-20">
+    <section className="px-6 py-6 sm:px-10 sm:py-20">
       <Reveal>
         <h2 className="text-2xl font-semibold text-slate sm:text-3xl">
           See it before you visit
