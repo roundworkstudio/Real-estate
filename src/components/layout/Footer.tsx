@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Mail } from "lucide-react";
 import { PLACEHOLDER_PHONE_NUMBER_DISPLAY, PLACEHOLDER_EMAIL, PLACEHOLDER_WHATSAPP_URL } from "@/lib/site-config";
 
 function WhatsAppLogo({ className }: { className?: string }) {
@@ -63,7 +64,7 @@ export function Footer() {
             className="inline-flex items-center gap-2 text-slate/60 hover:text-slate transition-colors"
             title="Send an email"
           >
-            <iCloudMailIcon className="h-5 w-5" />
+            <Mail size={20} />
             <span>{PLACEHOLDER_EMAIL}</span>
           </a>
         </div>
