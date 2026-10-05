@@ -34,6 +34,7 @@ export function InsightToolCard({
   imageSrc,
   imageAlt,
   areaGuideStyle = false,
+  disableTilt = false,
 }: {
   icon: LucideIcon;
   title: string;
@@ -42,10 +43,11 @@ export function InsightToolCard({
   imageSrc?: string;
   imageAlt?: string;
   areaGuideStyle?: boolean;
+  disableTilt?: boolean;
 }) {
   if (areaGuideStyle) {
     return (
-      <GlassCard className="group h-full min-h-[390px] overflow-hidden rounded-2xl shadow-card">
+      <GlassCard disabled={disableTilt} className="group h-full min-h-[390px] overflow-hidden rounded-2xl shadow-card">
         {imageSrc ? (
           <Image
             src={imageSrc}
@@ -94,6 +96,7 @@ export function InsightToolCard({
 
   return (
     <GlassCard
+      disabled={disableTilt}
       className="metal-edge group flex flex-col justify-between overflow-hidden rounded-[28px] bg-canvas shadow-card"
     >
       <div className="p-4">

@@ -118,6 +118,7 @@ export function InvestmentToolsTeaser() {
                   imageSrc={tool.imageSrc}
                   imageAlt={tool.imageAlt}
                   areaGuideStyle
+                  disableTilt
                 />
               </div>
             ))}
