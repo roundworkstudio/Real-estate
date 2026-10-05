@@ -6,6 +6,27 @@ import { animate } from "motion";
 import { navLinks } from "@/lib/nav-links";
 import { prefersReducedMotion } from "@/lib/motion";
 
+/** A tiny horizontal Burj Khalifa skyline marker for the active tab. The
+ * marker gets taller as the selected item moves right, so the tab bar has a
+ * quiet sense of progression without putting a bubble behind the label. */
+function BurjMarker({ level }: { level: number }) {
+  const height = 15 + level * 3;
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 60 24"
+      preserveAspectRatio="none"
+      className="pointer-events-none absolute bottom-1 left-1/2 w-[52px] -translate-x-1/2 text-sovereign/80 transition-[height,opacity] duration-500 ease-out"
+      style={{ height: `${height}px` }}
+    >
+      <path
+        fill="currentColor"
+        d="M1 23v-5h5v-3h6v5h5V11h5v-3h4v15h3V7h3V4h2V1h1v3h2v3h2v16h4v-7h5v3h5v-5h5v9H1Z"
+      />
+    </svg>
+  );
+}
+
 /**
  * Bottom pill nav for mobile, adapted from a Uiverse.io menu by mymiamo —
  * same glass-look language as Nav.tsx (translucent matcha tint + inset
@@ -122,19 +143,20 @@ export function MobileTabBar() {
         className="glass-nav flex gap-0.5 overflow-x-auto rounded-full border border-white/10 bg-royal-deep/90 p-1.5 no-scrollbar min-[350px]:justify-center"
         style={{ paddingBottom: "calc(0.375rem + env(safe-area-inset-bottom))" }}
       >
-        {navLinks.map((l) => {
+        {navLinks.map((l, index) => {
           const active = pathname === l.href || pathname?.startsWith(`${l.href}/`);
           const Icon = l.icon;
           return (
             <a
               key={l.href}
               href={l.href}
-              className={`flex w-[61px] shrink-0 flex-col items-center gap-1 rounded-full py-2 text-[11px] font-medium whitespace-nowrap transition-colors ${
-                active ? "bg-white/15 text-white" : "text-white/70 active:bg-white/10"
+              className={`relative flex w-[61px] shrink-0 flex-col items-center gap-1 rounded-full py-2 text-[11px] font-medium whitespace-nowrap transition-colors ${
+                active ? "text-white" : "text-white/70 active:bg-white/10"
               }`}
             >
-              <Icon size={18} strokeWidth={1.75} />
-              <span>{l.label}</span>
+              {active && <BurjMarker level={index} />}
+              <Icon className="relative z-10" size={18} strokeWidth={1.75} />
+              <span className="relative z-10">{l.label}</span>
             </a>
           );
         })}
