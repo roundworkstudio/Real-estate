@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { calculate } from "@/lib/mortgage";
+import { RangeSlider } from "@/components/ui/RangeSlider";
 
 /**
  * Interactive pro forma / sensitivity simulator. All outputs are live
@@ -10,44 +11,6 @@ import { calculate } from "@/lib/mortgage";
  */
 function formatAed(n: number): string {
   return `AED ${Math.round(n).toLocaleString("en-AE")}`;
-}
-
-function Slider({
-  label,
-  value,
-  onChange,
-  min,
-  max,
-  step,
-  displayValue,
-}: {
-  label: string;
-  value: number;
-  onChange: (n: number) => void;
-  min: number;
-  max: number;
-  step: number;
-  displayValue: string;
-}) {
-  return (
-    <label className="block">
-      <div className="flex items-baseline justify-between text-sm">
-        <span className="text-white/70">{label}</span>
-        <span className="font-medium tabular-nums text-white">
-          {displayValue}
-        </span>
-      </div>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="mt-2 h-1.5 w-full cursor-pointer appearance-none rounded-full bg-white/20 accent-white"
-      />
-    </label>
-  );
 }
 
 function Output({ label, value, tone }: { label: string; value: string; tone?: "positive" }) {
@@ -92,7 +55,7 @@ export function InvestmentCalculator({
   return (
     <div className="grid grid-cols-1 gap-8 rounded-2xl bg-royal-deep p-6 text-white shadow-card sm:grid-cols-2 sm:p-8">
       <div className="space-y-6">
-        <Slider
+        <RangeSlider
           label="Down payment"
           value={downPaymentPercent}
           onChange={setDownPaymentPercent}
@@ -100,8 +63,9 @@ export function InvestmentCalculator({
           max={100}
           step={5}
           displayValue={`${downPaymentPercent}%`}
+          tone="dark"
         />
-        <Slider
+        <RangeSlider
           label="Interest rate"
           value={interestRatePercent}
           onChange={setInterestRatePercent}
@@ -109,8 +73,9 @@ export function InvestmentCalculator({
           max={8}
           step={0.1}
           displayValue={`${interestRatePercent.toFixed(1)}%`}
+          tone="dark"
         />
-        <Slider
+        <RangeSlider
           label="Vacancy rate"
           value={vacancyRatePercent}
           onChange={setVacancyRatePercent}
@@ -118,8 +83,9 @@ export function InvestmentCalculator({
           max={20}
           step={1}
           displayValue={`${vacancyRatePercent}%`}
+          tone="dark"
         />
-        <Slider
+        <RangeSlider
           label="Monthly rent"
           value={monthlyRentAed}
           onChange={setMonthlyRentAed}
@@ -127,6 +93,7 @@ export function InvestmentCalculator({
           max={Math.round(estimatedMonthlyRentAed * 1.5)}
           step={500}
           displayValue={formatAed(monthlyRentAed)}
+          tone="dark"
         />
       </div>
 

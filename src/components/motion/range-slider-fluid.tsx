@@ -22,6 +22,8 @@ export interface FluidSliderProps extends SliderOptions {
   /** Formats the value shown on the right. */
   format?: (value: number) => string;
   className?: string;
+  /** Colour context for the same pill slider on light or deep panels. */
+  tone?: "dark" | "light";
 }
 
 /**
@@ -35,6 +37,7 @@ export function FluidSlider({
   // only make the label and the announcement disagree with aria-valuenow.
   format = (v) => `${v}%`,
   className,
+  tone = "light",
   ...options
 }: FluidSliderProps) {
   const reduce = useReducedMotion();
@@ -68,7 +71,8 @@ export function FluidSlider({
       animate={reduce ? undefined : { scale: dragging ? 1.03 : 1 }}
       transition={SPRING_PRESS}
       className={cn(
-        "relative flex h-12 w-full touch-none overflow-hidden rounded-full bg-slate/10 shadow-[inset_0_1px_2px_rgb(46_36_32_/_0.08)]",
+        "relative flex h-12 w-full touch-none overflow-hidden rounded-full shadow-[inset_0_1px_2px_rgb(46_36_32_/_0.08)]",
+        tone === "dark" ? "bg-white/10" : "bg-slate/10",
         TOUCH_GESTURE_CLASS,
         options.disabled
           ? "pointer-events-none opacity-50"
@@ -77,7 +81,7 @@ export function FluidSlider({
       )}
     >
       {/* uncovered label — sits on the muted track */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-5 text-sm font-medium text-slate">
+      <div className={cn("pointer-events-none absolute inset-0 flex items-center justify-between px-5 text-sm font-medium", tone === "dark" ? "text-white/75" : "text-slate")}>
         {row}
       </div>
 
