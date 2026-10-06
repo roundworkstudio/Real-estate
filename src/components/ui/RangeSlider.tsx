@@ -17,6 +17,7 @@ export function RangeSlider({
   step,
   displayValue,
   tone = "dark",
+  compact = false,
 }: {
   label: string;
   value: number;
@@ -26,6 +27,7 @@ export function RangeSlider({
   step: number;
   displayValue: string;
   tone?: "dark" | "light";
+  compact?: boolean;
 }) {
-  return <FluidSlider label={label} value={value} onValueChange={onChange} min={min} max={max} step={step} format={() => displayValue} tone={tone} />;
+  return <FluidSlider label={label} value={value} onValueChange={onChange} min={min} max={max} step={step} format={() => displayValue} tone={tone} compact={compact} />;
 }

@@ -19,10 +19,14 @@ export function PaymentPlanCalculator({
   priceAed,
   city,
   defaultStructureId = "60-40",
+  glass = false,
+  compact = false,
 }: {
   priceAed: number;
   city: Property["city"];
   defaultStructureId?: PaymentStructureId;
+  glass?: boolean;
+  compact?: boolean;
 }) {
   const { format } = useCurrency();
   const [structureId, setStructureId] = useState<PaymentStructureId>(defaultStructureId);
@@ -38,14 +42,16 @@ export function PaymentPlanCalculator({
   );
 
   return (
-    <div className="rounded-2xl bg-canvas p-6 shadow-card sm:p-8">
+    <div className={`min-w-0 overflow-hidden rounded-2xl border ${compact ? "p-4" : "p-6"} backdrop-blur-xl sm:p-8 ${glass
+      ? "border-white/70 bg-white/35 shadow-[inset_0_1px_0_rgba(255,255,255,.72),0_18px_45px_-28px_rgba(58,45,40,.55)]"
+      : "border-transparent bg-canvas shadow-card"}`}>
       <div className="flex flex-wrap gap-2">
         {STRUCTURE_IDS.map((id) => (
           <button
             key={id}
             type="button"
             onClick={() => setStructureId(id)}
-            className={`rounded-full px-4 py-2 text-sm font-medium capitalize transition-colors ${
+            className={`rounded-full px-3 py-1.5 text-xs font-medium capitalize transition-colors sm:px-4 sm:py-2 sm:text-sm ${
               structureId === id ? "bg-royal text-white" : "bg-sand text-slate/70 hover:text-slate"
             }`}
           >
@@ -54,7 +60,7 @@ export function PaymentPlanCalculator({
         ))}
       </div>
 
-      <div className="mt-8 grid grid-cols-1 gap-10 sm:grid-cols-2">
+      <div className={`mt-6 grid grid-cols-1 ${compact ? "gap-6" : "gap-10"} sm:grid-cols-2`}>
         <div>
           <h3 className="text-sm font-medium text-slate">Capital outlay schedule</h3>
           <ol className="mt-4 space-y-4 border-l border-slate/10 pl-5">
@@ -89,7 +95,7 @@ export function PaymentPlanCalculator({
             />
           </div>
 
-          <div className="mt-6 rounded-2xl bg-royal-deep p-5 text-white">
+          <div className={`mt-6 rounded-2xl ${compact ? "p-4" : "p-5"} text-white ${glass ? "border border-white/20 bg-royal-deep/75 backdrop-blur-xl" : "bg-royal-deep"}`}>
             <div className="text-xs text-white/60">
               Total initial capital required to close (booking + upfront fees)
             </div>

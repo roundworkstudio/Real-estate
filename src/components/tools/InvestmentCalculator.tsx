@@ -13,11 +13,11 @@ function formatAed(n: number): string {
   return `AED ${Math.round(n).toLocaleString("en-AE")}`;
 }
 
-function Output({ label, value, tone }: { label: string; value: string; tone?: "positive" }) {
+function Output({ label, value, tone, compact }: { label: string; value: string; tone?: "positive"; compact?: boolean }) {
   return (
     <div>
       <div
-        className={`text-2xl font-semibold tabular-nums sm:text-3xl ${
+        className={`${compact ? "text-xl" : "text-2xl"} font-semibold tabular-nums sm:text-3xl ${
           tone === "positive" ? "text-sovereign" : "text-white"
         }`}
       >
@@ -31,9 +31,13 @@ function Output({ label, value, tone }: { label: string; value: string; tone?: "
 export function InvestmentCalculator({
   priceAed,
   estimatedMonthlyRentAed,
+  glass = false,
+  compact = false,
 }: {
   priceAed: number;
   estimatedMonthlyRentAed: number;
+  glass?: boolean;
+  compact?: boolean;
 }) {
   const [downPaymentPercent, setDownPaymentPercent] = useState(20);
   const [interestRatePercent, setInterestRatePercent] = useState(4.5);
@@ -53,8 +57,10 @@ export function InvestmentCalculator({
   );
 
   return (
-    <div className="grid grid-cols-1 gap-8 rounded-2xl bg-royal-deep p-6 text-white shadow-card sm:grid-cols-2 sm:p-8">
-      <div className="space-y-6">
+    <div className={`min-w-0 overflow-hidden grid grid-cols-1 ${compact ? "gap-5 p-4" : "gap-8 p-6"} rounded-2xl border text-white backdrop-blur-xl sm:grid-cols-2 sm:p-8 ${glass
+      ? "border-white/20 bg-royal-deep/75 shadow-[inset_0_1px_0_rgba(255,255,255,.2),0_18px_45px_-28px_rgba(58,45,40,.65)]"
+      : "border-transparent bg-royal-deep shadow-card"}`}>
+      <div className={compact ? "space-y-4" : "space-y-6"}>
         <RangeSlider
           label="Down payment"
           value={downPaymentPercent}
@@ -64,6 +70,7 @@ export function InvestmentCalculator({
           step={5}
           displayValue={`${downPaymentPercent}%`}
           tone="dark"
+          compact={compact}
         />
         <RangeSlider
           label="Interest rate"
@@ -74,6 +81,7 @@ export function InvestmentCalculator({
           step={0.1}
           displayValue={`${interestRatePercent.toFixed(1)}%`}
           tone="dark"
+          compact={compact}
         />
         <RangeSlider
           label="Vacancy rate"
@@ -84,6 +92,7 @@ export function InvestmentCalculator({
           step={1}
           displayValue={`${vacancyRatePercent}%`}
           tone="dark"
+          compact={compact}
         />
         <RangeSlider
           label="Monthly rent"
@@ -94,18 +103,20 @@ export function InvestmentCalculator({
           step={500}
           displayValue={formatAed(monthlyRentAed)}
           tone="dark"
+          compact={compact}
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-6 border-t border-white/10 pt-6 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0">
-        <Output label="Cap rate" value={`${results.capRatePercent.toFixed(1)}%`} tone="positive" />
+      <div className={`grid grid-cols-2 ${compact ? "gap-4 pt-4" : "gap-6 pt-6"} border-t border-white/10 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0`}>
+        <Output compact={compact} label="Cap rate" value={`${results.capRatePercent.toFixed(1)}%`} tone="positive" />
         <Output
+          compact={compact}
           label="Cash-on-cash return"
           value={`${results.cashOnCashReturnPercent.toFixed(1)}%`}
           tone={results.cashOnCashReturnPercent >= 0 ? "positive" : undefined}
         />
-        <Output label="Monthly cash flow" value={formatAed(results.monthlyCashFlowAed)} />
-        <Output label="Down payment" value={formatAed(results.downPaymentAed)} />
+        <Output compact={compact} label="Monthly cash flow" value={formatAed(results.monthlyCashFlowAed)} />
+        <Output compact={compact} label="Down payment" value={formatAed(results.downPaymentAed)} />
         <div className="col-span-2 text-xs text-white/40">
           25-year amortizing mortgage assumed. Net operating income equals
           rent after vacancy — service charges and other running costs

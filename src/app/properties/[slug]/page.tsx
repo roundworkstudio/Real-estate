@@ -4,21 +4,19 @@
  */
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Bath, BedDouble, Heart, Images, Landmark, LineChart, MapPin, MessageCircle, MoveUpRight, Phone, Ruler, TrendingUp } from "lucide-react";
+import { ArrowLeft, Bath, BedDouble, Heart, Images, MapPin, MessageCircle, MoveUpRight, Phone, Ruler } from "lucide-react";
 import { sampleProperties } from "@/lib/sample-properties";
 import { pricePerSqft } from "@/lib/types";
 import { developments } from "@/lib/developments";
 import { PAYMENT_STRUCTURES, type PaymentStructureId } from "@/lib/paymentPlan";
 import { StatusBadge } from "@/components/ui/Badge";
 import { StatStrip, type StatStripItem } from "@/components/ui/StatStrip";
-import { BouncyAccordion, type BouncyAccordionItem } from "@/components/ui/BouncyAccordion";
 import { InvestmentCalculator } from "@/components/tools/InvestmentCalculator";
-import { BeforeAfterSlider } from "@/components/tools/BeforeAfterSlider";
 import { YieldSimulator } from "@/components/tools/YieldSimulator";
 import { HoldAppreciationModel } from "@/components/tools/HoldAppreciationModel";
 import { PaymentPlanCalculator } from "@/components/tools/PaymentPlanCalculator";
-import { CurrencyVisaToolbar } from "@/components/tools/CurrencyVisaToolbar";
 import { CurrencyProvider } from "@/lib/currency-context";
+import { PropertyDetailTools } from "@/components/tools/PropertyDetailTools";
 import { LocationMap } from "@/components/ui/LocationMap";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
@@ -106,16 +104,88 @@ export default async function PropertyDetailPage({
         </div>
       </section>
 
-      <MobilePropertyHero
-        gallery={gallery}
-        title={property.title}
-        community={property.community}
-        city={property.city}
-        priceDisplay={priceDisplay}
-        beds={property.beds}
-        status={property.status}
-        phoneUrl={PLACEHOLDER_TEL_URL}
-      />
+      <CurrencyProvider>
+        <MobilePropertyHero
+          gallery={gallery}
+          title={property.title}
+          community={property.community}
+          city={property.city}
+          priceDisplay={priceDisplay}
+          beds={property.beds}
+          status={property.status}
+          phoneUrl={PLACEHOLDER_TEL_URL}
+          mobileSections={{
+            About: (
+              <section>
+                <h2 className="text-xl font-semibold text-slate">About this property</h2>
+                <p className="mt-4 text-base leading-relaxed text-slate/70">
+                  Placeholder description text standing in for the agent&apos;s own words — three or four sentences covering the property, the building, and what makes it worth viewing, at roughly the length the real copy is expected to run.
+                </p>
+              </section>
+            ),
+            "Investment analysis": (
+              <section>
+                <h2 className="text-xl font-semibold text-slate">Investment analysis</h2>
+                <p className="mt-2 text-sm text-slate/60">
+                  Adjust the assumptions — every figure below recalculates live.
+                </p>
+                <div className="mt-5">
+                  <InvestmentCalculator
+                    priceAed={property.priceAed}
+                    estimatedMonthlyRentAed={estimatedMonthlyRent}
+                    glass
+                    compact
+                  />
+                </div>
+              </section>
+            ),
+            "Yield strategy simulator": (
+              <section>
+                <h2 className="text-xl font-semibold text-slate">Yield strategy simulator</h2>
+                <p className="mt-2 text-sm text-slate/60">
+                  Compare a short-term holiday let against a standard long-term lease.
+                </p>
+                <div className="mt-5">
+                  <YieldSimulator priceAed={property.priceAed} sqft={property.sqft} glass compact />
+                </div>
+              </section>
+            ),
+            "5 year hold & appreciation": (
+              <section>
+                <h2 className="text-xl font-semibold text-slate">5-year hold &amp; appreciation</h2>
+                <p className="mt-2 text-sm text-slate/60">
+                  Project equity growth over a hold period under a market scenario.
+                </p>
+                <div className="mt-5">
+                  <HoldAppreciationModel
+                    purchasePriceAed={property.priceAed}
+                    annualNetCashFlowAed={estimatedAnnualNetCashFlow}
+                    glass
+                    compact
+                  />
+                </div>
+              </section>
+            ),
+            "Payment plan & fee transparency": (
+              <section>
+                <h2 className="text-xl font-semibold text-slate">Payment plan &amp; fee transparency</h2>
+                <p className="mt-2 text-sm text-slate/60">
+                  Review capital outlay by milestone and the upfront fees due at closing.
+                </p>
+                <div className="mt-5">
+                  <PaymentPlanCalculator
+                    priceAed={property.priceAed}
+                    city={property.city}
+                    defaultStructureId={paymentStructureId}
+                    glass
+                    compact
+                  />
+                </div>
+              </section>
+            ),
+          }}
+        />
+      </CurrencyProvider>
 
       <section className="hidden">
         <div className="mx-auto max-w-md">
@@ -240,112 +310,22 @@ export default async function PropertyDetailPage({
           </div>
         </section>
 
-        {/* Description */}
-        <section id="investment" className="border-t border-slate/10 py-10">
-          <h2 className="text-xl font-semibold text-slate">About this property</h2>
-          <p className="mt-4 max-w-2xl text-base text-slate/70 leading-relaxed">
-            Placeholder description text standing in for the agent&apos;s own words — three or four sentences covering the property, the building, and what makes it worth viewing, at roughly the length the real copy is expected to run.
-          </p>
-        </section>
-
-        {/* Investment Analysis */}
-        <section className="border-t border-slate/10 py-10">
-          <h2 className="text-xl font-semibold text-slate">Investment analysis</h2>
-          <p className="mt-2 max-w-2xl text-sm text-slate/60">
-            Adjust the assumptions — every figure below recalculates live.
-          </p>
-          <div className="mt-8">
-            <InvestmentCalculator
-              priceAed={property.priceAed}
-              estimatedMonthlyRentAed={estimatedMonthlyRent}
-            />
-          </div>
-        </section>
-
-        {/* Tools & Insights */}
-        <CurrencyProvider>
-          <div className="border-t border-slate/10">
-            <CurrencyVisaToolbar priceAed={property.priceAed} />
-          </div>
-
-          <div className="py-10">
-            <BouncyAccordion
-              defaultValue="yield-strategy"
-              items={[
-                {
-                  id: "yield-strategy",
-                  title: "Yield strategy simulator",
-                  description:
-                    "Compare a short-term holiday let against a standard long-term lease for this property.",
-                  icon: <TrendingUp size={18} strokeWidth={1.75} />,
-                  content: (
-                    <YieldSimulator priceAed={property.priceAed} sqft={property.sqft} />
-                  ),
-                },
-                {
-                  id: "hold-appreciation",
-                  title: "5-year hold & appreciation model",
-                  description:
-                    "Project equity growth over a hold period under a market scenario.",
-                  icon: <LineChart size={18} strokeWidth={1.75} />,
-                  content: (
-                    <HoldAppreciationModel
-                      purchasePriceAed={property.priceAed}
-                      annualNetCashFlowAed={estimatedAnnualNetCashFlow}
-                    />
-                  ),
-                },
-                ...(property.status === "off-plan"
-                  ? [
-                      {
-                        id: "payment-plan",
-                        title: "Payment plan & fee transparency",
-                        description:
-                          "Capital outlay by milestone and every upfront fee due at closing.",
-                        icon: <Landmark size={18} strokeWidth={1.75} />,
-                        content: (
-                          <PaymentPlanCalculator
-                            priceAed={property.priceAed}
-                            city={property.city}
-                            defaultStructureId={paymentStructureId}
-                          />
-                        ),
-                      } satisfies BouncyAccordionItem,
-                    ]
-                  : []),
-                ...(property.status !== "off-plan"
-                  ? [
-                      {
-                        id: "before-after",
-                        title: "Before & after",
-                        description: "Sample renovation, illustrative only.",
-                        icon: <Images size={18} strokeWidth={1.75} />,
-                        content: (
-                          <div className="max-w-2xl">
-                            <BeforeAfterSlider
-                              beforeSrc={gallery[1]?.src ?? property.image.src}
-                              afterSrc={gallery[0]?.src ?? property.image.src}
-                              capex={[
-                                { label: "Kitchen refit", amount: 85_000 },
-                                { label: "Flooring", amount: 42_000 },
-                                { label: "Landscaping", amount: 28_000 },
-                              ]}
-                              rentIncreaseAed={3_200}
-                              isSample
-                            />
-                          </div>
-                        ),
-                      } satisfies BouncyAccordionItem,
-                    ]
-                  : []),
-              ]}
-            />
-          </div>
-        </CurrencyProvider>
+        <PropertyDetailTools
+          priceAed={property.priceAed}
+          priceDisplay={priceDisplay}
+          sqft={property.sqft}
+          title={property.title}
+          community={property.community}
+          status={property.status}
+          estimatedMonthlyRent={estimatedMonthlyRent}
+          estimatedAnnualNetCashFlow={estimatedAnnualNetCashFlow}
+          city={property.city}
+          paymentStructureId={paymentStructureId}
+        />
       </div>
 
       {/* Location */}
-      <section className="mx-auto max-w-5xl px-6 py-10 sm:px-10 border-t border-slate/10">
+      <section className="mx-auto max-w-5xl border-t border-slate/10 px-6 py-10 sm:px-10">
         <h2 className="text-xl font-semibold text-slate">Location</h2>
         <div className="mt-6">
           <LocationMap query={`${property.community}, ${property.city}`} />

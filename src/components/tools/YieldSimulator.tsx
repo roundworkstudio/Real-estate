@@ -10,11 +10,11 @@ import {
 import { useCurrency } from "@/lib/currency-context";
 import { RangeSlider } from "@/components/ui/RangeSlider";
 
-function Output({ label, value, tone }: { label: string; value: string; tone?: "positive" }) {
+function Output({ label, value, tone, compact }: { label: string; value: string; tone?: "positive"; compact?: boolean }) {
   return (
     <div>
       <div
-        className={`text-lg font-semibold leading-none tabular-nums sm:text-2xl ${
+        className={`${compact ? "text-base" : "text-lg"} font-semibold leading-none tabular-nums sm:text-2xl ${
           tone === "positive" ? "text-sovereign" : "text-white"
         }`}
       >
@@ -25,7 +25,7 @@ function Output({ label, value, tone }: { label: string; value: string; tone?: "
   );
 }
 
-export function YieldSimulator({ priceAed, sqft }: { priceAed: number; sqft: number }) {
+export function YieldSimulator({ priceAed, sqft, glass = false, compact = false }: { priceAed: number; sqft: number; glass?: boolean; compact?: boolean }) {
   const { format } = useCurrency();
   const [strategy, setStrategy] = useState<RentalStrategy>("str");
   const [nightlyRateAed, setNightlyRateAed] = useState(1200);
@@ -82,12 +82,14 @@ export function YieldSimulator({ priceAed, sqft }: { priceAed: number; sqft: num
   ];
 
   return (
-    <div className="rounded-2xl bg-royal-deep p-6 text-white shadow-card sm:p-8">
+    <div className={`min-w-0 overflow-hidden rounded-2xl border ${compact ? "p-4" : "p-6"} text-white backdrop-blur-xl sm:p-8 ${glass
+      ? "border-white/20 bg-royal-deep/75 shadow-[inset_0_1px_0_rgba(255,255,255,.2),0_18px_45px_-28px_rgba(58,45,40,.65)]"
+      : "border-transparent bg-royal-deep shadow-card"}`}>
       <div className="grid grid-cols-2 gap-2">
         <button
           type="button"
           onClick={() => switchStrategy("str")}
-          className={`rounded-full px-4 py-2.5 text-sm font-medium transition-colors ${
+          className={`rounded-full px-3 py-2 text-xs font-medium transition-colors sm:px-4 sm:py-2.5 sm:text-sm ${
             strategy === "str" ? "bg-white text-royal-deep" : "bg-white/10 text-white/70 hover:text-white"
           }`}
         >
@@ -96,7 +98,7 @@ export function YieldSimulator({ priceAed, sqft }: { priceAed: number; sqft: num
         <button
           type="button"
           onClick={() => switchStrategy("long-term")}
-          className={`rounded-full px-4 py-2.5 text-sm font-medium transition-colors ${
+          className={`rounded-full px-3 py-2 text-xs font-medium transition-colors sm:px-4 sm:py-2.5 sm:text-sm ${
             strategy === "long-term"
               ? "bg-white text-royal-deep"
               : "bg-white/10 text-white/70 hover:text-white"
@@ -106,8 +108,8 @@ export function YieldSimulator({ priceAed, sqft }: { priceAed: number; sqft: num
         </button>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-6 sm:mt-8 sm:grid-cols-2 sm:gap-8">
-        <div className="space-y-6">
+      <div className={`mt-5 grid grid-cols-1 ${compact ? "gap-4" : "gap-6"} sm:mt-8 sm:grid-cols-2 sm:gap-8`}>
+        <div className={compact ? "space-y-4" : "space-y-6"}>
           {strategy === "str" ? (
             <RangeSlider
               label="Average nightly rate"
@@ -117,6 +119,7 @@ export function YieldSimulator({ priceAed, sqft }: { priceAed: number; sqft: num
               max={4000}
               step={50}
               displayValue={format(nightlyRateAed)}
+              compact={compact}
             />
           ) : (
             <RangeSlider
@@ -127,6 +130,7 @@ export function YieldSimulator({ priceAed, sqft }: { priceAed: number; sqft: num
               max={Math.round(priceAed * 0.09 / 12)}
               step={500}
               displayValue={format(monthlyRentAed)}
+              compact={compact}
             />
           )}
           <RangeSlider
@@ -137,6 +141,7 @@ export function YieldSimulator({ priceAed, sqft }: { priceAed: number; sqft: num
             max={100}
             step={1}
             displayValue={`${occupancyPercent}%`}
+            compact={compact}
           />
           <RangeSlider
             label="Building service charge"
@@ -146,6 +151,7 @@ export function YieldSimulator({ priceAed, sqft }: { priceAed: number; sqft: num
             max={40}
             step={1}
             displayValue={`${format(serviceChargePerSqftAed)}/sqft`}
+            compact={compact}
           />
           <RangeSlider
             label="Property management fee"
@@ -155,22 +161,23 @@ export function YieldSimulator({ priceAed, sqft }: { priceAed: number; sqft: num
             max={30}
             step={1}
             displayValue={`${managementFeePercent}%`}
+            compact={compact}
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-x-4 gap-y-5 border-t border-white/10 pt-5 sm:gap-6 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0">
-          <Output label="Gross yield" value={`${results.grossYieldPercent.toFixed(1)}%`} />
+        <div className={`grid grid-cols-2 gap-x-4 ${compact ? "gap-y-4 pt-4" : "gap-y-5 pt-5"} border-t border-white/10 sm:gap-6 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0`}>
+          <Output compact={compact} label="Gross yield" value={`${results.grossYieldPercent.toFixed(1)}%`} />
           <Output
-            label="Net yield"
+            compact={compact} label="Net yield"
             value={`${results.netYieldPercent.toFixed(1)}%`}
             tone={results.netYieldPercent >= 0 ? "positive" : undefined}
           />
-          <Output label="Monthly cash flow" value={format(results.monthlyCashFlowAed)} />
-          <Output label="Annual net take-home" value={format(results.netAnnualIncomeAed)} />
+          <Output compact={compact} label="Monthly cash flow" value={format(results.monthlyCashFlowAed)} />
+          <Output compact={compact} label="Annual net take-home" value={format(results.netAnnualIncomeAed)} />
         </div>
       </div>
 
-      <div className="mt-6 h-44 border-t border-white/10 pt-5 sm:mt-8 sm:h-56">
+      <div className={`mt-5 min-w-0 w-full overflow-hidden ${compact ? "h-36 pt-4" : "h-44 pt-5"} border-t border-white/10 sm:mt-8 sm:h-56`}>
         <div className="mb-2 text-xs text-white/60">
           Gross income vs. operating expenses vs. net cash flow
         </div>

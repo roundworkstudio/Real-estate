@@ -25,6 +25,7 @@ export interface FluidSliderProps extends SliderOptions {
   /** Colour context for the same pill slider on light or deep panels. */
   tone?: "dark" | "light";
   orientation?: "horizontal" | "vertical";
+  compact?: boolean;
 }
 
 /**
@@ -40,6 +41,7 @@ export function FluidSlider({
   className,
   tone = "light",
   orientation = "horizontal",
+  compact = false,
   ...options
 }: FluidSliderProps) {
   const reduce = useReducedMotion();
@@ -76,7 +78,7 @@ export function FluidSlider({
       animate={reduce ? undefined : { scale: dragging ? 1.03 : 1 }}
       transition={SPRING_PRESS}
       className={cn(
-        orientation === "vertical" ? "relative flex h-48 w-14 touch-none overflow-hidden rounded-full shadow-[inset_0_1px_2px_rgb(46_36_32_/_0.08)]" : "relative flex h-12 w-full touch-none overflow-hidden rounded-full shadow-[inset_0_1px_2px_rgb(46_36_32_/_0.08)]",
+        orientation === "vertical" ? "relative flex h-48 w-14 touch-none overflow-hidden rounded-full shadow-[inset_0_1px_2px_rgb(46_36_32_/_0.08)]" : `relative flex ${compact ? "h-10" : "h-12"} w-full touch-none overflow-hidden rounded-full shadow-[inset_0_1px_2px_rgb(46_36_32_/_0.08)]`,
         tone === "dark" ? "bg-white/10" : "bg-slate/10",
         TOUCH_GESTURE_CLASS,
         options.disabled
@@ -86,7 +88,7 @@ export function FluidSlider({
       )}
     >
       {/* uncovered label — sits on the muted track */}
-      <div className={cn("pointer-events-none absolute inset-0 flex items-center justify-between text-sm font-medium", orientation === "vertical" ? "flex-col px-1 py-3 text-center text-[10px] leading-tight" : "px-5", tone === "dark" ? "text-white/75" : "text-slate")}>
+      <div className={cn("pointer-events-none absolute inset-0 flex items-center justify-between font-medium", compact ? "text-xs" : "text-sm", orientation === "vertical" ? "flex-col px-1 py-3 text-center text-[10px] leading-tight" : compact ? "px-3" : "px-5", tone === "dark" ? "text-white/75" : "text-slate")}>
         {row}
       </div>
 
@@ -95,7 +97,7 @@ export function FluidSlider({
           underneath. The clip's rounded right edge is the liquid cap. */}
       <motion.div className="absolute inset-0" style={{ clipPath }}>
         <div className="absolute inset-0 bg-gradient-to-r from-royal to-sovereign" />
-        <div className={cn("pointer-events-none absolute inset-0 flex items-center justify-between text-sm font-medium text-white", orientation === "vertical" ? "flex-col px-1 py-3 text-center text-[10px] leading-tight" : "px-5")}>
+        <div className={cn("pointer-events-none absolute inset-0 flex items-center justify-between font-medium text-white", compact ? "text-xs" : "text-sm", orientation === "vertical" ? "flex-col px-1 py-3 text-center text-[10px] leading-tight" : compact ? "px-3" : "px-5")}>
           {row}
         </div>
       </motion.div>

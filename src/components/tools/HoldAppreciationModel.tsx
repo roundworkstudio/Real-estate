@@ -13,10 +13,10 @@ import { RangeSlider } from "@/components/ui/RangeSlider";
 
 const HOLD_YEAR_OPTIONS = [3, 5, 7, 10] as const;
 
-function Output({ label, value }: { label: string; value: string }) {
+function Output({ label, value, compact }: { label: string; value: string; compact?: boolean }) {
   return (
     <div>
-      <div className="text-lg font-semibold leading-none tabular-nums text-slate sm:text-2xl">{value}</div>
+      <div className={`${compact ? "text-base" : "text-lg"} font-semibold leading-none tabular-nums text-slate sm:text-2xl`}>{value}</div>
       <div className="mt-1.5 text-xs text-slate/60">{label}</div>
     </div>
   );
@@ -24,12 +24,16 @@ function Output({ label, value }: { label: string; value: string }) {
 
 export function HoldAppreciationModel({
   purchasePriceAed,
+  glass = false,
+  compact = false,
   /** Net annual rental income used as the flat cash-flow assumption — see
    * lib/holdAppreciation.ts's top comment on why this is unlevered. */
   annualNetCashFlowAed,
 }: {
   purchasePriceAed: number;
   annualNetCashFlowAed: number;
+  glass?: boolean;
+  compact?: boolean;
 }) {
   const { format } = useCurrency();
   const [scenario, setScenario] = useState<HoldScenario>("base");
@@ -61,14 +65,16 @@ export function HoldAppreciationModel({
   }));
 
   return (
-    <div className="rounded-2xl bg-canvas p-6 shadow-card sm:p-8">
+    <div className={`min-w-0 overflow-hidden rounded-2xl border ${compact ? "p-4" : "p-6"} backdrop-blur-xl sm:p-8 ${glass
+      ? "border-white/70 bg-white/35 shadow-[inset_0_1px_0_rgba(255,255,255,.72),0_18px_45px_-28px_rgba(58,45,40,.55)]"
+      : "border-transparent bg-canvas shadow-card"}`}>
       <div className="flex flex-wrap gap-2">
         {(Object.keys(SCENARIO_GROWTH_PERCENT) as HoldScenario[]).map((s) => (
           <button
             key={s}
             type="button"
             onClick={() => selectScenario(s)}
-            className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+            className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:py-2 sm:text-sm ${
               scenario === s ? "bg-royal text-white" : "bg-sand text-slate/70 hover:text-slate"
             }`}
           >
@@ -77,8 +83,8 @@ export function HoldAppreciationModel({
         ))}
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-6 sm:mt-8 sm:grid-cols-2 sm:gap-8">
-        <div className="space-y-6">
+      <div className={`mt-5 grid grid-cols-1 ${compact ? "gap-4" : "gap-6"} sm:mt-8 sm:grid-cols-2 sm:gap-8`}>
+        <div className={compact ? "space-y-4" : "space-y-6"}>
           <RangeSlider
             label="Expected annual market growth"
             value={annualGrowthPercent}
@@ -91,6 +97,7 @@ export function HoldAppreciationModel({
             step={0.5}
             displayValue={`${annualGrowthPercent.toFixed(1)}%`}
             tone="light"
+            compact={compact}
           />
           <RangeSlider
             label="Down payment (invested equity)"
@@ -101,6 +108,7 @@ export function HoldAppreciationModel({
             step={5}
             displayValue={`${downPaymentPercent}%`}
             tone="light"
+            compact={compact}
           />
           <div className="block">
             <div className="text-sm text-slate/60">Hold period</div>
@@ -110,7 +118,7 @@ export function HoldAppreciationModel({
                   key={y}
                   type="button"
                   onClick={() => setHoldYears(y)}
-                  className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors sm:px-3.5 sm:text-sm ${
                     holdYears === y ? "bg-royal text-white" : "bg-sand text-slate/70 hover:text-slate"
                   }`}
                 >
@@ -121,18 +129,18 @@ export function HoldAppreciationModel({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-x-4 gap-y-5 border-t border-slate/10 pt-5 sm:gap-6 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0">
-          <Output label="Projected exit value" value={format(results.projectedExitValueAed)} />
-          <Output label="Total equity created" value={format(results.totalEquityCreatedAed)} />
-          <Output
+        <div className={`grid grid-cols-2 gap-x-4 ${compact ? "gap-y-4 pt-4" : "gap-y-5 pt-5"} border-t border-slate/10 sm:gap-6 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0`}>
+          <Output compact={compact} label="Projected exit value" value={format(results.projectedExitValueAed)} />
+          <Output compact={compact} label="Total equity created" value={format(results.totalEquityCreatedAed)} />
+          <Output compact={compact}
             label="Net IRR"
             value={results.netIRRPercent === null ? "n/a" : `${results.netIRRPercent.toFixed(1)}%`}
           />
-          <Output label="Equity multiple" value={`${results.equityMultiple.toFixed(2)}x`} />
+          <Output compact={compact} label="Equity multiple" value={`${results.equityMultiple.toFixed(2)}x`} />
         </div>
       </div>
 
-      <div className="mt-6 h-48 border-t border-slate/10 pt-5 sm:mt-8 sm:h-64">
+      <div className={`mt-5 min-w-0 w-full overflow-hidden ${compact ? "h-40 pt-4" : "h-48 pt-5"} border-t border-slate/10 sm:mt-8 sm:h-64`}>
         <div className="mb-2 text-xs text-slate/60">
           Cumulative cash flow stacked on asset appreciation, {holdYears}-year hold
         </div>

@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, type PanInfo } from "motion/react";
-import { ArrowLeft, BedDouble, Heart, Images, MapPin, Ruler } from "lucide-react";
+import { ArrowLeft, BedDouble, Heart, House, LayoutGrid, MapPin, Waves } from "lucide-react";
 
 type PropertyImage = { src: string; alt: string };
 
@@ -16,6 +17,7 @@ export function MobilePropertyHero({
   beds,
   status,
   phoneUrl,
+  mobileSections,
 }: {
   gallery: PropertyImage[];
   title: string;
@@ -25,8 +27,10 @@ export function MobilePropertyHero({
   beds: number;
   status: string;
   phoneUrl: string;
+  mobileSections: Record<string, ReactNode>;
 }) {
   const [heroImage, setHeroImage] = useState(0);
+  const [activeSection, setActiveSection] = useState("About");
   const galleryRef = useRef<HTMLDivElement>(null);
   const slides = gallery.length > 1 ? gallery.slice(1) : gallery;
   const showingMainPhoto = heroImage === 0;
@@ -140,9 +144,9 @@ export function MobilePropertyHero({
           <h2 className="text-xl font-semibold text-slate">{community} Villa</h2>
           <div className="mt-3 flex gap-3">
             <div className="flex w-12 shrink-0 flex-col items-center justify-between rounded-2xl border border-white/80 bg-white/55 py-2 text-royal-deep">
-              <BedDouble size={17} />
-              <Ruler size={17} />
-              <Images size={17} />
+              <Waves size={17} aria-label="Pool amenity" />
+              <House size={17} aria-label="Villa" />
+              <LayoutGrid size={17} aria-label="Floor plan" />
             </div>
             <div ref={galleryRef} className="flex min-w-0 flex-1 gap-2 overflow-x-auto no-scrollbar touch-pan-x">
               {slides.slice(1).map((img) => (
@@ -160,29 +164,45 @@ export function MobilePropertyHero({
           </div>
         </div>
 
-        <div className="mt-4 flex gap-2 overflow-x-auto no-scrollbar">
-          {["Facilities", "Offers", "Host", "Location"].map((label, index) => (
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          {["About", "Investment analysis", "Yield strategy simulator", "5 year hold & appreciation", "Payment plan & fee transparency"].map((label) => (
             <button
               key={label}
               type="button"
-              className={index === 0
-                ? "shrink-0 rounded-full border border-royal-deep bg-royal-deep px-5 py-2.5 text-xs font-medium text-white transition hover:bg-royal"
-                : "shrink-0 rounded-full border border-white/80 bg-white/60 px-5 py-2.5 text-xs font-medium text-slate transition hover:bg-white/80"}
+              onClick={() => setActiveSection(label)}
+              className={`${label === "About" ? "col-span-2 " : ""}${activeSection === label
+                ? "min-w-0 rounded-full border border-white/30 bg-royal-deep/80 px-3 py-2.5 text-xs font-medium leading-tight text-white shadow-[inset_0_1px_0_rgba(255,255,255,.28),0_8px_24px_-16px_rgba(58,45,40,.65)] backdrop-blur-xl transition hover:bg-royal-deep/90"
+                : "min-w-0 rounded-full border border-white/70 bg-white/35 px-3 py-2.5 text-xs font-medium leading-tight text-slate shadow-[inset_0_1px_0_rgba(255,255,255,.65),0_8px_24px_-16px_rgba(58,45,40,.45)] backdrop-blur-xl transition hover:bg-white/55"}`}
             >
               {label}
             </button>
           ))}
         </div>
 
-        <div className="sticky bottom-3 z-10 mt-4 flex items-center justify-between rounded-[1.5rem] border border-white/80 bg-white/70 px-4 py-3 shadow-[0_18px_45px_-28px_rgba(58,45,40,.55)] backdrop-blur-xl">
+        <div className="sticky bottom-3 z-10 mt-4 flex items-center justify-between rounded-[1.5rem] border border-white/65 bg-white/35 px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,.72),0_18px_45px_-28px_rgba(58,45,40,.55)] backdrop-blur-xl">
           <div>
             <p className="text-xs text-slate/55">Guide price</p>
             <p className="text-xl font-semibold text-slate">{priceDisplay}</p>
           </div>
-          <a href={phoneUrl} className="rounded-full bg-royal-deep px-5 py-3 text-xs font-medium text-white transition hover:bg-royal">
+          <a href={phoneUrl} className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-[#285943]/90 px-5 py-3 text-xs font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,.2),0_8px_20px_-12px_rgba(40,89,67,.75)] backdrop-blur-xl transition hover:bg-[#214a38]">
+            <span className="pulse-dot h-2 w-2 rounded-full bg-[#25D366]" />
             Book a call
           </a>
         </div>
+
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={activeSection}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.28, ease: "easeOut" }}
+            className="mt-5 min-w-0 overflow-hidden border-t border-slate/10 pt-6"
+          >
+            {mobileSections[activeSection]}
+          </motion.div>
+        </AnimatePresence>
+
       </div>
     </section>
   );

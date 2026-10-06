@@ -49,6 +49,7 @@ const wadeemGardensVillas: Property[] = [
       { src: "/media/wadeem-gardens/interior-living.jpg", alt: "Living room, Wadeem Gardens villa" },
       { src: "/media/wadeem-gardens/interior-kitchen.jpg", alt: "Kitchen and dining, Wadeem Gardens villa" },
       { src: "/media/wadeem-gardens/interior-bedroom.jpg", alt: "Bedroom suite, Wadeem Gardens villa" },
+      { src: "/media/wadeem-gardens/amenity-pool.jpg", alt: "Pool amenity at Wadeem Gardens" },
       { src: "/media/wadeem-gardens/floorplan-4br.jpg", alt: "4-bedroom floor plan, Layout A & B" },
     ],
   },
