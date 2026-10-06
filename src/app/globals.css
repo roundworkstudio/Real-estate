@@ -87,6 +87,13 @@ body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
+/* Keep the browser viewport and iPhone safe-area edge aligned with the
+   properties route surface instead of exposing the global canvas colour. */
+html:has([data-page="properties"]),
+body:has([data-page="properties"]) {
+  background: #eef1f3;
+}
+
 .range-slider-thumb::-webkit-slider-runnable-track {
   height: 0.5rem;
   background: transparent;

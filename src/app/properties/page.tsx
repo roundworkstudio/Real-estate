@@ -5,7 +5,7 @@ import { sampleProperties } from "@/lib/sample-properties";
 
 export default function PropertiesPage() {
   return (
-    <main className="min-h-screen bg-[#eef1f3]">
+    <main data-page="properties" className="min-h-screen bg-[#eef1f3]">
       <div className="relative hidden bg-slate md:block"><Nav /><div className="h-28" /></div>
       <section className="relative overflow-hidden bg-gradient-to-b from-[#eef1f3] via-[#eef1f3] to-[#eef1f3] pt-28 md:pt-10">
         <div className="pointer-events-none absolute -right-24 top-10 h-64 w-64 rounded-full bg-sovereign/20 blur-3xl" />
