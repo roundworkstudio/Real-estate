@@ -24,6 +24,7 @@ import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
 import { PLACEHOLDER_TEL_URL } from "@/lib/site-config";
+import { MobilePropertyHero } from "@/components/ui/MobilePropertyHero";
 
 export function generateStaticParams() {
   return sampleProperties.map((p) => ({ slug: p.slug }));
@@ -77,13 +78,13 @@ export default async function PropertyDetailPage({
     : `AED ${(property.priceAed / 1000).toFixed(0)}k`;
 
   return (
-    <main className="min-h-screen bg-canvas">
+    <main data-page="property-detail" className="min-h-screen bg-canvas">
       <div className="relative hidden bg-slate md:block">
         <Nav compactStyle />
-        <div className="h-28" />
+        <div className="h-20" />
       </div>
 
-      <section className="bg-gradient-to-b from-mist/70 to-canvas pt-28 md:pt-8">
+      <section className="hidden bg-gradient-to-b from-mist/70 to-canvas pt-28 md:block md:pt-8">
         <div className="mx-auto max-w-6xl px-5 pb-8 sm:px-10 sm:pb-12">
           <div className="mb-5 flex items-center justify-between">
             <Link href="/properties" className="inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-sm text-slate transition hover:bg-white"><ArrowLeft size={16} /> Back to properties</Link>
@@ -105,20 +106,127 @@ export default async function PropertyDetailPage({
         </div>
       </section>
 
+      <MobilePropertyHero
+        gallery={gallery}
+        title={property.title}
+        community={property.community}
+        city={property.city}
+        priceDisplay={priceDisplay}
+        beds={property.beds}
+        status={property.status}
+        phoneUrl={PLACEHOLDER_TEL_URL}
+      />
+
+      <section className="hidden">
+        <div className="mx-auto max-w-md">
+          <div className="relative h-[min(88vw,330px)] overflow-hidden rounded-[2rem] border-2 border-white/80 bg-slate shadow-[0_25px_65px_-35px_rgba(58,45,40,.8)]">
+            <img
+              src={gallery[1]?.src ?? property.image.src}
+              alt={gallery[1]?.alt ?? property.image.alt}
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate/90 via-slate/15 to-transparent" />
+            <Link
+              href="/properties"
+              aria-label="Back to properties"
+              className="absolute left-4 top-4 flex h-11 w-11 items-center justify-center rounded-full border border-white/60 bg-canvas/75 text-slate shadow-sm backdrop-blur-sm"
+            >
+              <ArrowLeft size={18} />
+            </Link>
+            <button
+              type="button"
+              aria-label="Add to wishlist"
+              className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full border border-white/60 bg-canvas/75 text-slate shadow-sm backdrop-blur-sm"
+            >
+              <Heart size={19} />
+            </button>
+            <div className="absolute bottom-4 left-4 right-4 text-white">
+              <div className="flex items-center gap-1.5 text-xs text-white/80">
+                <MapPin size={14} />
+                {property.community}, {property.city}
+              </div>
+              <h1 className="mt-1 max-w-[18rem] text-2xl font-semibold leading-tight">
+                {property.title}
+              </h1>
+              <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                <span className="rounded-full bg-slate/70 px-3 py-1.5 backdrop-blur-sm">
+                  {priceDisplay}
+                </span>
+                <span className="rounded-full bg-slate/70 px-3 py-1.5 backdrop-blur-sm">
+                  <BedDouble className="mr-1 inline" size={13} />
+                  {property.beds} beds
+                </span>
+                <span className="rounded-full bg-slate/70 px-3 py-1.5 backdrop-blur-sm">
+                  {property.status}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 rounded-[1.75rem] border border-white/80 bg-white/60 p-4 shadow-[0_18px_45px_-35px_rgba(58,45,40,.45)] backdrop-blur-md">
+            <h2 className="text-xl font-semibold text-slate">{property.community} Villa</h2>
+            <div className="mt-3 flex gap-3">
+              <div className="flex w-12 shrink-0 flex-col items-center justify-between rounded-2xl border border-white/80 bg-white/55 py-2 text-royal-deep">
+                <BedDouble size={17} />
+                <Ruler size={17} />
+                <Images size={17} />
+              </div>
+              <div className="grid min-w-0 flex-1 grid-cols-3 gap-2">
+                {gallery.slice(2, 5).map((img) => (
+                  <img
+                    key={img.src}
+                    src={img.src}
+                    alt={img.alt}
+                    className="aspect-square w-full rounded-2xl object-cover"
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 flex gap-2 overflow-x-auto no-scrollbar">
+            {["Facilities", "Offers", "Host", "Location"].map((label, index) => (
+              <button
+                key={label}
+                type="button"
+                className={index === 0
+                  ? "shrink-0 rounded-full border border-royal-deep bg-royal-deep px-5 py-2.5 text-xs font-medium text-white transition hover:bg-royal"
+                  : "shrink-0 rounded-full border border-white/80 bg-white/60 px-5 py-2.5 text-xs font-medium text-slate transition hover:bg-white/80"}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <div className="sticky bottom-3 z-10 mt-4 flex items-center justify-between rounded-[1.5rem] border border-white/80 bg-white/70 px-4 py-3 shadow-[0_18px_45px_-28px_rgba(58,45,40,.55)] backdrop-blur-xl">
+            <div>
+              <p className="text-xs text-slate/55">Guide price</p>
+              <p className="text-xl font-semibold text-slate">{priceDisplay}</p>
+            </div>
+            <a
+              href={PLACEHOLDER_TEL_URL}
+              className="rounded-full bg-royal-deep px-5 py-3 text-xs font-medium text-white transition hover:bg-royal"
+            >
+              Book a call
+            </a>
+          </div>
+        </div>
+      </section>
+
       <div className="mx-auto max-w-6xl px-5 sm:px-10">
-        <section className="grid gap-5 border-b border-slate/10 py-5 sm:grid-cols-[1fr_auto] sm:items-center sm:py-8">
+        <section className="hidden gap-5 border-b border-slate/10 py-5 sm:grid sm:grid-cols-[1fr_auto] sm:items-center sm:py-8">
           <div><p className="text-sm text-slate/55">Guide price</p><p className="mt-1 text-3xl font-semibold text-slate sm:text-4xl">{priceDisplay}</p></div>
           <a href="#investment" className="inline-flex items-center justify-center gap-2 rounded-full bg-royal-deep px-5 py-3 text-sm font-medium text-white transition hover:bg-royal">View investment tools <MoveUpRight size={16} /></a>
         </section>
 
 
         {/* Stats Section */}
-        <section className="py-10 border-b border-slate/10">
+        <section className="hidden border-b border-slate/10 py-10 sm:block">
           <StatStrip items={heroStats} />
         </section>
 
         {/* Gallery Grid */}
-        <section className="py-10">
+        <section className="hidden py-10 sm:block">
           <h2 className="text-2xl font-semibold text-slate mb-6">Inside the property</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {gallery.slice(1).map((img, i) => (

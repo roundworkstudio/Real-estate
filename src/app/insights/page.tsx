@@ -112,7 +112,7 @@ export default function InsightsPage() {
             comment), which used to leave it sitting low in this block
             with almost no margin underneath. This height centres it
             instead. */}
-        <div className="h-28" />
+        <div className="h-20" />
       </div>
 
       <section className="mx-auto max-w-5xl px-6 py-16 sm:px-10">

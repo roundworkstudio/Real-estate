@@ -26,7 +26,7 @@ export function MobileTopBar() {
   }, []);
 
   return (
-    <header className="pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center md:hidden">
+    <header className="mobile-top-bar pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center md:hidden">
       <div className="flex items-center">
         <Link
           href="/"

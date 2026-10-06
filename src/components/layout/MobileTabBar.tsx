@@ -115,7 +115,7 @@ export function MobileTabBar() {
   }, []);
 
   return (
-    <div className="fixed inset-x-3 bottom-3 z-40 md:hidden">
+    <div className="mobile-tab-bar fixed inset-x-3 bottom-3 z-40 md:hidden">
       <nav
         ref={scrollRef}
         aria-label="Primary"

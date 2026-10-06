@@ -114,7 +114,7 @@ export default async function DevelopmentDetailPage({
               comment), which used to leave it sitting low in this block
               with almost no margin underneath. This height centres it
               instead. */}
-          <div className="h-28" />
+          <div className="h-20" />
         </div>
       )}
 
