@@ -4,7 +4,7 @@
  */
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Bath, BedDouble, Heart, Images, MapPin, MessageCircle, MoveUpRight, Phone, Ruler } from "lucide-react";
+import { ArrowLeft, Bath, BedDouble, Heart, House, Images, LayoutGrid, MapPin, Phone, Ruler, Waves } from "lucide-react";
 import { sampleProperties } from "@/lib/sample-properties";
 import { pricePerSqft } from "@/lib/types";
 import { developments } from "@/lib/developments";
@@ -23,6 +23,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
 import { PLACEHOLDER_TEL_URL } from "@/lib/site-config";
 import { MobilePropertyHero } from "@/components/ui/MobilePropertyHero";
+import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 
 export function generateStaticParams() {
   return sampleProperties.map((p) => ({ slug: p.slug }));
@@ -38,6 +39,7 @@ export default async function PropertyDetailPage({
   if (!property) notFound();
 
   const gallery = property.gallery ?? [property.image];
+  const propertyThumbnails = [property.image, ...gallery.slice(2)].slice(0, 4);
   const estimatedMonthlyRent = property.expectedAnnualRentAed
     ? Math.round(property.expectedAnnualRentAed / 12)
     : Math.round(property.priceAed * 0.05) / 12;
@@ -54,7 +56,6 @@ export default async function PropertyDetailPage({
   const eoiDate = development?.meta?.eoiTimeline?.[0];
 
   const heroStats: StatStripItem[] = [
-    { value: `AED ${property.priceAed.toLocaleString("en-AE")}`, label: "Price" },
     {
       value: `AED ${pricePerSqft(property).toLocaleString("en-AE")}/sqft`,
       label: "Price / sqft",
@@ -107,7 +108,6 @@ export default async function PropertyDetailPage({
       <CurrencyProvider>
         <MobilePropertyHero
           gallery={gallery}
-          title={property.title}
           community={property.community}
           city={property.city}
           priceDisplay={priceDisplay}
@@ -284,39 +284,51 @@ export default async function PropertyDetailPage({
       </section>
 
       <div className="mx-auto max-w-6xl px-5 sm:px-10">
-        <section className="hidden gap-5 border-b border-slate/10 py-5 sm:grid sm:grid-cols-[1fr_auto] sm:items-center sm:py-8">
-          <div><p className="text-sm text-slate/55">Guide price</p><p className="mt-1 text-3xl font-semibold text-slate sm:text-4xl">{priceDisplay}</p></div>
-          <a href="#investment" className="inline-flex items-center justify-center gap-2 rounded-full bg-royal-deep px-5 py-3 text-sm font-medium text-white transition hover:bg-royal">View investment tools <MoveUpRight size={16} /></a>
+        <section className="hidden py-5 md:block md:py-8">
+          <div className="flex items-center justify-between rounded-[1.5rem] border border-white/65 bg-white/35 px-6 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,.72),0_18px_45px_-28px_rgba(58,45,40,.55)] backdrop-blur-xl">
+            <div>
+              <p className="text-sm text-slate/55">Guide price</p>
+              <p className="text-3xl font-semibold text-slate">{priceDisplay}</p>
+            </div>
+            <a href="#property-tools" className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-[#285943]/90 px-6 py-3.5 text-sm font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,.2),0_8px_20px_-12px_rgba(40,89,67,.75)] backdrop-blur-xl transition hover:bg-[#214a38]">
+              <span className="pulse-dot h-2 w-2 rounded-full bg-[#25D366]" />
+              Book a call
+            </a>
+          </div>
         </section>
 
 
         {/* Stats Section */}
-        <section className="hidden border-b border-slate/10 py-10 sm:block">
+        <section className="hidden py-10 sm:block">
           <StatStrip items={heroStats} />
         </section>
 
-        {/* Gallery Grid */}
-        <section className="hidden py-10 sm:block">
-          <h2 className="text-2xl font-semibold text-slate mb-6">Inside the property</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {gallery.slice(1).map((img, i) => (
-              <img
-                key={i}
-                src={img.src}
-                alt={img.alt}
-                className="w-full aspect-[4/3] object-cover rounded-2xl shadow-md"
-              />
-            ))}
+        {/* Desktop property card */}
+        <section className="hidden py-10 md:block">
+          <div className="rounded-[1.75rem] border border-white/80 bg-white/60 p-4 shadow-[0_18px_45px_-35px_rgba(58,45,40,.45)] backdrop-blur-md">
+            <div className="flex gap-3">
+              <div className="flex w-12 shrink-0 flex-col items-center justify-between rounded-2xl border border-white/80 bg-white/55 py-2 text-royal-deep">
+                <Waves size={17} aria-label="Pool amenity" />
+                <House size={17} aria-label="Villa" />
+                <LayoutGrid size={17} aria-label="Floor plan" />
+              </div>
+              <div className="grid min-w-0 flex-1 grid-cols-2 gap-2 lg:grid-cols-4">
+                {propertyThumbnails.map((img) => (
+                  <img
+                    key={img.src}
+                    src={img.src}
+                    alt={img.alt}
+                    className="aspect-square w-full rounded-2xl object-cover shadow-sm"
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
         <PropertyDetailTools
           priceAed={property.priceAed}
-          priceDisplay={priceDisplay}
           sqft={property.sqft}
-          title={property.title}
-          community={property.community}
-          status={property.status}
           estimatedMonthlyRent={estimatedMonthlyRent}
           estimatedAnnualNetCashFlow={estimatedAnnualNetCashFlow}
           city={property.city}
@@ -325,7 +337,7 @@ export default async function PropertyDetailPage({
       </div>
 
       {/* Location */}
-      <section className="mx-auto max-w-5xl border-t border-slate/10 px-6 py-10 sm:px-10">
+      <section className="mx-auto max-w-5xl px-6 py-10 sm:px-10">
         <h2 className="text-xl font-semibold text-slate">Location</h2>
         <div className="mt-6">
           <LocationMap query={`${property.community}, ${property.city}`} />
@@ -351,10 +363,9 @@ export default async function PropertyDetailPage({
                 <Phone size={18} />
                 <span>Book a call</span>
               </Button>
-              <Button href="https://wa.me/971555881148" variant="light" className="flex items-center justify-center gap-2">
-                <MessageCircle size={18} />
-                <span>Chat on WhatsApp</span>
-              </Button>
+              <WhatsAppButton href="https://wa.me/971555881148" variant="light" compact>
+                Chat on WhatsApp
+              </WhatsAppButton>
             </div>
           </div>
         </div>

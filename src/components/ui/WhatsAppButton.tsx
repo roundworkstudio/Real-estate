@@ -39,6 +39,7 @@ export function WhatsAppButton({
         className,
       )}
     >
+      <span className="pulse-dot h-2 w-2 rounded-full bg-[#25D366]" aria-hidden="true" />
       <span className="whatsapp-action__text">{children}</span>
       <span className="whatsapp-action__icon">
         <WhatsAppLogo className="h-[52%] w-[52%]" />
