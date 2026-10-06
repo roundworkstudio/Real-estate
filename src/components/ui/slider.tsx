@@ -61,7 +61,7 @@ export function Slider({
           value={current}
           onChange={(event) => updateValue(index, Number(event.target.value))}
           aria-label={ariaLabel ? `${ariaLabel} ${index === 0 && isRange ? "minimum" : index === 1 ? "maximum" : "value"}` : undefined}
-          className={cn("range-slider-thumb absolute inset-x-4 h-8 w-[calc(100%-2rem)] appearance-none bg-transparent sm:h-2", index === 0 ? "z-20" : "z-10")}
+          className={cn("range-slider-thumb absolute inset-x-4 h-2 w-[calc(100%-2rem)] appearance-none bg-transparent", index === 0 ? "z-20" : "z-10")}
         />
       ))}
     </div>
