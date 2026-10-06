@@ -91,7 +91,7 @@ body {
    properties route surface instead of exposing the global canvas colour. */
 html:has([data-page="properties"]),
 body:has([data-page="properties"]) {
-  background: #eef1f3;
+  background: var(--color-canvas);
 }
 
 .range-slider-thumb::-webkit-slider-runnable-track {
@@ -472,6 +472,11 @@ html.is-scrolling .nav-cta {
   --wa-icon: #128c4a;
   border-color: rgb(31 41 51 / 0.14);
   box-shadow: 0 4px 16px rgb(31 41 51 / 0.08);
+}
+
+.whatsapp-action--light:hover,
+.whatsapp-action--light:focus-visible {
+  background: var(--wa-overlay);
 }
 
 .whatsapp-action--translucent {
