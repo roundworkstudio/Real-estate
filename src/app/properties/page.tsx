@@ -16,6 +16,19 @@ export default function PropertiesPage() {
       <div className="relative hidden bg-slate md:block"><Nav compactStyle /><div className="h-20" /></div>
       <section className="relative overflow-hidden bg-canvas pt-28 md:pt-10">
         <div className="pointer-events-none absolute -right-24 top-10 h-64 w-64 rounded-full bg-sovereign/20 blur-3xl" />
+        <div className="sand-shimmer-layer" aria-hidden="true">
+          <span className="sand-shimmer sand-shimmer--one" />
+          <span className="sand-shimmer sand-shimmer--two" />
+          <span className="sand-shimmer sand-shimmer--three" />
+          <span className="sand-shimmer sand-shimmer--four" />
+          <span className="sand-shimmer sand-shimmer--five" />
+          <span className="sand-grain sand-grain--one" />
+          <span className="sand-grain sand-grain--two" />
+          <span className="sand-grain sand-grain--three" />
+          <span className="sand-grain sand-grain--four" />
+          <span className="sand-grain sand-grain--five" />
+          <span className="sand-grain sand-grain--six" />
+        </div>
         <div className="mx-auto max-w-6xl px-5 pb-14 sm:px-10 sm:pb-20">
           <div className="max-w-3xl"><HeroShimmerHeading light={false} className="leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">Explore modern living spaces <span className="font-accent">in the UAE.</span></HeroShimmerHeading></div>
           <div className="mt-10"><PortfolioFilters properties={sampleProperties} /></div>

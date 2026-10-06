@@ -550,6 +550,66 @@ html.is-scrolling .nav-cta {
   animation: filter-arrow-bounce 900ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+@keyframes sand-drift {
+  0% {
+    opacity: 0;
+    transform: translate3d(-24vw, 10px, 0) rotate(-5deg) scaleX(.75);
+  }
+  18%, 72% { opacity: .64; }
+  100% {
+    opacity: 0;
+    transform: translate3d(138vw, -22px, 0) rotate(3deg) scaleX(1.2);
+  }
+}
+
+@keyframes sand-float {
+  0% { opacity: 0; transform: translate3d(-12vw, 10px, 0) scale(.7); }
+  20%, 75% { opacity: .72; }
+  100% { opacity: 0; transform: translate3d(118vw, -18px, 0) scale(1.15); }
+}
+
+.sand-shimmer-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.sand-shimmer {
+  position: absolute;
+  left: var(--sand-left, -20%);
+  width: 24rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgb(201 143 65 / .42), rgb(255 220 157 / .8), rgb(199 140 58 / .28), transparent);
+  filter: blur(7px);
+  animation: sand-drift 16s linear infinite;
+}
+
+.sand-shimmer--one { --sand-left: -18%; top: 16%; width: 30rem; animation-delay: -3s; }
+.sand-shimmer--two { --sand-left: -42%; top: 34%; width: 34rem; animation-delay: -9s; animation-duration: 21s; }
+.sand-shimmer--three { --sand-left: -8%; top: 52%; width: 22rem; animation-delay: -13s; animation-duration: 18s; }
+.sand-shimmer--four { --sand-left: -55%; top: 69%; width: 38rem; animation-delay: -6s; animation-duration: 24s; }
+.sand-shimmer--five { --sand-left: -28%; top: 86%; width: 26rem; animation-delay: -17s; animation-duration: 20s; }
+
+.sand-grain {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgb(231 175 92 / .72);
+  box-shadow: 0 0 18px rgb(236 194 126 / .82);
+  animation: sand-float 9s linear infinite;
+}
+
+.sand-grain--one { top: 26%; left: 8%; animation-delay: -1s; }
+.sand-grain--two { top: 48%; left: 64%; animation-delay: -5s; animation-duration: 11s; }
+.sand-grain--three { top: 18%; left: 84%; width: 5px; height: 5px; animation-delay: -7s; animation-duration: 8s; }
+.sand-grain--four { top: 62%; left: 42%; width: 5px; height: 5px; animation-delay: -3s; animation-duration: 12s; }
+.sand-grain--five { top: 78%; left: 18%; width: 9px; height: 9px; animation-delay: -9s; animation-duration: 10s; }
+.sand-grain--six { top: 88%; left: 76%; width: 4px; height: 4px; animation-delay: -6s; animation-duration: 7s; }
+
 @media (min-width: 640px) {
   .filter-sheet-mobile {
     animation: none;
@@ -558,7 +618,9 @@ html.is-scrolling .nav-cta {
 
 @media (prefers-reduced-motion: reduce) {
   .filter-sheet-mobile,
-  .filter-arrow-bounce {
+  .filter-arrow-bounce,
+  .sand-shimmer,
+  .sand-grain {
     animation: none;
   }
 }
