@@ -91,7 +91,7 @@ export function Hero() {
         }}
       />
 
-      <Nav />
+      <Nav compactStyle />
 
       <div className="relative px-6 pb-14 pt-24 sm:px-10 sm:pb-10 sm:pt-32">
         <HeroShimmerHeading />

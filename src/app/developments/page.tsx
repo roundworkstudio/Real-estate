@@ -44,7 +44,7 @@ export default function DevelopmentsPage() {
               "linear-gradient(to top, rgb(0 0 0 / 0.65), rgb(0 0 0 / 0.05) 55%)",
           }}
         />
-        <Nav />
+        <Nav compactStyle />
         <div className="relative px-6 pb-10 sm:px-10 sm:pb-14">
           <h1 className="text-3xl font-semibold text-white sm:text-4xl">Projects</h1>
           <p className="mt-3 max-w-lg text-white/80">

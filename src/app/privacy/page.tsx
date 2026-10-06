@@ -14,7 +14,7 @@ export default function PrivacyPage() {
   return (
     <main>
       <div className="relative hidden bg-slate md:block">
-        <Nav />
+        <Nav compactStyle />
         {/* h-28, not h-20 (2026-09-27, explicit request) — the fixed
             Nav pill's own top offset + padding put its vertical centre
             ~57px down from the viewport top (see Nav.tsx's box-height

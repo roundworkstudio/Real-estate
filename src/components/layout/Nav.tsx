@@ -3,10 +3,18 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Home } from "lucide-react";
+import { motion } from "motion/react";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { useScrollingFlag } from "@/lib/motion";
 import { navLinks } from "@/lib/nav-links";
 import { PLACEHOLDER_TEL_URL } from "@/lib/site-config";
+
+function isNavLinkActive(pathname: string | null, href: string) {
+  if (!pathname) return false;
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 /**
  * Fixed header that morphs on scroll: fully transparent/blend-in over the
@@ -79,8 +87,9 @@ import { PLACEHOLDER_TEL_URL } from "@/lib/site-config";
  * second one. `px-6`, not the shared Button's default `px-5`, so the dot
  * reads as deliberately placed rather than cramped against the label.
  */
-export function Nav() {
+export function Nav({ compactStyle = false }: { compactStyle?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
   useScrollingFlag();
 
   useEffect(() => {
@@ -91,6 +100,70 @@ export function Nav() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  if (compactStyle) {
+    return (
+      <header className="pointer-events-none fixed inset-x-6 top-4 z-30 hidden items-center justify-center gap-2 md:flex">
+        <Link
+          href="/"
+          aria-label="Home"
+          aria-hidden={!scrolled}
+          tabIndex={scrolled ? 0 : -1}
+          className={[
+            "glass-nav pointer-events-auto flex h-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-royal-deep/80 text-white shadow-card transition-[width,margin,opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
+            scrolled
+              ? "w-12 translate-x-0 scale-100 opacity-100"
+              : "pointer-events-none -ml-12 w-0 -translate-x-6 scale-50 opacity-0",
+          ].join(" ")}
+        >
+          <Home size={18} strokeWidth={1.8} />
+        </Link>
+
+        <Link
+          href="/"
+          className="glass-nav pointer-events-auto flex h-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-royal-deep/80 px-4 shadow-card"
+        >
+          <Image
+            src="/brand/logo-mobile-light.svg"
+            alt="Property with Janvi"
+            width={690}
+            height={135}
+            priority
+            className="h-auto w-[min(16vw,190px)]"
+          />
+        </Link>
+
+        <nav className="glass-nav pointer-events-auto flex h-12 items-center gap-0.5 rounded-full border border-white/10 bg-royal-deep/80 p-1.5 shadow-card">
+          {navLinks.map((l) => (
+            <span key={l.href} className="relative flex h-9">
+              <a
+                href={l.href}
+                className="nav-link relative z-10 flex h-9 items-center px-2.5 text-xs text-white/80 hover:text-white lg:px-3 lg:text-sm"
+              >
+                {isNavLinkActive(pathname, l.href) && (
+                  <motion.span
+                    layoutId="desktop-nav-active"
+                    transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                    className="pointer-events-none absolute inset-0 -z-10 rounded-full border border-white/20 bg-white/15 shadow-[inset_0_1px_2px_rgba(255,255,255,.35),0_8px_18px_rgba(0,0,0,.14)]"
+                  />
+                )}
+                {l.label}
+              </a>
+            </span>
+          ))}
+        </nav>
+
+        <Button
+          href={PLACEHOLDER_TEL_URL}
+          variant="primary"
+          className="nav-cta glass-nav pointer-events-auto h-12 shrink-0 px-4 text-xs shadow-card lg:px-5 lg:text-sm"
+        >
+          <span className="pulse-dot h-2 w-2 rounded-full bg-[#25D366]" />
+          Book a call
+        </Button>
+      </header>
+    );
+  }
 
   return (
     <header

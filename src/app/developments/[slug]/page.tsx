@@ -91,7 +91,7 @@ export default async function DevelopmentDetailPage({
                 "linear-gradient(to top, rgb(0 0 0 / 0.65), rgb(0 0 0 / 0.05) 55%), linear-gradient(to right, rgb(0 0 0 / 0.4), rgb(0 0 0 / 0) 60%)",
             }}
           />
-          <Nav />
+          <Nav compactStyle />
           <div className="relative px-6 pb-10 sm:px-10 sm:pb-14">
             <div className="text-sm font-medium text-white/70">
               {meta.developer} · {development.city}
@@ -107,7 +107,7 @@ export default async function DevelopmentDetailPage({
         </section>
       ) : (
         <div className="relative hidden bg-slate md:block">
-          <Nav />
+          <Nav compactStyle />
           {/* h-28, not h-20 (2026-09-27, explicit request) — the fixed
               Nav pill's own top offset + padding put its vertical centre
               ~57px down from the viewport top (see Nav.tsx's box-height

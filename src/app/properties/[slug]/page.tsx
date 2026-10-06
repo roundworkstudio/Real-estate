@@ -79,7 +79,7 @@ export default async function PropertyDetailPage({
   return (
     <main className="min-h-screen bg-canvas">
       <div className="relative hidden bg-slate md:block">
-        <Nav />
+        <Nav compactStyle />
         <div className="h-28" />
       </div>
 
