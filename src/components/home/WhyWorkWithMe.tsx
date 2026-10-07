@@ -64,7 +64,7 @@ export function WhyWorkWithMe() {
       <img
         src="/media/hero/ramhan-villa-hero.jpg"
         alt=""
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover object-[center_82%]"
       />
       <div
         className="absolute inset-0"

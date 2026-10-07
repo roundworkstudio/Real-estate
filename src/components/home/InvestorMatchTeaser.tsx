@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { InvestorMatchWizard } from "@/components/tools/InvestorMatchWizard";
-import { GlassCard } from "@/components/ui/GlassCard";
 import { Reveal } from "@/components/ui/Reveal";
 
 /**
@@ -37,7 +36,7 @@ import { Reveal } from "@/components/ui/Reveal";
  * only interactive card.
  */
 export function InvestorMatchTeaser() {
-  const [showingResults, setShowingResults] = useState(false);
+  const [, setShowingResults] = useState(false);
   const cardClassName =
     "mobile-static-card rounded-2xl bg-gradient-to-br from-white/90 to-canvas p-6 sm:p-10";
 
@@ -52,13 +51,9 @@ export function InvestorMatchTeaser() {
         </p>
       </Reveal>
       <div className="mx-auto mt-10 max-w-2xl rounded-2xl bg-gradient-to-br from-sovereign/50 via-white/40 to-royal/30 p-px shadow-card">
-        <GlassCard
-          pane={false}
-          disabled={showingResults}
-          className={cardClassName}
-        >
+        <div className={cardClassName}>
           <InvestorMatchWizard onResultsChange={setShowingResults} />
-        </GlassCard>
+        </div>
       </div>
     </section>
   );

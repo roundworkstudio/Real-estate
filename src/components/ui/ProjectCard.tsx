@@ -3,6 +3,7 @@
 import Image from "next/image";
 import type { Development, DevelopmentStats } from "@/lib/developments";
 import { GlassCard } from "./GlassCard";
+import { FormattedPrice } from "./FormattedPrice";
 import { useInView } from "@/lib/motion";
 
 /**
@@ -24,10 +25,7 @@ export function ProjectCard({
 }) {
   const { ref, inView } = useInView<HTMLDivElement>();
   const cover = development.meta?.heroImage ?? development.properties[0].image;
-  const priceRange =
-    stats.minPriceAed === stats.maxPriceAed
-      ? `AED ${stats.minPriceAed.toLocaleString("en-AE")}`
-      : `AED ${(stats.minPriceAed / 1_000_000).toFixed(1)}m – ${(stats.maxPriceAed / 1_000_000).toFixed(1)}m`;
+  const samePrice = stats.minPriceAed === stats.maxPriceAed;
 
   return (
     <a href={`/developments/${development.slug}`} className="hover-lift group block">
@@ -54,7 +52,16 @@ export function ProjectCard({
             </span>
           </div>
           <div className="mt-1 text-xs leading-relaxed text-slate/60 sm:text-sm">
-            {development.city} · {priceRange}
+            {development.city} ·{" "}
+            {samePrice ? (
+              <FormattedPrice amountAed={stats.minPriceAed} />
+            ) : (
+              <>
+                <FormattedPrice amountAed={stats.minPriceAed} />
+                {" – "}
+                <FormattedPrice amountAed={stats.maxPriceAed} />
+              </>
+            )}
           </div>
         </div>
       </GlassCard>

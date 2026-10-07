@@ -14,11 +14,7 @@ import { Hero } from "@/components/home/Hero";
 import { CredibilityNumbers } from "@/components/home/CredibilityNumbers";
 import { FeaturedProjects } from "@/components/home/FeaturedProjects";
 import { VideoTour } from "@/components/home/VideoTour";
-import { AreasPreview } from "@/components/home/AreasPreview";
 import { RecentlySold } from "@/components/home/RecentlySold";
-import { InvestmentToolsTeaser } from "@/components/home/InvestmentToolsTeaser";
-import { InvestorMatchTeaser } from "@/components/home/InvestorMatchTeaser";
-import { ValuationPrompt } from "@/components/home/ValuationPrompt";
 import { WhatsAppBanner } from "@/components/tools/WhatsAppBanner";
 import { Footer } from "@/components/layout/Footer";
 
@@ -29,14 +25,10 @@ export default function Home() {
       <CredibilityNumbers />
       <FeaturedProjects />
       <VideoTour />
-      <AreasPreview />
       <RecentlySold />
-      <InvestmentToolsTeaser />
-      <InvestorMatchTeaser />
       <section className="px-6 py-4 sm:px-10 sm:py-10">
         <WhatsAppBanner />
       </section>
-      <ValuationPrompt />
       <Footer />
     </main>
   );

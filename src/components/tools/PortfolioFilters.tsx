@@ -2,8 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import { Building2, ChevronDown, CircleDollarSign, House, MapPin, Search, SlidersHorizontal, Sparkles, TrendingUp, X } from "lucide-react";
+import { Building2, ChevronDown, CircleDollarSign, GitCompare, House, MapPin, Search, SlidersHorizontal, Sparkles, TrendingUp, X } from "lucide-react";
+import { COMPARE_LIMIT } from "@/lib/compare-context";
 import { PropertyCard } from "@/components/ui/PropertyCard";
+import { CurrencySwitcher } from "@/components/tools/CurrencySwitcher";
 import { FluidSlider } from "@/components/motion/range-slider-fluid";
 import { Slider } from "@/components/ui/slider";
 import type { Property, PropertyStatus, PropertyStrategy } from "@/lib/types";
@@ -173,7 +175,22 @@ export function PortfolioFilters({ properties }: { properties: Property[] }) {
           </div>
       </div>, document.body)}
       </div>
-      <div className="mt-10 flex items-end justify-between gap-4"><div><h2 className="text-2xl font-semibold text-slate sm:text-3xl">Top properties</h2></div><span className="text-sm text-slate/50">{sorted.length} results</span></div>
+      <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h2 className="text-2xl font-semibold text-slate sm:text-3xl">Top properties</h2>
+          <p className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm text-slate/60">
+            Tap
+            <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/70 text-slate shadow-sm">
+              <GitCompare size={14} aria-label="the compare button" />
+            </span>
+            to compare up to {COMPARE_LIMIT} properties
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <CurrencySwitcher />
+          <span className="text-sm text-slate/50">{sorted.length} results</span>
+        </div>
+      </div>
       {sorted.length === 0 ? <div className="py-16 text-center text-sm text-slate/50">No listings match — try a different filter.</div> : <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{sorted.map((property, index) => <PropertyCard key={property.slug} property={property} featured={index === 0} />)}</div>}
     </div>
   );

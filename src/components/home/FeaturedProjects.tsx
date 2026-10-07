@@ -1,5 +1,6 @@
 import { ProjectCard } from "@/components/ui/ProjectCard";
 import { Reveal } from "@/components/ui/Reveal";
+import { CurrencySwitcher } from "@/components/tools/CurrencySwitcher";
 import { developments, developmentStats } from "@/lib/developments";
 
 /**
@@ -15,9 +16,12 @@ export function FeaturedProjects() {
   return (
     <section className="px-6 py-6 sm:px-10 sm:py-20">
       <Reveal as="div">
-        <h2 className="text-2xl font-semibold text-slate sm:text-3xl">
-          Featured projects
-        </h2>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <h2 className="text-2xl font-semibold text-slate sm:text-3xl">
+            Featured projects
+          </h2>
+          <CurrencySwitcher />
+        </div>
       </Reveal>
 
       <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-x-8 sm:gap-y-12 lg:grid-cols-3">

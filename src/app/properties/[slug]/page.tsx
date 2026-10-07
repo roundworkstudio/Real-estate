@@ -4,7 +4,7 @@
  */
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Bath, BedDouble, Heart, House, Images, LayoutGrid, MapPin, Phone, Ruler, Waves } from "lucide-react";
+import { ArrowLeft, Bath, BedDouble, House, Images, LayoutGrid, MapPin, Phone, Ruler, Waves } from "lucide-react";
 import { sampleProperties } from "@/lib/sample-properties";
 import { pricePerSqft } from "@/lib/types";
 import { developments } from "@/lib/developments";
@@ -15,8 +15,10 @@ import { InvestmentCalculator } from "@/components/tools/InvestmentCalculator";
 import { YieldSimulator } from "@/components/tools/YieldSimulator";
 import { HoldAppreciationModel } from "@/components/tools/HoldAppreciationModel";
 import { PaymentPlanCalculator } from "@/components/tools/PaymentPlanCalculator";
-import { CurrencyProvider } from "@/lib/currency-context";
 import { PropertyDetailTools } from "@/components/tools/PropertyDetailTools";
+import { CompareToggle } from "@/components/tools/CompareToggle";
+import { FormattedPrice } from "@/components/ui/FormattedPrice";
+import { CurrencySwitcher } from "@/components/tools/CurrencySwitcher";
 import { LocationMap } from "@/components/ui/LocationMap";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
@@ -71,11 +73,6 @@ export default async function PropertyDetailPage({
     ...(eoiDate ? [{ value: eoiDate.date, label: eoiDate.label }] : []),
   ];
 
-  const priceInMillions = property.priceAed / 1_000_000;
-  const priceDisplay = priceInMillions >= 1
-    ? `AED ${priceInMillions.toFixed(1)}m`
-    : `AED ${(property.priceAed / 1000).toFixed(0)}k`;
-
   return (
     <main data-page="property-detail" className="min-h-screen bg-canvas">
       <div className="relative hidden bg-slate md:block">
@@ -93,7 +90,7 @@ export default async function PropertyDetailPage({
             <div className="relative aspect-[4/5] max-h-[680px] sm:aspect-[16/9]">
               <img src={gallery[0]?.src ?? property.image.src} alt={gallery[0]?.alt ?? property.image.alt} className="h-full w-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-slate/90 via-slate/10 to-transparent" />
-              <button type="button" aria-label="Add to wishlist" className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-canvas/85 text-slate backdrop-blur-sm sm:right-6 sm:top-6"><Heart size={19} /></button>
+              <CompareToggle slug={property.slug} className="absolute right-4 top-4 h-11 w-11 sm:right-6 sm:top-6" />
               <div className="absolute bottom-5 left-5 right-5 text-white sm:bottom-8 sm:left-8 sm:right-8">
                 <div className="mb-2 flex items-center gap-1.5 text-sm text-white/75"><MapPin size={15} /> {property.community}, {property.city}</div>
                 <h1 className="max-w-3xl text-3xl font-semibold leading-tight sm:text-5xl">{property.title}</h1>
@@ -105,12 +102,13 @@ export default async function PropertyDetailPage({
         </div>
       </section>
 
-      <CurrencyProvider>
         <MobilePropertyHero
           gallery={gallery}
+          title={property.title}
+          slug={property.slug}
           community={property.community}
           city={property.city}
-          priceDisplay={priceDisplay}
+          priceAed={property.priceAed}
           beds={property.beds}
           status={property.status}
           phoneUrl={PLACEHOLDER_TEL_URL}
@@ -185,7 +183,6 @@ export default async function PropertyDetailPage({
             ),
           }}
         />
-      </CurrencyProvider>
 
       <section className="hidden">
         <div className="mx-auto max-w-md">
@@ -203,13 +200,10 @@ export default async function PropertyDetailPage({
             >
               <ArrowLeft size={18} />
             </Link>
-            <button
-              type="button"
-              aria-label="Add to wishlist"
-              className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full border border-white/60 bg-canvas/75 text-slate shadow-sm backdrop-blur-sm"
-            >
-              <Heart size={19} />
-            </button>
+            <CompareToggle
+              slug={property.slug}
+              className="absolute right-4 top-4 h-11 w-11 border border-white/60"
+            />
             <div className="absolute bottom-4 left-4 right-4 text-white">
               <div className="flex items-center gap-1.5 text-xs text-white/80">
                 <MapPin size={14} />
@@ -220,7 +214,7 @@ export default async function PropertyDetailPage({
               </h1>
               <div className="mt-3 flex flex-wrap gap-2 text-xs">
                 <span className="rounded-full bg-slate/70 px-3 py-1.5 backdrop-blur-sm">
-                  {priceDisplay}
+                  <FormattedPrice amountAed={property.priceAed} />
                 </span>
                 <span className="rounded-full bg-slate/70 px-3 py-1.5 backdrop-blur-sm">
                   <BedDouble className="mr-1 inline" size={13} />
@@ -271,7 +265,9 @@ export default async function PropertyDetailPage({
           <div className="sticky bottom-3 z-10 mt-4 flex items-center justify-between rounded-[1.5rem] border border-white/80 bg-white/70 px-4 py-3 shadow-[0_18px_45px_-28px_rgba(58,45,40,.55)] backdrop-blur-xl">
             <div>
               <p className="text-xs text-slate/55">Guide price</p>
-              <p className="text-xl font-semibold text-slate">{priceDisplay}</p>
+              <p className="text-xl font-semibold text-slate">
+                <FormattedPrice amountAed={property.priceAed} />
+              </p>
             </div>
             <a
               href={PLACEHOLDER_TEL_URL}
@@ -288,12 +284,17 @@ export default async function PropertyDetailPage({
           <div className="flex items-center justify-between rounded-[1.5rem] border border-white/65 bg-white/35 px-6 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,.72),0_18px_45px_-28px_rgba(58,45,40,.55)] backdrop-blur-xl">
             <div>
               <p className="text-sm text-slate/55">Guide price</p>
-              <p className="text-3xl font-semibold text-slate">{priceDisplay}</p>
+              <p className="text-3xl font-semibold text-slate">
+                <FormattedPrice amountAed={property.priceAed} />
+              </p>
             </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <CurrencySwitcher />
             <a href="#property-tools" className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-[#285943]/90 px-6 py-3.5 text-sm font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,.2),0_8px_20px_-12px_rgba(40,89,67,.75)] backdrop-blur-xl transition hover:bg-[#214a38]">
               <span className="pulse-dot h-2 w-2 rounded-full bg-[#25D366]" />
               Book a call
             </a>
+            </div>
           </div>
         </section>
 

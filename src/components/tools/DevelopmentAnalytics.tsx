@@ -10,7 +10,6 @@
 import { useState } from "react";
 import { TrendingUp, LineChart, Landmark } from "lucide-react";
 import type { Property } from "@/lib/types";
-import { CurrencyProvider } from "@/lib/currency-context";
 import { CurrencyVisaToolbar } from "@/components/tools/CurrencyVisaToolbar";
 import { YieldSimulator } from "@/components/tools/YieldSimulator";
 import { HoldAppreciationModel } from "@/components/tools/HoldAppreciationModel";
@@ -18,7 +17,6 @@ import { PaymentPlanCalculator } from "@/components/tools/PaymentPlanCalculator"
 import { InsightToolCard } from "@/components/ui/InsightToolCard";
 import { Reveal } from "@/components/ui/Reveal";
 import { ImageBreak } from "@/components/ui/ImageBreak";
-import { GOLDEN_VISA_THRESHOLD_AED } from "@/lib/currency";
 import type { PaymentStructureId } from "@/lib/paymentPlan";
 
 const tools = [
@@ -87,9 +85,8 @@ export function DevelopmentAnalytics({
         ))}
       </div>
 
-      <CurrencyProvider>
         <div className="mt-10 -mx-6 sm:-mx-10">
-          <CurrencyVisaToolbar priceAed={property.priceAed} />
+          <CurrencyVisaToolbar />
         </div>
 
         <div className="mt-10 space-y-16">
@@ -103,9 +100,9 @@ export function DevelopmentAnalytics({
           <ImageBreak
             src={breakImage(2).src}
             alt={breakImage(2).alt}
-            eyebrow="Golden Visa"
-            value={`AED ${GOLDEN_VISA_THRESHOLD_AED.toLocaleString("en-AE")}`}
-            label="Purchase price threshold for the 10-year UAE Golden Visa"
+            eyebrow={`${property.community}, ${property.city}`}
+            value={`${property.beds} bed`}
+            label={property.title}
           />
 
           <div id="dev-hold-appreciation" className="scroll-mt-24">
@@ -141,7 +138,6 @@ export function DevelopmentAnalytics({
             </div>
           </div>
         </div>
-      </CurrencyProvider>
     </div>
   );
 }

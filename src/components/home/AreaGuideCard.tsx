@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { GlassCard } from "@/components/ui/GlassCard";
+import { FormattedPrice } from "@/components/ui/FormattedPrice";
 
 export type AreaGuide = {
   name: string;
@@ -56,7 +57,7 @@ export function AreaGuideCard({ area }: { area: AreaGuide }) {
             <div>
               <div className="text-xs text-slate/55">From</div>
               <div className="mt-0.5 text-sm font-semibold text-slate">
-                AED {area.priceFromAed.toLocaleString("en-AE")}
+                <FormattedPrice amountAed={area.priceFromAed} compact={false} />
               </div>
             </div>
           </div>

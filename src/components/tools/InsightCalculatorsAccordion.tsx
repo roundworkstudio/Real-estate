@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { TrendingUp, LineChart, Landmark } from "lucide-react";
 import { sampleProperties } from "@/lib/sample-properties";
-import { CurrencyProvider } from "@/lib/currency-context";
 import { CurrencyVisaToolbar } from "@/components/tools/CurrencyVisaToolbar";
 import { YieldSimulator } from "@/components/tools/YieldSimulator";
 import { HoldAppreciationModel } from "@/components/tools/HoldAppreciationModel";
@@ -57,7 +56,6 @@ export function InsightCalculatorsAccordion() {
   ];
 
   return (
-    <CurrencyProvider>
       <div className="mt-10 border-t border-slate/10 pt-8 sm:mt-16 sm:pt-12">
         <h2 className="text-2xl font-semibold text-slate">Insight calculators</h2>
         <p className="mt-2 max-w-lg text-sm text-slate/60">
@@ -81,7 +79,7 @@ export function InsightCalculatorsAccordion() {
         </label>
 
         <div className="-mx-6 mt-5 sm:-mx-10 sm:mt-8">
-          <CurrencyVisaToolbar priceAed={property.priceAed} />
+          <CurrencyVisaToolbar />
         </div>
 
         <BouncyAccordion
@@ -90,6 +88,5 @@ export function InsightCalculatorsAccordion() {
           className="mt-5 sm:mt-8"
         />
       </div>
-    </CurrencyProvider>
   );
 }

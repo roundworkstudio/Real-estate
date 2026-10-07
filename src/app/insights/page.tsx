@@ -37,7 +37,6 @@ import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { sampleProperties } from "@/lib/sample-properties";
 import { buildMarketSnapshotCards } from "@/lib/market-snapshot";
-import { CurrencyProvider } from "@/lib/currency-context";
 import { CurrencyVisaToolbar } from "@/components/tools/CurrencyVisaToolbar";
 import { YieldSimulator } from "@/components/tools/YieldSimulator";
 import { HoldAppreciationModel } from "@/components/tools/HoldAppreciationModel";
@@ -47,7 +46,7 @@ import { MarketCard } from "@/components/ui/MarketCard";
 import { Reveal } from "@/components/ui/Reveal";
 import { ImageBreak } from "@/components/ui/ImageBreak";
 import { MorphingTabs } from "@/components/ui/MorphingTabs";
-import { GOLDEN_VISA_THRESHOLD_AED } from "@/lib/currency";
+import { InvestmentToolsTeaser } from "@/components/home/InvestmentToolsTeaser";
 
 const TOOLS_SUB_ANCHORS = ["tools", "yield-strategy", "hold-appreciation", "payment-plan"];
 
@@ -123,7 +122,11 @@ export default function InsightsPage() {
           Market notes and analysis, plus the tools to model a deal against
           current inventory.
         </p>
+      </section>
 
+      <InvestmentToolsTeaser />
+
+      <section className="mx-auto max-w-5xl px-6 pb-16 sm:px-10">
         <MorphingTabs
           className="mt-12"
           ariaLabel="Insights sections"
@@ -137,7 +140,7 @@ export default function InsightsPage() {
                 <div className="p-6 sm:p-10">
                   <p className="max-w-lg text-sm text-slate/60">
                     A snapshot of the current sample inventory — not live
-                    market data, see docs/client-inputs-required.md.
+                    market data.
                   </p>
                   <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
                     {marketSnapshotCards.map((card, i) => (
@@ -195,9 +198,8 @@ export default function InsightsPage() {
                     ))}
                   </div>
 
-                  <CurrencyProvider>
                     <div className="mt-10 -mx-6 sm:-mx-10">
-                      <CurrencyVisaToolbar priceAed={property.priceAed} />
+                      <CurrencyVisaToolbar />
                     </div>
 
                     <div className="mt-10 space-y-16">
@@ -217,9 +219,9 @@ export default function InsightsPage() {
                       <ImageBreak
                         src={breakImage(2).src}
                         alt={breakImage(2).alt}
-                        eyebrow="Golden Visa"
-                        value={`AED ${GOLDEN_VISA_THRESHOLD_AED.toLocaleString("en-AE")}`}
-                        label="Purchase price threshold for the 10-year UAE Golden Visa"
+                        eyebrow={`${property.community}, ${property.city}`}
+                        value={`${property.beds} bed`}
+                        label={property.title}
                       />
 
                       <div id="hold-appreciation" className="scroll-mt-24">
@@ -265,7 +267,6 @@ export default function InsightsPage() {
                         </div>
                       </div>
                     </div>
-                  </CurrencyProvider>
                 </div>
               ),
             },

@@ -79,9 +79,13 @@ const areas: AreaGuide[] = [
   },
 ];
 
-export function AreasPreview() {
+export function AreasPreview({ embedded = false }: { embedded?: boolean }) {
   return (
-    <section className="px-6 py-6 sm:px-10 sm:py-20">
+    <section
+      className={
+        embedded ? "px-6 py-6 sm:px-10 sm:py-8" : "px-6 py-6 sm:px-10 sm:py-20"
+      }
+    >
       <Reveal>
         <h2 className="text-2xl font-semibold text-slate sm:text-3xl">
           Area guides
@@ -118,79 +122,27 @@ export function AreasPreview() {
         </div>
       </Reveal>
 
-      <Reveal delayMs={360}>
-        <details className="mt-6 max-w-3xl text-xs leading-relaxed text-slate/45">
-          <summary className="w-fit cursor-pointer transition-colors hover:text-slate/65">
-            Photo credits
-          </summary>
-          <p className="mt-2">
-            Unsplash photography by{" "}
-            <a
-              href="https://unsplash.com/photos/xeFDlGub15M"
-              target="_blank"
-              rel="noreferrer"
-              className="underline underline-offset-2 hover:text-slate/65"
-            >
-              Nazar Skalatsky
-            </a>
-            ,{" "}
-            <a
-              href="https://unsplash.com/photos/Z1Y4cvcy7uM"
-              target="_blank"
-              rel="noreferrer"
-              className="underline underline-offset-2 hover:text-slate/65"
-            >
-              Shubham Darlinge
-            </a>
-            ,{" "}
-            <a
-              href="https://unsplash.com/photos/NK_P83I72qc"
-              target="_blank"
-              rel="noreferrer"
-              className="underline underline-offset-2 hover:text-slate/65"
-            >
-              Janith Devinda
-            </a>
-            ,{" "}
-            <a
-              href="https://unsplash.com/photos/CwJb7ly-iqc"
-              target="_blank"
-              rel="noreferrer"
-              className="underline underline-offset-2 hover:text-slate/65"
-            >
-              Ashim D&apos;Silva
-            </a>
-            , and{" "}
-            <a
-              href="https://unsplash.com/photos/Fr6zexbmjmc"
-              target="_blank"
-              rel="noreferrer"
-              className="underline underline-offset-2 hover:text-slate/65"
-            >
-              David Rodrigo
-            </a>
-            . Hudayriyat Island by{" "}
-            <a
-              href="https://commons.wikimedia.org/wiki/File:Hudayriyat_Island.jpg"
-              target="_blank"
-              rel="noreferrer"
-              className="underline underline-offset-2 hover:text-slate/65"
-            >
-              Slywire
-            </a>{" "}
-            via Wikimedia Commons, licensed under{" "}
-            <a
-              href="https://creativecommons.org/licenses/by-sa/4.0/"
-              target="_blank"
-              rel="noreferrer"
-              className="underline underline-offset-2 hover:text-slate/65"
-            >
-              CC BY-SA 4.0
-            </a>
-            .
-          </p>
-        </details>
-      </Reveal>
+      <p className="mt-8 text-[11px] leading-relaxed text-slate/35">
+        Area stills are licensed stock placeholders until on-site photography
+        replaces them.{" "}
+        <a
+          href="https://unsplash.com"
+          target="_blank"
+          rel="noreferrer"
+          className="underline underline-offset-2 decoration-slate/20 hover:text-slate/50"
+        >
+          Unsplash
+        </a>
+        {" · "}
+        <a
+          href="https://commons.wikimedia.org/wiki/File:Hudayriyat_Island.jpg"
+          target="_blank"
+          rel="noreferrer"
+          className="underline underline-offset-2 decoration-slate/20 hover:text-slate/50"
+        >
+          Wikimedia
+        </a>
+      </p>
     </section>
   );
 }

@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Reveal } from "@/components/ui/Reveal";
+import { FormattedPrice } from "@/components/ui/FormattedPrice";
 
 /**
  * LAYOUT FILLER — not real sales. Reuses the two real property photos
@@ -61,7 +64,7 @@ export function RecentlySold() {
               </div>
               <div className="p-4 sm:p-5">
                 <div className="text-sm font-medium text-slate">
-                  AED {s.priceAed.toLocaleString("en-AE")}
+                  <FormattedPrice amountAed={s.priceAed} compact={false} />
                 </div>
                 <div className="text-sm text-slate/60">{s.address}</div>
               </div>

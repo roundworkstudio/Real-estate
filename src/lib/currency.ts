@@ -7,14 +7,14 @@
  */
 export type CurrencyCode = "AED" | "USD" | "EUR" | "GBP" | "INR" | "USDT" | "BTC";
 
-export const CURRENCIES: { code: CurrencyCode; label: string }[] = [
-  { code: "AED", label: "AED" },
-  { code: "USD", label: "USD" },
-  { code: "EUR", label: "EUR" },
-  { code: "GBP", label: "GBP" },
-  { code: "INR", label: "INR" },
-  { code: "USDT", label: "USDT" },
-  { code: "BTC", label: "BTC" },
+export const CURRENCIES: { code: CurrencyCode; label: string; name: string }[] = [
+  { code: "AED", label: "AED", name: "UAE Dirham" },
+  { code: "USD", label: "USD", name: "US Dollar" },
+  { code: "EUR", label: "EUR", name: "Euro" },
+  { code: "GBP", label: "GBP", name: "British Pound" },
+  { code: "INR", label: "INR", name: "Indian Rupee" },
+  { code: "USDT", label: "USDT", name: "Tether" },
+  { code: "BTC", label: "BTC", name: "Bitcoin" },
 ];
 
 /** Units of each currency per 1 AED. Fixed, illustrative — AED is pegged to
@@ -52,6 +52,23 @@ export function formatCurrency(amountAed: number, currency: CurrencyCode): strin
   });
   if (currency === "BTC") return `₿${formatted}`;
   return `${currency} ${formatted}`;
+}
+
+/** Compact listing-style price, e.g. "AED 8.7m" / "USD 2.4m". */
+export function formatCompactPrice(
+  amountAed: number,
+  currency: CurrencyCode,
+): string {
+  if (currency === "BTC") return formatCurrency(amountAed, currency);
+  const value = convert(amountAed, currency);
+  const abs = Math.abs(value);
+  if (abs >= 1_000_000) {
+    return `${currency} ${(value / 1_000_000).toFixed(1)}m`;
+  }
+  if (abs >= 1_000) {
+    return `${currency} ${(value / 1_000).toFixed(0)}k`;
+  }
+  return formatCurrency(amountAed, currency);
 }
 
 /** UAE federal rule, applied uniformly regardless of emirate: a single

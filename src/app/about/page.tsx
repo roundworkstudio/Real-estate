@@ -33,17 +33,8 @@ import { PLACEHOLDER_TEL_URL } from "@/lib/site-config";
 import { Button } from "@/components/ui/Button";
 import { MorphingTabs } from "@/components/ui/MorphingTabs";
 import { WhyWorkWithMe } from "@/components/home/WhyWorkWithMe";
-
-const areas = [
-  "Saadiyat Island",
-  "Yas Island",
-  "Al Reem Island",
-  "Al Raha Beach",
-  "Ramhan Island",
-  "Downtown Dubai",
-  "Dubai Marina",
-  "Palm Jumeirah",
-];
+import { AreasPreview } from "@/components/home/AreasPreview";
+import { ValuationPrompt } from "@/components/home/ValuationPrompt";
 
 export default function AboutPage() {
   const [tab, setTab] = useState<"about" | "areas">("about");
@@ -71,7 +62,7 @@ export default function AboutPage() {
 
       <WhyWorkWithMe />
 
-      <section className="mx-auto max-w-3xl px-6 py-16 sm:px-10">
+      <section className="mx-auto max-w-6xl px-6 py-16 sm:px-10">
         <MorphingTabs
           ariaLabel="About sections"
           value={tab}
@@ -117,31 +108,16 @@ export default function AboutPage() {
               id: "areas",
               label: "Areas we cover",
               content: (
-                <div id="areas" className="scroll-mt-24 p-6 sm:p-10">
-                  <p className="max-w-lg text-sm text-slate/60">
-                    Illustrative list — actual coverage and per-area guide
-                    content pending, see docs/client-inputs-required.md.
-                  </p>
-
-                  <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    {areas.map((a) => (
-                      <div
-                        key={a}
-                        className="rounded-2xl border border-slate/10 bg-white/40 p-6"
-                      >
-                        <div className="font-medium text-slate">{a}</div>
-                        <div className="mt-1 text-sm text-slate/50">
-                          Guide content pending
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                <div id="areas" className="scroll-mt-24">
+                  <AreasPreview embedded />
                 </div>
               ),
             },
           ]}
         />
       </section>
+
+      <ValuationPrompt />
 
       <Footer />
     </main>

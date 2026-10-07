@@ -4,16 +4,19 @@ import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, type PanInfo } from "motion/react";
-import { ArrowLeft, BedDouble, Heart, House, LayoutGrid, MapPin, Waves } from "lucide-react";
+import { ArrowLeft, BedDouble, House, LayoutGrid, MapPin, Waves } from "lucide-react";
+import { CompareToggle } from "@/components/tools/CompareToggle";
+import { FormattedPrice } from "@/components/ui/FormattedPrice";
 
 type PropertyImage = { src: string; alt: string };
 
 export function MobilePropertyHero({
   gallery,
   title,
+  slug,
   community,
   city,
-  priceDisplay,
+  priceAed,
   beds,
   status,
   phoneUrl,
@@ -21,9 +24,10 @@ export function MobilePropertyHero({
 }: {
   gallery: PropertyImage[];
   title: string;
+  slug: string;
   community: string;
   city: string;
-  priceDisplay: string;
+  priceAed: number;
   beds: number;
   status: string;
   phoneUrl: string;
@@ -93,13 +97,10 @@ export function MobilePropertyHero({
           >
             <ArrowLeft size={18} />
           </Link>
-          <button
-            type="button"
-            aria-label="Add to wishlist"
-            className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full border border-white/60 bg-canvas/75 text-slate shadow-sm backdrop-blur-sm"
-          >
-            <Heart size={19} />
-          </button>
+          <CompareToggle
+            slug={slug}
+            className="absolute right-4 top-4 h-11 w-11 border border-white/60 bg-canvas/75"
+          />
           <AnimatePresence initial={false}>
             {showingMainPhoto && (
               <motion.div
@@ -116,7 +117,9 @@ export function MobilePropertyHero({
                 </div>
                 <h1 className="mt-1 max-w-[18rem] text-2xl font-semibold leading-tight">{title}</h1>
                 <div className="mt-3 flex flex-wrap gap-2 text-xs">
-                  <span className="rounded-full bg-slate/70 px-3 py-1.5 backdrop-blur-sm">{priceDisplay}</span>
+                  <span className="rounded-full bg-slate/70 px-3 py-1.5 backdrop-blur-sm">
+                    <FormattedPrice amountAed={priceAed} />
+                  </span>
                   <span className="rounded-full bg-slate/70 px-3 py-1.5 backdrop-blur-sm">
                     <BedDouble className="mr-1 inline" size={13} />
                     {beds} beds
@@ -182,7 +185,9 @@ export function MobilePropertyHero({
         <div className="sticky bottom-3 z-10 mt-4 flex items-center justify-between rounded-[1.5rem] border border-white/65 bg-white/35 px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,.72),0_18px_45px_-28px_rgba(58,45,40,.55)] backdrop-blur-xl">
           <div>
             <p className="text-xs text-slate/55">Guide price</p>
-            <p className="text-xl font-semibold text-slate">{priceDisplay}</p>
+            <p className="text-xl font-semibold text-slate">
+              <FormattedPrice amountAed={priceAed} />
+            </p>
           </div>
           <a href={phoneUrl} className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-[#285943]/90 px-5 py-3 text-xs font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,.2),0_8px_20px_-12px_rgba(40,89,67,.75)] backdrop-blur-xl transition hover:bg-[#214a38]">
             <span className="pulse-dot h-2 w-2 rounded-full bg-[#25D366]" />

@@ -19,6 +19,8 @@ import { Reveal } from "@/components/ui/Reveal";
 import { ImageBreak } from "@/components/ui/ImageBreak";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
+import { FormattedPrice } from "@/components/ui/FormattedPrice";
+import { CurrencySwitcher } from "@/components/tools/CurrencySwitcher";
 
 const HERO_IMAGE = {
   src: "/media/wadeem-gardens/hero.jpg",
@@ -48,9 +50,13 @@ export default function DevelopmentsPage() {
         <div className="relative px-6 pb-10 sm:px-10 sm:pb-14">
           <h1 className="text-3xl font-semibold text-white sm:text-4xl">Projects</h1>
           <p className="mt-3 max-w-lg text-white/80">
-            Current listings grouped by development, with project-level
-            figures pulled live from the listings in each one.
+            Compare yield, entry price, and payment terms across a development
+            before you shortlist a unit — built for buyers and investors, not
+            a brochure of floor plans.
           </p>
+          <div className="mt-5">
+            <CurrencySwitcher />
+          </div>
         </div>
       </section>
 
@@ -58,10 +64,6 @@ export default function DevelopmentsPage() {
         {developments.map((d, i) => {
           const stats = developmentStats(d);
           const cover = d.meta?.heroImage ?? d.properties[0].image;
-          const priceRange =
-            stats.minPriceAed === stats.maxPriceAed
-              ? `AED ${stats.minPriceAed.toLocaleString("en-AE")}`
-              : `AED ${stats.minPriceAed.toLocaleString("en-AE")} – ${stats.maxPriceAed.toLocaleString("en-AE")}`;
           const imageFirst = i % 2 === 0;
 
           return (
@@ -114,7 +116,15 @@ export default function DevelopmentsPage() {
                       {stats.unitCount} {stats.unitCount === 1 ? "listing" : "listings"}
                     </span>
                     <span className="rounded-full bg-sand px-3.5 py-1.5 text-sm text-slate">
-                      {priceRange}
+                      {stats.minPriceAed === stats.maxPriceAed ? (
+                        <FormattedPrice amountAed={stats.minPriceAed} />
+                      ) : (
+                        <>
+                          <FormattedPrice amountAed={stats.minPriceAed} />
+                          {" – "}
+                          <FormattedPrice amountAed={stats.maxPriceAed} />
+                        </>
+                      )}
                     </span>
                     {stats.avgGrossYieldPercent !== null && (
                       <span className="rounded-full bg-sovereign/10 px-3.5 py-1.5 text-sm font-medium text-sovereign">

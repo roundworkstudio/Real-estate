@@ -4,6 +4,7 @@ import { Poppins, Lora } from "next/font/google";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { MobileTopBar } from "@/components/layout/MobileTopBar";
 import { SmoothScrollProvider } from "@/components/layout/SmoothScrollProvider";
+import { AppProviders } from "@/components/providers";
 import "lenis/dist/lenis.css";
 import "./globals.css";
 
@@ -48,9 +49,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     >
       <body className="min-h-full flex flex-col">
         <SmoothScrollProvider>
-          <MobileTopBar />
-          {children}
-          <MobileTabBar />
+          <AppProviders>
+            <MobileTopBar />
+            {children}
+            <MobileTabBar />
+          </AppProviders>
         </SmoothScrollProvider>
       </body>
     </html>

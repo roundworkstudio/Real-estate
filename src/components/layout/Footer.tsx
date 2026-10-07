@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Mail } from "lucide-react";
+import { CurrencySwitcher } from "@/components/tools/CurrencySwitcher";
 import { PLACEHOLDER_PHONE_NUMBER_DISPLAY, PLACEHOLDER_EMAIL, PLACEHOLDER_WHATSAPP_URL } from "@/lib/site-config";
 
 function WhatsAppLogo({ className }: { className?: string }) {
@@ -76,8 +77,12 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="mt-6 text-xs text-slate/40">
-        © {new Date().getFullYear()} Janvi Real Estate. All rights reserved.
+      <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <CurrencySwitcher />
+        <div className="text-xs text-slate/40">
+          © {new Date().getFullYear()} Janvi Real Estate. All rights reserved.
+          Prices convert at illustrative rates, not a live quote.
+        </div>
       </div>
     </footer>
   );

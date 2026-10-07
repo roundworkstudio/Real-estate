@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Lenis from "lenis";
 import { prefersReducedMotion } from "@/lib/motion";
+import { registerScroller } from "@/lib/scroll-lock";
 
 /**
  * Inertial smooth scroll for the whole page (mouse wheel and touch), not
@@ -32,8 +33,12 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
       anchors: true,
       autoRaf: true,
     });
+    registerScroller(lenis);
 
-    return () => lenis.destroy();
+    return () => {
+      registerScroller(null);
+      lenis.destroy();
+    };
   }, []);
 
   return children;

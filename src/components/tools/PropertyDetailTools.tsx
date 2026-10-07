@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { CurrencyProvider } from "@/lib/currency-context";
 import type { Property } from "@/lib/types";
 import type { PaymentStructureId } from "@/lib/paymentPlan";
 import { InvestmentCalculator } from "@/components/tools/InvestmentCalculator";
@@ -37,7 +36,6 @@ export function PropertyDetailTools({
   const [activeTab, setActiveTab] = useState<(typeof TABS)[number]>("About");
 
   return (
-    <CurrencyProvider>
       <section id="property-tools" className="hidden py-10 md:block">
         <div className="mt-4 flex flex-wrap gap-2">
           {TABS.map((tab) => (
@@ -107,6 +105,5 @@ export function PropertyDetailTools({
           )}
         </div>
       </section>
-    </CurrencyProvider>
   );
 }
