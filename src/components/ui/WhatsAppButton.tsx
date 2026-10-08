@@ -9,7 +9,7 @@ type WhatsAppButtonProps = {
   className?: string;
 };
 
-function WhatsAppLogo({ className }: { className?: string }) {
+export function WhatsAppLogo({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"

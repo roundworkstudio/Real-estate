@@ -11,8 +11,11 @@
  * not just fade-up) purely for rhythm across the two rows that exist
  * today; with more projects it naturally continues alternating.
  */
+import type { Metadata } from "next";
 import Image from "next/image";
-import { developments, developmentStats } from "@/lib/developments";
+import Link from "next/link";
+import { CalendarClock, Dumbbell, Sparkles, Trees, Waves } from "lucide-react";
+import { derivedUnitMix, developments, developmentStats } from "@/lib/developments";
 import { RevealImage } from "@/components/ui/RevealImage";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Reveal } from "@/components/ui/Reveal";
@@ -21,6 +24,28 @@ import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { FormattedPrice } from "@/components/ui/FormattedPrice";
 import { CurrencySwitcher } from "@/components/tools/CurrencySwitcher";
+
+type GlanceRow = { label: string; value: React.ReactNode };
+
+function amenityIcon(amenity: string) {
+  const a = amenity.toLowerCase();
+  if (a.includes("pool")) return <Waves size={13} />;
+  if (a.includes("gym")) return <Dumbbell size={13} />;
+  if (a.includes("garden") || a.includes("park")) return <Trees size={13} />;
+  return <Sparkles size={13} />;
+}
+
+export const metadata: Metadata = {
+  title: "Projects · Janvi Real Estate",
+  description:
+    "Compare off-plan and ready developments across Abu Dhabi and Dubai — payment plans, handover, unit mix and pricing at a glance.",
+  openGraph: {
+    title: "Projects · Janvi Real Estate",
+    description:
+      "Compare developments across Abu Dhabi and Dubai — payment plans, handover, unit mix and pricing at a glance.",
+    images: [{ url: "/media/wadeem-gardens/hero.jpg", alt: "Aerial view of a villa community on the Abu Dhabi coastline" }],
+  },
+};
 
 const HERO_IMAGE = {
   src: "/media/wadeem-gardens/hero.jpg",
@@ -43,7 +68,7 @@ export default function DevelopmentsPage() {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(to top, rgb(0 0 0 / 0.65), rgb(0 0 0 / 0.05) 55%)",
+              "linear-gradient(to top, rgb(0 0 0 / 0.65), rgb(0 0 0 / 0.05) 55%), linear-gradient(to right, rgb(0 0 0 / 0.5), transparent 60%)",
           }}
         />
         <Nav compactStyle />
@@ -57,6 +82,10 @@ export default function DevelopmentsPage() {
           <div className="mt-5">
             <CurrencySwitcher />
           </div>
+          <p className="mt-4 max-w-lg text-xs text-white/60">
+            Sample inventory for layout — prices, yields and unit details are
+            placeholders until live listings replace them.
+          </p>
         </div>
       </section>
 
@@ -72,9 +101,9 @@ export default function DevelopmentsPage() {
                 <ImageBreak
                   src={d.properties[0].gallery?.[2]?.src ?? cover.src}
                   alt={d.properties[0].gallery?.[2]?.alt ?? cover.alt}
-                  eyebrow={developments[i - 1].city}
-                  value={`${stats.unitCount + developmentStats(developments[i - 1]).unitCount} listings`}
-                  label="across current projects"
+                  eyebrow="Current projects"
+                  value={`${developments.length} ${developments.length === 1 ? "project" : "projects"}`}
+                  label={`across ${Array.from(new Set(developments.map((dev) => dev.city))).join(" & ")}`}
                 />
               )}
 
@@ -83,6 +112,7 @@ export default function DevelopmentsPage() {
                   direction={imageFirst ? "left" : "right"}
                   className={imageFirst ? "sm:order-1" : "sm:order-2"}
                 >
+                  <Link href={`/developments/${d.slug}`} tabIndex={-1} aria-hidden className="block">
                   <GlassCard maxDeg={6} className="overflow-hidden rounded-2xl bg-sand shadow-card">
                     <RevealImage
                       src={cover.src}
@@ -93,6 +123,7 @@ export default function DevelopmentsPage() {
                       className="object-cover"
                     />
                   </GlassCard>
+                  </Link>
                 </Reveal>
 
                 <Reveal
@@ -101,41 +132,66 @@ export default function DevelopmentsPage() {
                   className={imageFirst ? "sm:order-2" : "sm:order-1"}
                 >
                   {d.meta && (
-                    <div className="text-sm font-medium text-slate/50">{d.meta.developer}</div>
+                    <div className="text-sm font-medium text-slate/70">{d.meta.developer}</div>
                   )}
                   <h2 className="mt-1 text-2xl font-semibold text-slate sm:text-3xl">
-                    {d.name}
+                    <Link href={`/developments/${d.slug}`} className="transition-colors hover:text-royal">
+                      {d.name}
+                    </Link>
                   </h2>
-                  <div className="mt-1 text-slate/60">{d.city}</div>
+                  <div className="mt-1 text-slate/70">{d.city}</div>
                   {d.meta && (
                     <p className="mt-4 max-w-md text-sm text-slate/70">{d.meta.description}</p>
                   )}
 
-                  <div className="mt-6 flex flex-wrap gap-2">
-                    <span className="rounded-full bg-sand px-3.5 py-1.5 text-sm text-slate">
-                      {stats.unitCount} {stats.unitCount === 1 ? "listing" : "listings"}
-                    </span>
-                    <span className="rounded-full bg-sand px-3.5 py-1.5 text-sm text-slate">
-                      {stats.minPriceAed === stats.maxPriceAed ? (
-                        <FormattedPrice amountAed={stats.minPriceAed} />
-                      ) : (
-                        <>
+                  <dl className="mt-6 divide-y divide-slate/10 rounded-2xl border border-white/80 bg-white/55 px-4 text-sm shadow-[inset_0_1px_2px_rgba(255,255,255,.85)]">
+                    {([
+                      {
+                        label: "Price range",
+                        value: stats.minPriceAed === stats.maxPriceAed ? (
                           <FormattedPrice amountAed={stats.minPriceAed} />
-                          {" – "}
-                          <FormattedPrice amountAed={stats.maxPriceAed} />
-                        </>
-                      )}
-                    </span>
-                    {stats.avgGrossYieldPercent !== null && (
-                      <span className="rounded-full bg-sovereign/10 px-3.5 py-1.5 text-sm font-medium text-sovereign">
-                        {stats.avgGrossYieldPercent.toFixed(1)}% avg. yield
-                      </span>
-                    )}
-                  </div>
+                        ) : (
+                          <>
+                            <FormattedPrice amountAed={stats.minPriceAed} />
+                            {" – "}
+                            <FormattedPrice amountAed={stats.maxPriceAed} />
+                          </>
+                        ),
+                      },
+                      { label: "Unit mix", value: d.meta?.unitMix ?? derivedUnitMix(d) },
+                      d.meta?.paymentPlan && { label: "Payment plan", value: d.meta.paymentPlan },
+                      d.meta?.handover && { label: "Handover", value: d.meta.handover },
+                      stats.avgGrossYieldPercent !== null && {
+                        label: "Avg. gross yield",
+                        value: <span className="font-medium text-sovereign">{stats.avgGrossYieldPercent.toFixed(1)}%</span>,
+                      },
+                    ] as (GlanceRow | false | "" | undefined)[])
+                      .filter((row): row is GlanceRow => Boolean(row))
+                      .map((row) => (
+                        <div key={row.label} className="flex items-baseline justify-between gap-4 py-2.5">
+                          <dt className="shrink-0 text-slate/70">{row.label}</dt>
+                          <dd className="text-right font-medium text-slate">{row.value}</dd>
+                        </div>
+                      ))}
+                  </dl>
+
+                  {d.meta?.amenities.length ? (
+                    <ul className="mt-3 flex flex-wrap gap-1.5" aria-label="Key amenities">
+                      {d.meta.amenities.slice(0, 3).map((amenity) => (
+                        <li key={amenity} className="inline-flex items-center gap-1.5 rounded-full bg-sand px-3 py-1.5 text-xs text-slate">
+                          {amenityIcon(amenity)} {amenity}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="mt-3 flex items-center gap-1.5 text-xs text-slate/70">
+                      <CalendarClock size={13} /> Payment plan and handover details to be confirmed with the developer.
+                    </p>
+                  )}
 
                   <a
                     href={`/developments/${d.slug}`}
-                    className="mt-6 inline-flex items-center gap-2 rounded-full bg-royal px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-royal/90"
+                    className="mt-6 inline-flex items-center gap-2 rounded-full bg-royal-deep px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-royal-deep/90"
                   >
                     View project
                   </a>

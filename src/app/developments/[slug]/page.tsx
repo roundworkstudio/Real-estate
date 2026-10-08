@@ -68,7 +68,9 @@ export default async function DevelopmentDetailPage({
         { value: PAYMENT_STRUCTURES[paymentStructureId].splitLabel, label: "Payment plan" },
         ...(meta.eoiTimeline?.[0]
           ? [{ value: meta.eoiTimeline[0].date, label: meta.eoiTimeline[0].label }]
-          : []),
+          : meta.salesStatus
+            ? [{ value: meta.salesStatus, label: "Sales status" }]
+            : []),
       ]
     : [];
 

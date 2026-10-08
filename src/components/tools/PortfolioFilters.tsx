@@ -2,9 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import { Building2, ChevronDown, CircleDollarSign, GitCompare, House, MapPin, Search, SlidersHorizontal, Sparkles, TrendingUp, X } from "lucide-react";
+import { BedDouble, Building2, ChevronDown, CircleDollarSign, GitCompare, House, KeyRound, MapPin, Search, SlidersHorizontal, Sparkles, Star, TrendingUp, X } from "lucide-react";
 import { COMPARE_LIMIT } from "@/lib/compare-context";
 import { PropertyCard } from "@/components/ui/PropertyCard";
+import { AreaStory } from "@/components/ui/AreaStory";
 import { CurrencySwitcher } from "@/components/tools/CurrencySwitcher";
 import { FluidSlider } from "@/components/motion/range-slider-fluid";
 import { Slider } from "@/components/ui/slider";
@@ -13,6 +14,30 @@ import type { Property, PropertyStatus, PropertyStrategy } from "@/lib/types";
 const strategyLabels: Record<PropertyStrategy, string> = { yield: "Yield", "off-plan": "Off-plan", "value-add": "Value-add", str: "Short stay", commercial: "Commercial" };
 const statusLabels: Record<PropertyStatus, string> = { new: "New", "under-offer": "Under offer", sold: "Sold", "off-plan": "Off-plan" };
 type VisitorIntent = "all" | "buyer" | "investor";
+
+type QuickFilterId = "picks" | "ready" | "off-plan" | "yield" | "beds5";
+const quickFilters: { id: QuickFilterId; label: string; icon: React.ReactNode; test: (p: Property) => boolean; excludes?: QuickFilterId }[] = [
+  { id: "picks", label: "Janvi\u2019s picks", icon: <Star size={12} />, test: (p) => Boolean(p.janvisPick) },
+  { id: "off-plan", label: "Off-plan", icon: <Building2 size={12} />, test: (p) => p.status === "off-plan", excludes: "ready" },
+  { id: "ready", label: "Ready to move", icon: <KeyRound size={12} />, test: (p) => p.status !== "off-plan", excludes: "off-plan" },
+  { id: "yield", label: "Yield 5%+", icon: <TrendingUp size={12} />, test: (p) => (p.grossYield ?? 0) >= 0.05 },
+  { id: "beds5", label: "5+ bedrooms", icon: <BedDouble size={12} />, test: (p) => p.beds >= 5 },
+];
+
+const areaStories: Record<string, { place: string; blurb: string; image: string; projectSlug: string }> = {
+  "Wadeem Gardens": {
+    place: "Hudayriyat Island, Abu Dhabi",
+    blurb: "Coastal villas on Abu Dhabi\u2019s island of sport and beaches.",
+    image: "/media/area-guides/hudayriyat-island.jpg",
+    projectSlug: "wadeem-gardens",
+  },
+  "Ramhan Island": {
+    place: "Ramhan Island, Abu Dhabi",
+    blurb: "Private island living, just off the Abu Dhabi coast.",
+    image: "/media/hero/ramhan-villa-hero.jpg",
+    projectSlug: "ramhan-island",
+  },
+};
 
 function FilterPill({ active, children, icon, onClick, compact = false }: { active: boolean; children: React.ReactNode; icon?: React.ReactNode; onClick: () => void; compact?: boolean }) {
   return <button type="button" onClick={onClick} className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border border-white/75 ${compact ? "px-2.5 py-1.5 text-xs" : "gap-2 px-3 py-2 text-sm"} font-medium shadow-[inset_0_1px_2px_rgba(255,255,255,.75)] backdrop-blur-md transition ${active ? "bg-royal-deep/90 text-white shadow-sm" : "bg-white/50 text-slate/65 hover:bg-white/75"}`}>
@@ -43,6 +68,11 @@ export function PortfolioFilters({ properties }: { properties: Property[] }) {
   const [minBeds, setMinBeds] = useState(1);
   const [maxBeds, setMaxBeds] = useState(8);
   const [sortBy, setSortBy] = useState<"featured" | "price-low" | "price-high" | "beds-high">("featured");
+  const [quick, setQuick] = useState<QuickFilterId[]>([]);
+  const toggleQuick = (id: QuickFilterId) => {
+    const excludes = quickFilters.find((f) => f.id === id)?.excludes;
+    setQuick((current) => current.includes(id) ? current.filter((q) => q !== id) : [...current.filter((q) => q !== excludes), id]);
+  };
   useEffect(() => {
     const frame = requestAnimationFrame(() => setIsMounted(true));
     return () => cancelAnimationFrame(frame);
@@ -99,6 +129,7 @@ export function PortfolioFilters({ properties }: { properties: Property[] }) {
         (maxPriceAed >= 15_000_000 || property.priceAed <= maxPriceAed) &&
         property.beds >= minBeds &&
         (maxBeds >= 8 || property.beds <= maxBeds) &&
+        quick.every((id) => quickFilters.find((f) => f.id === id)?.test(property)) &&
         matchesSearch
       );
     });
@@ -109,7 +140,13 @@ export function PortfolioFilters({ properties }: { properties: Property[] }) {
       if (sortBy === "beds-high") return b.beds - a.beds;
       return 0;
     });
-  }, [community, maxBeds, maxPriceAed, minBeds, minPriceAed, properties, query, sortBy, status, strategy, visitorIntent]);
+  }, [community, maxBeds, maxPriceAed, minBeds, minPriceAed, properties, query, quick, sortBy, status, strategy, visitorIntent]);
+
+  const areaGroups = useMemo(() => {
+    const groups = new Map<string, Property[]>();
+    for (const property of sorted) groups.set(property.community, [...(groups.get(property.community) ?? []), property]);
+    return Array.from(groups, ([name, items]) => ({ name, items }));
+  }, [sorted]);
 
   const resetFilters = () => {
     setStrategy("all");
@@ -122,6 +159,7 @@ export function PortfolioFilters({ properties }: { properties: Property[] }) {
     setMinBeds(1);
     setMaxBeds(8);
     setSortBy("featured");
+    setQuick([]);
   };
 
   return (
@@ -130,6 +168,9 @@ export function PortfolioFilters({ properties }: { properties: Property[] }) {
         <div className="flex gap-2">
           <label className="flex min-w-0 flex-1 items-center gap-2 rounded-full border border-white/85 bg-white/60 px-4 py-3 text-slate/55 shadow-[inset_0_1px_2px_rgba(255,255,255,.85),0_5px_18px_rgba(58,45,40,.06)] backdrop-blur-md"><Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search homes, communities..." className="min-w-0 flex-1 bg-transparent text-sm text-slate outline-none placeholder:text-slate/45" /></label>
           <button type="button" aria-label="Show more filters" aria-expanded={showMoreFilters} onClick={() => setShowMoreFilters(true)} className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/85 text-slate shadow-[inset_0_1px_2px_rgba(255,255,255,.85),0_5px_18px_rgba(58,45,40,.06)] backdrop-blur-md transition hover:bg-white/80 sm:hidden ${showMoreFilters ? "bg-royal-deep text-white" : "bg-white/60"}`}><SlidersHorizontal size={18} /></button>
+        </div>
+        <div className="no-scrollbar mt-3 flex gap-1.5 overflow-x-auto rounded-full [mask-image:linear-gradient(to_right,black_calc(100%-40px),transparent)] sm:flex-wrap sm:overflow-visible sm:rounded-none sm:[mask-image:none]" role="group" aria-label="Quick filters">
+          {quickFilters.map((filter) => <FilterPill compact key={filter.id} icon={filter.icon} active={quick.includes(filter.id)} onClick={() => toggleQuick(filter.id)}>{filter.label}</FilterPill>)}
         </div>
         <div className="mt-4 hidden items-end justify-between sm:flex"><div><p className="text-xs font-medium uppercase tracking-[0.16em] text-royal">Refine your search</p><button type="button" aria-expanded={showFilterContent} aria-controls="desktop-filter-content" onClick={() => setShowFilterContent((open) => !open)} className="mt-1 inline-flex items-center gap-2 text-left text-2xl font-semibold text-slate"><span>Filters</span><ChevronDown size={19} className={`transition-transform ${showFilterContent ? "rotate-180" : ""} ${arrowBounce ? "filter-arrow-bounce" : ""}`} /></button></div></div>
         <div id="desktop-filter-content" className={`hidden overflow-hidden transition-[grid-template-rows,opacity,transform] duration-750 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none sm:grid ${showFilterContent ? "sm:grid-rows-[1fr] sm:translate-y-0 sm:opacity-100" : "sm:pointer-events-none sm:grid-rows-[0fr] sm:-translate-y-2 sm:opacity-0"}`}>
@@ -191,7 +232,19 @@ export function PortfolioFilters({ properties }: { properties: Property[] }) {
           <span className="text-sm text-slate/50">{sorted.length} results</span>
         </div>
       </div>
-      {sorted.length === 0 ? <div className="py-16 text-center text-sm text-slate/50">No listings match — try a different filter.</div> : <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{sorted.map((property, index) => <PropertyCard key={property.slug} property={property} featured={index === 0} />)}</div>}
+      {sorted.length === 0 ? <div className="py-16 text-center text-sm text-slate/50">No listings match — try a different filter.</div> : sortBy === "featured" ? (
+        <div className="mt-5 space-y-12 sm:space-y-16">
+          {areaGroups.map((group) => {
+            const story = areaStories[group.name];
+            return (
+              <section key={group.name} aria-label={group.name}>
+                {story && <AreaStory community={group.name} place={story.place} blurb={story.blurb} image={story.image} projectHref={`/developments/${story.projectSlug}`} />}
+                <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{group.items.map((property, index) => <PropertyCard key={property.slug} property={property} featured={index === 0 && group.items.length > 2} />)}</div>
+              </section>
+            );
+          })}
+        </div>
+      ) : <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{sorted.map((property, index) => <PropertyCard key={property.slug} property={property} featured={index === 0} />)}</div>}
     </div>
   );
 }

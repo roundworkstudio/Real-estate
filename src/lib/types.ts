@@ -49,6 +49,11 @@ export type Property = {
   image: { src: string; alt: string };
   /** Additional gallery images, for the property detail page. */
   gallery?: { src: string; alt: string }[];
+  /** Master developer, e.g. "MODON". Omit when not confirmed. */
+  developer?: string;
+  /** Janvi's own one-line reason for recommending this listing. Present
+   * only when she has personally picked it — never auto-generated. */
+  janvisPick?: string;
 };
 
 export function pricePerSqft(p: Property): number {

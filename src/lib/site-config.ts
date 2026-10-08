@@ -4,6 +4,8 @@
 export const PLACEHOLDER_PHONE_NUMBER = "971555881148";
 export const PLACEHOLDER_PHONE_NUMBER_DISPLAY = "+971 55 588 1148";
 export const PLACEHOLDER_WHATSAPP_URL = `https://wa.me/${PLACEHOLDER_PHONE_NUMBER}`;
+export const whatsAppUrlWithMessage = (message: string) =>
+  `${PLACEHOLDER_WHATSAPP_URL}?text=${encodeURIComponent(message)}`;
 export const PLACEHOLDER_TEL_URL = `tel:+${PLACEHOLDER_PHONE_NUMBER}`;
 
 /**

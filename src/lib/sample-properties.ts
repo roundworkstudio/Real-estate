@@ -31,6 +31,7 @@ const wadeemGardensVillas: Property[] = [
     title: "Wadeem Gardens Villa — 4 Bedroom",
     community: "Wadeem Gardens",
     city: "Abu Dhabi",
+    developer: "MODON",
     priceAed: 8_700_000,
     beds: 4,
     sqft: 4629, // GSA 430 m²
@@ -56,8 +57,11 @@ const wadeemGardensVillas: Property[] = [
   {
     slug: "wadeem-gardens-5br",
     title: "Wadeem Gardens Villa — 5 Bedroom",
+    // PLACEHOLDER — Janvi to supply her own reason.
+    janvisPick: "The sweet spot of the release — a real step up in plot and space for a modest premium over the 4-bed.",
     community: "Wadeem Gardens",
     city: "Abu Dhabi",
+    developer: "MODON",
     priceAed: 10_200_000,
     beds: 5,
     sqft: 5490, // GSA 510 m²
@@ -84,6 +88,7 @@ const wadeemGardensVillas: Property[] = [
     title: "Wadeem Gardens Villa — 6 Bedroom",
     community: "Wadeem Gardens",
     city: "Abu Dhabi",
+    developer: "MODON",
     priceAed: 11_600_000,
     beds: 6,
     sqft: 6362, // GSA 591 m²
@@ -115,6 +120,7 @@ export const sampleProperties: Property[] = [
     title: "Villa on Ramhan Island",
     community: "Ramhan Island",
     city: "Abu Dhabi",
+    developer: "Eagle Hills",
     priceAed: 8_200_000,
     beds: 5,
     baths: 6,
@@ -139,8 +145,11 @@ export const sampleProperties: Property[] = [
   {
     slug: "ramhan-villa-2",
     title: "Waterfront Villa, Ramhan Island",
+    // PLACEHOLDER — Janvi to supply her own reason.
+    janvisPick: "Ready now on the waterfront, so you can start earning rental income straight away instead of waiting for handover.",
     community: "Ramhan Island",
     city: "Abu Dhabi",
+    developer: "Eagle Hills",
     priceAed: 9_650_000,
     beds: 6,
     baths: 7,

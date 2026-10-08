@@ -35,6 +35,18 @@ export type DevelopmentMeta = {
    * itself didn't state one — see the EOI timeline note in
    * app/developments/[slug]/page.tsx for why. */
   eoiTimeline?: { label: string; date: string }[];
+  /** A finished EOI window, kept for reference but never rendered — the
+   * source gives no year, so past dates would read as a live launch. */
+  pastEoiTimeline?: { label: string; date: string }[];
+  /** Current sales stage, e.g. "Now selling", shown in place of an EOI date. */
+  salesStatus?: string;
+  /** Overrides the unit mix derived from listings when the source states
+   * more, e.g. layout/style options. */
+  unitMix?: string;
+  /** One-line summary of the published payment plan — see lib/paymentPlan.ts
+   * for the full milestone schedule. */
+  paymentPlan?: string;
+  handover?: string;
 };
 
 /** Real project metadata, sourced from client-supplied developer packs —
@@ -62,14 +74,25 @@ const DEVELOPMENT_META: Record<string, DevelopmentMeta> = {
       "Central 2.3km + 2.2km spine connecting the precinct to the waterfront",
       "Part of a wider precinct masterplan including a waterfront promenade and marina",
     ],
-    eoiTimeline: [
+    salesStatus: "Now selling",
+    pastEoiTimeline: [
       { label: "EOI starts", date: "18 Sep" },
       { label: "EOI ends", date: "28 Sep" },
       { label: "VIP sales", date: "29 Sep" },
       { label: "Sales launch", date: "1 Oct" },
     ],
+    unitMix: "4, 5 & 6-bed villas · Arabian or Modern styles",
+    paymentPlan: "5% down · 25% from you, 75% financed by ADIB",
+    handover: "Month 48 from booking",
   },
 };
+
+/** "4, 5 & 6-bed" from the listings themselves — no assumption about type. */
+export function derivedUnitMix(d: Development): string {
+  const beds = Array.from(new Set(d.properties.map((p) => p.beds))).sort((a, b) => a - b);
+  const list = beds.length > 1 ? `${beds.slice(0, -1).join(", ")} & ${beds.at(-1)}` : `${beds[0]}`;
+  return `${list}-bed homes`;
+}
 
 function slugify(value: string): string {
   return value
