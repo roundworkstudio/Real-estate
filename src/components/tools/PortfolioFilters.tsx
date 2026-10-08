@@ -237,7 +237,7 @@ export function PortfolioFilters({ properties }: { properties: Property[] }) {
           {areaGroups.map((group) => {
             const story = areaStories[group.name];
             return (
-              <section key={group.name} aria-label={group.name}>
+              <section key={group.name} id={story ? `homes-${story.projectSlug}` : undefined} aria-label={group.name} className="scroll-mt-28">
                 {story && <AreaStory community={group.name} place={story.place} blurb={story.blurb} image={story.image} projectHref={`/developments/${story.projectSlug}`} />}
                 <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{group.items.map((property, index) => <PropertyCard key={property.slug} property={property} featured={index === 0 && group.items.length > 2} />)}</div>
               </section>

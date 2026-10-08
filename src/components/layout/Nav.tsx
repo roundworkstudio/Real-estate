@@ -128,7 +128,7 @@ export function Nav({ compactStyle = false }: { compactStyle?: boolean }) {
             alt="Property with Janvi"
             width={690}
             height={135}
-            priority
+            preload
             className="h-auto w-[min(16vw,190px)]"
           />
         </Link>
@@ -179,7 +179,7 @@ export function Nav({ compactStyle = false }: { compactStyle?: boolean }) {
           alt="Property with Janvi"
           width={600}
           height={315}
-          priority
+          preload
           className="h-16 w-auto"
         />
       </Link>

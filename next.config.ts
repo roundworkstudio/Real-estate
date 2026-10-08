@@ -26,6 +26,8 @@ const nextConfig: NextConfig = {
     // Keep the workaround only in the local preview. Production on Vercel
     // should resize, compress, and cache these multi-megabyte source photos.
     unoptimized: process.env.NODE_ENV === "development",
+    // 90 is reserved for full-bleed hero and cover photography.
+    qualities: [75, 90],
   },
 };
 

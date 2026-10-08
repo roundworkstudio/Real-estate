@@ -87,6 +87,59 @@ const DEVELOPMENT_META: Record<string, DevelopmentMeta> = {
   },
 };
 
+/** A development Janvi has sold into that has since completed. Unlike
+ * `Development`, it isn't derived from live listings — there's nothing
+ * left to list — so it's its own record. */
+export type CompletedProject = {
+  slug: string;
+  name: string;
+  area: string;
+  city: Property["city"];
+  developer: string;
+  completedYear: number;
+  image: { src: string; alt: string };
+  launchPricePerSqftAed: number;
+  currentPricePerSqftAed: number;
+  /** Only set when one of Janvi's Portfolio deals happened in this project. */
+  caseStudyHref?: string;
+  isSample: boolean;
+};
+
+/** PLACEHOLDER — no real completed projects have been supplied yet. Names,
+ * developers and prices are invented for layout and every card renders a
+ * sample label; replace with Janvi's real track record. */
+export const completedProjects: CompletedProject[] = [
+  {
+    slug: "sample-yas",
+    name: "Sample community",
+    area: "Yas Island",
+    city: "Abu Dhabi",
+    developer: "Developer to be confirmed",
+    completedYear: 2024,
+    image: { src: "/media/area-guides/yas-island.jpg", alt: "Waterfront skyline on Yas Island, Abu Dhabi" },
+    launchPricePerSqftAed: 1_450,
+    currentPricePerSqftAed: 2_000,
+    caseStudyHref: "/portfolio",
+    isSample: true,
+  },
+  {
+    slug: "sample-saadiyat",
+    name: "Sample community",
+    area: "Saadiyat Island",
+    city: "Abu Dhabi",
+    developer: "Developer to be confirmed",
+    completedYear: 2023,
+    image: { src: "/media/area-guides/saadiyat-island.jpg", alt: "Beachfront on Saadiyat Island, Abu Dhabi" },
+    launchPricePerSqftAed: 1_900,
+    currentPricePerSqftAed: 2_550,
+    isSample: true,
+  },
+];
+
+export function growthSinceLaunch(p: CompletedProject): number {
+  return ((p.currentPricePerSqftAed - p.launchPricePerSqftAed) / p.launchPricePerSqftAed) * 100;
+}
+
 /** "4, 5 & 6-bed" from the listings themselves — no assumption about type. */
 export function derivedUnitMix(d: Development): string {
   const beds = Array.from(new Set(d.properties.map((p) => p.beds))).sort((a, b) => a - b);

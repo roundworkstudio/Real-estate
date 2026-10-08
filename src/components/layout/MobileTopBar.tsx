@@ -37,7 +37,7 @@ export function MobileTopBar() {
             alt="Property with Janvi"
             width={690}
             height={135}
-            priority
+            preload
             className="h-auto w-[min(44vw,170px)]"
           />
         </Link>

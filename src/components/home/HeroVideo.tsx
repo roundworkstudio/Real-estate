@@ -96,7 +96,7 @@ export function HeroVideo({ clips }: { clips: HeroClip[] }) {
       {/* Painted first, so it is the hero's largest paint; the same-sized
           videos fading in over it don't register as later, larger paints. */}
       {clips[0] && (
-        <Image src={clips[0].poster} alt="" fill priority sizes="100vw" className="object-cover" />
+        <Image src={clips[0].poster} alt="" fill preload sizes="100vw" className="object-cover" />
       )}
       {clips.map((clip, i) => (
         <video

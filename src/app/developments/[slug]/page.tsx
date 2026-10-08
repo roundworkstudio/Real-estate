@@ -82,7 +82,7 @@ export default async function DevelopmentDetailPage({
             src={meta.heroImage.src}
             alt={meta.heroImage.alt}
             fill
-            priority
+            preload
             sizes="100vw"
             className="object-cover"
           />

@@ -49,7 +49,7 @@ export function WalkInBackdrop({
           src={src}
           alt=""
           fill
-          priority
+          preload
           sizes="100vw"
           className="object-cover object-[68%_center] sm:object-center"
         />

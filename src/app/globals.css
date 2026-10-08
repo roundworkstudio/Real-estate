@@ -236,6 +236,89 @@ html.is-scrolling .glass-tilt {
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35);
 }
 
+/* Liquid glass. `.liquid-glass` blurs and saturates what's behind it, so
+   per the glass rule above it only ever sits over photography, never on
+   fixed chrome. `--tint` darkens it for white text on bright photos.
+   `.liquid-glass-light` is the same rim and highlights with no
+   backdrop-filter, for glass surfaces over the plain page background.
+   Both draw a specular rim with a masked gradient border on ::before. */
+@layer components {
+.liquid-glass,
+.liquid-glass-light {
+  position: relative;
+  isolation: isolate;
+}
+.liquid-glass {
+  background: linear-gradient(
+    135deg,
+    rgb(255 255 255 / 0.24),
+    rgb(255 255 255 / 0.07) 55%,
+    rgb(255 255 255 / 0.14)
+  );
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  backdrop-filter: blur(20px) saturate(170%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.5),
+    inset 0 -1px 0 rgb(255 255 255 / 0.1),
+    inset 0 0 24px rgb(255 255 255 / 0.07),
+    0 20px 44px -22px rgb(0 0 0 / 0.5);
+}
+.liquid-glass--tint {
+  background: linear-gradient(
+    135deg,
+    rgb(46 36 32 / 0.46),
+    rgb(46 36 32 / 0.26) 55%,
+    rgb(46 36 32 / 0.36)
+  );
+}
+.liquid-glass-light {
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.9), rgb(255 255 255 / 0.58));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 1),
+    inset 0 -1px 0 rgb(58 45 40 / 0.05),
+    0 18px 44px -28px rgb(58 45 40 / 0.55);
+}
+.liquid-glass::before,
+.liquid-glass-light::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    140deg,
+    rgb(255 255 255 / 0.8),
+    rgb(255 255 255 / 0.12) 35%,
+    rgb(255 255 255 / 0.04) 65%,
+    rgb(255 255 255 / 0.45)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.liquid-glass-light::before {
+  background: linear-gradient(
+    140deg,
+    rgb(255 255 255 / 1),
+    rgb(214 200 186 / 0.45) 40%,
+    rgb(214 200 186 / 0.25) 70%,
+    rgb(255 255 255 / 0.9)
+  );
+}
+/* Glossy fill for an active pill sitting on glass. */
+.liquid-pill {
+  background: linear-gradient(180deg, rgb(92 72 62), rgb(58 45 40));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.28),
+    inset 0 -1px 0 rgb(0 0 0 / 0.2),
+    0 8px 18px -8px rgb(58 45 40 / 0.7);
+}
+}
+
 /* Raised metal edge for the insight tool cards. The lower champagne layer
    reads as the card's physical side while the broad shadow lifts it clear
    of the page. All highlights and shadows sit outside the surface so the
