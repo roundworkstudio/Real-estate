@@ -20,6 +20,7 @@ import { useCallback, useRef, useEffect, useState } from "react";
 import type { PointerEvent as ReactPointerEvent, KeyboardEvent as ReactKeyboardEvent } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { useInView } from "@/lib/motion";
+import { posterSrc } from "@/lib/poster";
 
 const SWIPE_THRESHOLD = 36;
 
@@ -132,11 +133,11 @@ function StackCard({
           className="h-full w-full object-cover"
           style={{ pointerEvents: "none", userSelect: "none" }}
           src={clip.src}
-          poster={clip.poster}
+          poster={posterSrc(clip.poster)}
           muted
           loop
           playsInline
-          preload={stackPos === 0 ? "auto" : "none"}
+          preload={stackPos === 0 && isInView ? "auto" : "none"}
         />
       </div>
     </motion.div>
@@ -210,7 +211,7 @@ export function VideoSwipeStack({ clips }: { clips: Clip[] }) {
       </div>
 
       {/* Pagination dots */}
-      <div className="flex justify-center gap-2">
+      <div className="flex justify-center gap-1">
         {clips.map((_, i) => (
           <button
             key={i}
@@ -219,14 +220,19 @@ export function VideoSwipeStack({ clips }: { clips: Clip[] }) {
               if (!transitioning) setActiveIndex(i);
             }}
             aria-label={`Go to clip ${i + 1}`}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
-              i === visualIndex ? "w-5 bg-slate" : "w-1.5 bg-slate/25"
-            }`}
-          />
+            aria-current={i === visualIndex ? "true" : undefined}
+            className="flex h-6 min-w-6 items-center justify-center"
+          >
+            <span
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === visualIndex ? "w-5 bg-slate" : "w-1.5 bg-slate/25"
+              }`}
+            />
+          </button>
         ))}
       </div>
 
-      <p className="mt-2 text-center text-xs text-slate/40">
+      <p className="mt-2 text-center text-xs text-slate/65">
         Swipe to browse
       </p>
     </div>

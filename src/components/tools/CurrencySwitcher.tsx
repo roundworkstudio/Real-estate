@@ -163,7 +163,7 @@ export function CurrencySwitcher({
         type="button"
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label={`Display currency: ${selected.name}`}
+        aria-label={`${selected.code}, display currency: ${selected.name}`}
         onClick={() => (open ? setOpen(false) : openMenu())}
         onKeyDown={(e) => {
           if (e.key === "ArrowDown" || e.key === "ArrowUp") {

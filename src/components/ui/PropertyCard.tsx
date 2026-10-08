@@ -16,11 +16,14 @@ export function PropertyCard({
   featured = false,
   compactOnMobile: _compactOnMobile,
   minimal: _minimal,
+  pickBelow = false,
 }: {
   property: Property;
   featured?: boolean;
   compactOnMobile?: boolean;
   minimal?: boolean;
+  /** Render Janvi's pick quote as a bubble under the card so card heights stay uniform. */
+  pickBelow?: boolean;
 }) {
   const images = property.gallery?.length ? property.gallery : [property.image];
   const href = `/properties/${property.slug}`;
@@ -126,7 +129,7 @@ export function PropertyCard({
                   <FormattedPrice amountAed={property.priceAed} />
                 </Link>
               </p>
-              <p className="mt-1 text-xs text-slate/55">
+              <p className="mt-1 text-xs text-slate/70">
                 {property.beds} bedrooms · {property.sqft.toLocaleString("en-AE")} sqft
               </p>
               {property.developer && (
@@ -154,7 +157,7 @@ export function PropertyCard({
               </span>
             </div>
           </div>
-          {property.janvisPick && (
+          {property.janvisPick && !pickBelow && (
             <div className="mt-3 flex items-start gap-2.5 border-t border-slate/10 pt-3">
               <Image
                 src="/media/people/janvi-about.jpg"
@@ -170,6 +173,27 @@ export function PropertyCard({
           )}
         </div>
       </div>
+      {property.janvisPick && pickBelow && (
+        <figure className="relative mx-4 mt-4 flex items-start gap-2.5 rounded-2xl border border-white/80 bg-white/70 px-4 py-3 shadow-[0_10px_30px_-22px_rgba(58,45,40,.6)] backdrop-blur-sm">
+          <span
+            aria-hidden
+            className="absolute -top-[7px] left-8 h-3 w-3 rotate-45 rounded-tl-[3px] border-l border-t border-white/80 bg-white/70"
+          />
+          <Image
+            src="/media/people/janvi-about.jpg"
+            alt=""
+            width={28}
+            height={28}
+            className="h-7 w-7 shrink-0 rounded-full object-cover object-top"
+          />
+          <div>
+            <blockquote className="text-xs italic leading-relaxed text-slate/75">
+              &ldquo;{property.janvisPick}&rdquo;
+            </blockquote>
+            <p className="mt-1 text-[11px] font-medium text-slate/70">Janvi</p>
+          </div>
+        </figure>
+      )}
       <CompareToggle slug={property.slug} className="absolute right-4 top-4 z-10" />
     </article>
   );

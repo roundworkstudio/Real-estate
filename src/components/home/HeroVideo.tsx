@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { posterSrc } from "@/lib/poster";
 
 /**
  * Some browsers (mobile Safari, and apparently this project's preview
@@ -91,6 +93,11 @@ export function HeroVideo({ clips }: { clips: HeroClip[] }) {
 
   return (
     <div className="absolute inset-0 h-full w-full">
+      {/* Painted first, so it is the hero's largest paint; the same-sized
+          videos fading in over it don't register as later, larger paints. */}
+      {clips[0] && (
+        <Image src={clips[0].poster} alt="" fill priority sizes="100vw" className="object-cover" />
+      )}
       {clips.map((clip, i) => (
         <video
           key={clip.src}
@@ -100,7 +107,7 @@ export function HeroVideo({ clips }: { clips: HeroClip[] }) {
           className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
           style={{ opacity: active === i ? 1 : 0 }}
           src={clip.src}
-          poster={active === i ? clip.poster : undefined}
+          poster={active === i && i !== 0 ? posterSrc(clip.poster, 1080, 1920) : undefined}
           muted
           playsInline
           preload={i === active || i === next ? "auto" : "none"}

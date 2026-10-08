@@ -8,7 +8,7 @@ import {
 type Variant = "primary" | "dark" | "ghost-light" | "light";
 
 const variantClass: Record<Variant, string> = {
-  primary: "bg-royal text-white hover:bg-royal/90",
+  primary: "bg-royal-deep text-white hover:bg-royal-deep/90",
   dark: "bg-slate text-white hover:bg-slate/90",
   // For use over photography or a deep-blue panel.
   "ghost-light": "bg-white/10 text-white hover:bg-white/20",

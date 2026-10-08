@@ -29,7 +29,7 @@ export default function PropertiesPage() {
             <HeroShimmerHeading light={false} className="leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
               Explore modern living spaces <span className="font-accent">in the UAE.</span>
             </HeroShimmerHeading>
-            <p className="mt-4 max-w-xl text-sm text-slate/50">
+            <p className="mt-4 inline-block max-w-xl rounded-xl bg-canvas/70 px-3 py-2 text-sm text-slate/75 backdrop-blur-sm">
               Sample inventory for layout — status, prices, and specs are
               placeholders until live listings replace them.
             </p>

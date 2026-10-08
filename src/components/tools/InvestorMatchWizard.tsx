@@ -35,6 +35,7 @@ function ProgressBar({ step }: { step: number }) {
   return (
     <div
       role="progressbar"
+      aria-label="Question progress"
       aria-valuenow={step + 1}
       aria-valuemin={1}
       aria-valuemax={TOTAL_STEPS}
@@ -178,16 +179,18 @@ export function InvestorMatchWizard({
             ? `${matches.length} listing${matches.length > 1 ? "s" : ""} match your criteria`
             : "No current listings match — Janvi will reach out directly"}
         </h3>
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-x-8 sm:gap-y-12">
+        <div className="no-scrollbar mt-6 flex items-start snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain rounded-[2rem] pt-1 pb-2 sm:mt-8 sm:pt-0 sm:grid sm:grid-cols-2 sm:items-stretch sm:gap-x-8 sm:gap-y-12 sm:overflow-visible sm:rounded-none sm:pb-0">
           {matches.map((p) => (
-            <PropertyCard
-              key={p.slug}
-              property={p}
-              compactOnMobile
-              minimal
-            />
+            <div key={p.slug} className="w-[88%] shrink-0 snap-start sm:w-auto">
+              <PropertyCard property={p} pickBelow />
+            </div>
           ))}
         </div>
+        {matches.length > 1 && (
+          <p className="mt-3 text-center text-xs text-slate/65 sm:hidden">
+            Swipe to see all {matches.length}
+          </p>
+        )}
         <button
           type="button"
           onClick={() => {

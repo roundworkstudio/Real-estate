@@ -11,13 +11,13 @@
  * IMG_1829.mov and IMG_1845.mov — see directives/prepare_media.md for the
  * conversion tool and where source footage lives.
  *
- * Desktop videos show their posters and load metadata until a visitor
- * chooses one to play. Starting three portrait videos together cost both
- * network and decoding time. Mobile keeps ambient autoplay for only the
- * one card at the front of the swipe stack.
+ * Desktop clips load and autoplay only once scrolled near (LazyVideo).
+ * Mobile keeps ambient autoplay for only the one card at the front of the
+ * swipe stack, and only once the stack is in view.
  */
 import { Reveal } from "@/components/ui/Reveal";
 import { VideoSwipeStack } from "@/components/home/VideoSwipeStack";
+import { LazyVideo } from "@/components/home/LazyVideo";
 
 const clips = [
   {
@@ -34,20 +34,6 @@ const clips = [
   },
 ];
 
-function TourClip({ src, poster }: { src: string; poster: string }) {
-  return (
-    <video
-      className="aspect-[9/16] w-full object-cover"
-      src={src}
-      poster={poster}
-      autoPlay
-      muted
-      loop
-      playsInline
-      preload="metadata"
-    />
-  );
-}
 
 export function VideoTour() {
   return (
@@ -76,7 +62,7 @@ export function VideoTour() {
               delayMs={i * 100}
               className="hover-lift overflow-hidden rounded-2xl shadow-card"
             >
-              <TourClip src={c.src} poster={c.poster} />
+              <LazyVideo src={c.src} poster={c.poster} className="aspect-[9/16] w-full object-cover" />
             </Reveal>
           ))}
         </div>

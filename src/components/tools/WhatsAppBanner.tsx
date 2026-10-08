@@ -29,7 +29,7 @@ export function WhatsAppBanner() {
           Instant pro forma access the moment a deal is available, before
           it&apos;s listed anywhere else.
         </p>
-        <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#25D366]/10 px-3.5 py-1.5 text-sm font-medium text-[#128C4A]">
+        <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#25D366]/10 px-3.5 py-1.5 text-sm font-medium text-[#0B6B35]">
           <span className="pulse-dot h-2 w-2 rounded-full bg-[#25D366]" />
           Avg. response time: &lt; 5 mins
         </div>

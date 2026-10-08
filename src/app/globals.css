@@ -624,3 +624,18 @@ html.is-scrolling .nav-cta {
     animation: none;
   }
 }
+
+/* Bright WhatsApp green can't carry white text (1.98:1). Deep green text and
+   icon on the bright fill; white once the darker hover bloom covers it. */
+.whatsapp-action--green {
+  --wa-text: #0b3d20;
+  --wa-icon: #0b3d20;
+  --wa-icon-bg: rgb(255 255 255 / 0.4);
+  --wa-overlay: #0e6b37;
+}
+
+.whatsapp-action--green:hover .whatsapp-action__icon,
+.whatsapp-action--green:focus-visible .whatsapp-action__icon {
+  background: rgb(255 255 255 / 0.18);
+  color: #ffffff;
+}
