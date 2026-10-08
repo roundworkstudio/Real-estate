@@ -12,6 +12,7 @@
 import { sampleProperties } from "./sample-properties";
 import type { Property } from "./types";
 import { pricePerSqft } from "./types";
+import type { PaymentStructureId } from "./paymentPlan";
 
 export type Development = {
   slug: string;
@@ -46,7 +47,19 @@ export type DevelopmentMeta = {
   /** One-line summary of the published payment plan — see lib/paymentPlan.ts
    * for the full milestone schedule. */
   paymentPlan?: string;
+  /** Full milestone schedule in lib/paymentPlan.ts, when one is published. */
+  paymentStructureId?: PaymentStructureId;
   handover?: string;
+};
+
+/** PLACEHOLDER — wording written for layout, not by Janvi. Replace each
+ * with her own two lines: who the project suits, and one honest watch-out.
+ * Keyed by development slug, so it covers groupings without meta too. */
+export const JANVIS_TAKE: Record<string, string> = {
+  "wadeem-gardens":
+    "Right for families who want a big villa by the beach and can wait for it. Handover is four years out, but you only fund 25% yourself.",
+  "ramhan-island":
+    "For buyers who want something finished and private now. Very few villas on the island, so resales are rare. Move quickly when one comes up.",
 };
 
 /** Real project metadata, sourced from client-supplied developer packs —
@@ -83,6 +96,7 @@ const DEVELOPMENT_META: Record<string, DevelopmentMeta> = {
     ],
     unitMix: "4, 5 & 6-bed villas · Arabian or Modern styles",
     paymentPlan: "5% down · 25% from you, 75% financed by ADIB",
+    paymentStructureId: "wadeem-adib",
     handover: "Month 48 from booking",
   },
 };

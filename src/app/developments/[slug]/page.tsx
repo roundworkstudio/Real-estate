@@ -18,6 +18,7 @@ import { developments, getDevelopment, developmentStats } from "@/lib/developmen
 import { PAYMENT_STRUCTURES, type PaymentStructureId } from "@/lib/paymentPlan";
 import { PropertyCard } from "@/components/ui/PropertyCard";
 import { LocationMap } from "@/components/ui/LocationMap";
+import { PriceListRequest } from "@/components/tools/PriceListRequest";
 import { DevelopmentAnalytics } from "@/components/tools/DevelopmentAnalytics";
 import { ImageBreak } from "@/components/ui/ImageBreak";
 import { RevealImage } from "@/components/ui/RevealImage";
@@ -46,8 +47,7 @@ export default async function DevelopmentDetailPage({
   // Same structure choice DevelopmentAnalytics defaults to further down
   // the page — computed once here so the hero stat strip and the
   // modelling suite never disagree about which plan this project uses.
-  const paymentStructureId: PaymentStructureId =
-    slug === "wadeem-gardens" ? "wadeem-adib" : "60-40";
+  const paymentStructureId: PaymentStructureId = meta?.paymentStructureId ?? "60-40";
 
   /** "Launch briefing" style stat strip — the facts a buyer needs before
    * scrolling, modelled on a client-supplied reference page. Only built
@@ -102,6 +102,12 @@ export default async function DevelopmentDetailPage({
               {development.name}
             </h1>
             <p className="mt-3 max-w-2xl text-white/80">{meta.description}</p>
+            <PriceListRequest
+              project={development.name}
+              developer={meta.developer}
+              variant="onDark"
+              className="mt-5"
+            />
             <div className="mt-8">
               <StatStrip theme="dark" items={heroStats} />
             </div>
@@ -127,6 +133,7 @@ export default async function DevelopmentDetailPage({
               {development.name}
             </h1>
             <div className="mt-1 text-lg text-slate/70">{development.city}</div>
+            <PriceListRequest project={development.name} className="mt-5" />
           </>
         )}
 

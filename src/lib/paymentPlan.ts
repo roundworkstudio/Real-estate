@@ -78,6 +78,26 @@ export const PAYMENT_STRUCTURES: Record<
   },
 };
 
+export type PlanSegment = { percent: number; payer: "you" | "bank"; when: string };
+
+/** Who pays what, in time order, summarising the milestones above for a
+ * single bar. Must sum to 100 and agree with the milestone list. */
+export const PLAN_TIMELINES: Partial<
+  Record<PaymentStructureId, { financedBy: string; youPayOver: string; segments: PlanSegment[] }>
+> = {
+  "wadeem-adib": {
+    financedBy: "ADIB",
+    youPayOver: "4 years",
+    segments: [
+      { percent: 5, payer: "you", when: "Today" },
+      { percent: 15, payer: "you", when: "Months 8–20" },
+      { percent: 20, payer: "bank", when: "During construction" },
+      { percent: 5, payer: "you", when: "Handover, month 48" },
+      { percent: 55, payer: "bank", when: "After handover" },
+    ],
+  },
+};
+
 const TRANSFER_FEE_RATE_BY_CITY: Record<Property["city"], number> = {
   Dubai: 0.04,
   "Abu Dhabi": 0.02,

@@ -15,9 +15,14 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CalendarClock, Dumbbell, Sparkles, Trees, Waves } from "lucide-react";
-import { completedProjects, derivedUnitMix, developments, developmentStats, type Development } from "@/lib/developments";
+import { completedProjects, derivedUnitMix, developments, developmentStats, JANVIS_TAKE, type Development } from "@/lib/developments";
 import { ProjectsShowcase } from "@/components/tools/ProjectsShowcase";
 import { WhatsAppBanner } from "@/components/tools/WhatsAppBanner";
+import { PriceListRequest } from "@/components/tools/PriceListRequest";
+import { CurrencyIcon } from "@/components/tools/CurrencyIcon";
+import { PaymentTimeline } from "@/components/ui/PaymentTimeline";
+import { JanviTake } from "@/components/ui/JanviTake";
+import type { CurrencyCode } from "@/lib/currency";
 import { RevealImage } from "@/components/ui/RevealImage";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Reveal } from "@/components/ui/Reveal";
@@ -54,6 +59,12 @@ const HERO_IMAGE = {
   alt: "Resort-style community pool lined with trees and sun loungers at Wadeem Gardens",
 };
 
+/** PLACEHOLDER — invented for layout and labelled "Sample" on the page.
+ * Replace with the real count and Janvi's top buyer nationalities. */
+const BUYER_COUNTRY_COUNT = 14;
+const BUYER_FLAGS: CurrencyCode[] = ["GBP", "INR", "USD", "EUR", "AED"];
+const MOBILE_FLAG_COUNT = 3;
+
 function statusLabel(d: Development): string {
   if (d.meta?.salesStatus) return d.meta.salesStatus;
   return d.properties.every((p) => p.status === "off-plan") ? "Off-plan" : "Ready to move";
@@ -69,7 +80,7 @@ function bedRange(d: Development): string {
 export default function DevelopmentsPage() {
   return (
     <main>
-      <section className="relative flex h-[62vh] min-h-[480px] flex-col justify-end overflow-hidden sm:h-[56vh] sm:min-h-[440px]">
+      <section className="relative flex flex-col justify-end overflow-hidden pt-36 sm:h-[56vh] sm:min-h-[440px] sm:pt-0">
         <Image
           src={HERO_IMAGE.src}
           alt={HERO_IMAGE.alt}
@@ -100,6 +111,27 @@ export default function DevelopmentsPage() {
       </section>
 
       <div className="mx-auto max-w-5xl px-6 sm:px-10">
+        <div className="mt-8 flex justify-center">
+          <div className="liquid-glass-light inline-flex items-center gap-2 rounded-full py-2 pl-2.5 pr-3 sm:gap-3 sm:pr-4">
+            <span className="flex -space-x-2" aria-hidden>
+              {BUYER_FLAGS.map((code, i) => (
+                <span key={code} className={`rounded-full ring-2 ring-white ${i >= MOBILE_FLAG_COUNT ? "hidden sm:block" : ""}`}>
+                  <CurrencyIcon code={code} size={24} />
+                </span>
+              ))}
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate text-[10px] font-semibold text-white ring-2 ring-white">
+                <span className="sm:hidden">+{BUYER_COUNTRY_COUNT - MOBILE_FLAG_COUNT}</span>
+                <span className="hidden sm:inline">+{BUYER_COUNTRY_COUNT - BUYER_FLAGS.length}</span>
+              </span>
+            </span>
+            <span className="whitespace-nowrap text-[13px] text-slate sm:text-sm">
+              <span className="hidden sm:inline">Janvi&rsquo;s buyers come from </span>
+              <span className="sm:hidden">Buyers from </span>
+              <span className="font-semibold">{BUYER_COUNTRY_COUNT} countries</span>
+            </span>
+            <span className="rounded-full bg-slate/10 px-2 py-0.5 text-[10px] font-medium text-slate/70">Sample</span>
+          </div>
+        </div>
         <ProjectsShowcase
           completed={completedProjects}
           currentPoints={developments.map((d) => ({
@@ -130,7 +162,7 @@ export default function DevelopmentsPage() {
 
               <Reveal className={i === 0 ? "pt-8 sm:hidden" : "pt-5 sm:hidden"}>
                 <article className="relative overflow-hidden rounded-[2rem] shadow-[0_24px_50px_-28px_rgba(58,45,40,.7)]">
-                  <div className="relative aspect-[4/5]">
+                  <div className={`relative ${d.meta?.paymentStructureId ? "aspect-[3/4]" : "aspect-[4/5]"}`}>
                     <Image
                       src={cover.src}
                       alt={cover.alt}
@@ -145,9 +177,17 @@ export default function DevelopmentsPage() {
                     {statusLabel(d)}
                   </span>
                   <div className="liquid-glass liquid-glass--tint absolute inset-x-3 bottom-3 rounded-[1.5rem] p-4 text-white">
-                    <p className="text-xs font-medium text-white/80">
-                      {d.meta ? `${d.meta.developer} · ` : ""}{d.city}
-                    </p>
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-xs font-medium text-white/80">
+                        {d.meta ? `${d.meta.developer} · ` : ""}{d.city}
+                      </p>
+                      <Link
+                        href={`/properties#homes-${d.slug}`}
+                        className="-my-2 inline-flex items-center gap-1 py-2 text-xs font-medium text-white underline-offset-2 hover:underline"
+                      >
+                        See homes <ArrowRight size={12} />
+                      </Link>
+                    </div>
                     <h2 className="mt-0.5 text-2xl font-semibold leading-tight">
                       <Link href={`/developments/${d.slug}`}>{d.name}</Link>
                     </h2>
@@ -165,22 +205,26 @@ export default function DevelopmentsPage() {
                         <dd className="mt-0.5 text-sm font-semibold">{stats.unitCount} {stats.unitCount === 1 ? "home" : "homes"}</dd>
                       </div>
                     </dl>
+                    <PaymentTimeline
+                      structureId={d.meta?.paymentStructureId}
+                      fromPriceAed={stats.minPriceAed}
+                      tone="dark"
+                      className="mt-3 border-t border-white/20 pt-3"
+                    />
                     <div className="mt-4 grid grid-cols-2 gap-2">
                       <Link
                         href={`/developments/${d.slug}`}
-                        className="flex items-center justify-center rounded-full bg-white px-4 py-2.5 text-sm font-medium text-slate transition-colors hover:bg-white/90"
+                        className="flex items-center justify-center whitespace-nowrap rounded-full bg-white px-3 py-2.5 text-sm font-medium text-slate transition-colors hover:bg-white/90"
                       >
                         Explore project
                       </Link>
-                      <Link
-                        href={`/properties#homes-${d.slug}`}
-                        className="liquid-glass flex items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-medium text-white"
-                      >
-                        See homes <ArrowRight size={14} />
-                      </Link>
+                      <PriceListRequest project={d.name} developer={d.meta?.developer} variant="glass" className="whitespace-nowrap px-3" />
                     </div>
                   </div>
                 </article>
+                {JANVIS_TAKE[d.slug] && (
+                  <JanviTake quote={JANVIS_TAKE[d.slug]} variant="bubble" className="mx-3 mt-4" />
+                )}
               </Reveal>
 
               <section className="hidden items-center gap-12 py-14 sm:grid sm:grid-cols-2">
@@ -221,10 +265,17 @@ export default function DevelopmentsPage() {
                   </h2>
                   <div className="mt-1 text-slate/70">{d.city}</div>
                   {d.meta && (
-                    <p className="mt-4 max-w-md text-sm text-slate/70">{d.meta.description}</p>
+                    <p className="mt-4 line-clamp-2 max-w-md text-sm text-slate/70">{d.meta.description}</p>
                   )}
+                  {JANVIS_TAKE[d.slug] && <JanviTake quote={JANVIS_TAKE[d.slug]} className="mt-5 max-w-md" />}
 
-                  <dl className="liquid-glass-light mt-6 divide-y divide-slate/10 rounded-2xl px-4 text-sm">
+                  <div className="liquid-glass-light mt-6 rounded-2xl text-sm">
+                  <PaymentTimeline
+                    structureId={d.meta?.paymentStructureId}
+                    fromPriceAed={stats.minPriceAed}
+                    className="border-b border-slate/10 p-4"
+                  />
+                  <dl className="divide-y divide-slate/10 px-4">
                     {([
                       {
                         label: "Price range",
@@ -239,7 +290,7 @@ export default function DevelopmentsPage() {
                         ),
                       },
                       { label: "Unit mix", value: d.meta?.unitMix ?? derivedUnitMix(d) },
-                      d.meta?.paymentPlan && { label: "Payment plan", value: d.meta.paymentPlan },
+                      !d.meta?.paymentStructureId && d.meta?.paymentPlan && { label: "Payment plan", value: d.meta.paymentPlan },
                       d.meta?.handover && { label: "Handover", value: d.meta.handover },
                       stats.avgGrossYieldPercent !== null && {
                         label: "Avg. gross yield",
@@ -254,6 +305,7 @@ export default function DevelopmentsPage() {
                         </div>
                       ))}
                   </dl>
+                  </div>
 
                   {d.meta?.amenities.length ? (
                     <ul className="mt-3 flex flex-wrap gap-1.5" aria-label="Key amenities">
@@ -276,6 +328,7 @@ export default function DevelopmentsPage() {
                     >
                       Explore project
                     </Link>
+                    <PriceListRequest project={d.name} developer={d.meta?.developer} />
                     <Link
                       href={`/properties#homes-${d.slug}`}
                       className="inline-flex items-center gap-1.5 text-sm font-medium text-royal-deep transition-colors hover:text-royal"
