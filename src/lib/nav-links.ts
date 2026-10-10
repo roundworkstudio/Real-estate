@@ -1,7 +1,7 @@
 import {
   List,
   Building2,
-  Briefcase,
+  Home,
   Newspaper,
   User,
   type LucideIcon,
@@ -19,19 +19,24 @@ import {
  * and Areas folded into About (same pattern — see app/about/page.tsx).
  * /analytics and /areas still resolve via next.config.ts's `redirects()`.
  *
- * Properties uses a list icon. The home route is reached through the
- * desktop wordmark; it is not a tab in the mobile navigation.
+ * Portfolio was removed (2026-10-10, explicit request); /portfolio
+ * redirects to Projects. Its slot in the middle of the mobile tab bar is
+ * now Home, styled as a raised button rather than a tab. Home is
+ * `mobileOnly` because the desktop wordmark already links home.
  */
 export const navLinks: {
   href: string;
   label: string;
   icon: LucideIcon;
+  mobileOnly?: boolean;
 }[] = [
   { href: "/properties", label: "Properties", icon: List },
   // Index not yet in SITEMAP.md (only /developments/[slug] is planned
   // there) — see app/developments/page.tsx's top comment.
   { href: "/developments", label: "Projects", icon: Building2 },
-  { href: "/portfolio", label: "Portfolio", icon: Briefcase },
+  { href: "/", label: "Home", icon: Home, mobileOnly: true },
   { href: "/insights", label: "Insights", icon: Newspaper },
   { href: "/about", label: "About", icon: User },
 ];
+
+export const desktopNavLinks = navLinks.filter((l) => !l.mobileOnly);

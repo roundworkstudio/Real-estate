@@ -169,7 +169,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={status === "loading"}
-        className="inline-flex w-fit items-center gap-2 self-start rounded-full bg-royal px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-royal/90 disabled:opacity-70"
+        className="inline-flex w-fit items-center gap-2 self-start rounded-full bg-royal-deep px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-royal-deep/90 disabled:opacity-70"
       >
         <AnimatePresence mode="wait" initial={false}>
           {status === "loading" ? (

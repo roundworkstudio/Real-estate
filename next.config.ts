@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
     return [
       { source: "/analytics", destination: "/insights#tools", permanent: false },
       { source: "/areas", destination: "/about#areas", permanent: false },
+      { source: "/portfolio", destination: "/developments", permanent: false },
     ];
   },
   images: {

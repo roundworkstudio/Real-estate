@@ -13,6 +13,10 @@ import { prefersReducedMotion } from "@/lib/motion";
  * why). Only rendered below the `md` breakpoint — desktop keeps the top
  * bar's inline links.
  *
+ * Home sits in the middle as a raised sand-coloured button rather than a
+ * labelled tab (2026-10-10, explicit request — "a different contrast or
+ * button style"), so it reads as the way back rather than another section.
+ *
  * The five links fit on most phones. On narrower screens the pill scrolls
  * horizontally instead of squeezing them — see .no-scrollbar in
  * globals.css. Every tile is the same fixed width (2026-09-27, explicit
@@ -125,6 +129,25 @@ export function MobileTabBar() {
         {navLinks.map((l) => {
           const active = pathname === l.href || pathname?.startsWith(`${l.href}/`);
           const Icon = l.icon;
+          if (l.href === "/") {
+            return (
+              <a
+                key={l.href}
+                href={l.href}
+                aria-label={l.label}
+                aria-current={active ? "page" : undefined}
+                className="flex w-[61px] shrink-0 items-center justify-center"
+              >
+                <span
+                  className={`flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-b from-[#f4e7d5] to-[#d8c4ac] text-royal-deep shadow-[inset_0_1px_1px_rgba(255,255,255,.8),0_6px_16px_rgba(0,0,0,.28)] transition-transform active:scale-95 ${
+                    active ? "ring-2 ring-[#f4e7d5]/50 ring-offset-2 ring-offset-royal-deep" : ""
+                  }`}
+                >
+                  <Icon size={20} strokeWidth={2} />
+                </span>
+              </a>
+            );
+          }
           return (
             <a
               key={l.href}

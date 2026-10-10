@@ -114,7 +114,7 @@ export type CompletedProject = {
   image: { src: string; alt: string };
   launchPricePerSqftAed: number;
   currentPricePerSqftAed: number;
-  /** Only set when one of Janvi's Portfolio deals happened in this project. */
+  /** Only set once a written-up case study exists for a deal in this project. */
   caseStudyHref?: string;
   isSample: boolean;
 };
@@ -133,7 +133,6 @@ export const completedProjects: CompletedProject[] = [
     image: { src: "/media/area-guides/yas-island.jpg", alt: "Waterfront skyline on Yas Island, Abu Dhabi" },
     launchPricePerSqftAed: 1_450,
     currentPricePerSqftAed: 2_000,
-    caseStudyHref: "/portfolio",
     isSample: true,
   },
   {

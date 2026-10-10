@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Home } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import { motion } from "motion/react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { useScrollingFlag } from "@/lib/motion";
-import { navLinks } from "@/lib/nav-links";
+import { desktopNavLinks as navLinks } from "@/lib/nav-links";
 import { PLACEHOLDER_TEL_URL } from "@/lib/site-config";
 
 function isNavLinkActive(pathname: string | null, href: string) {
@@ -105,8 +105,8 @@ export function Nav({ compactStyle = false }: { compactStyle?: boolean }) {
     return (
       <header className="pointer-events-none fixed inset-x-6 top-4 z-30 hidden items-center justify-center gap-2 md:flex">
         <Link
-          href="/"
-          aria-label="Home"
+          href="/contact"
+          aria-label="Contact Janvi"
           aria-hidden={!scrolled}
           tabIndex={scrolled ? 0 : -1}
           className={[
@@ -116,7 +116,7 @@ export function Nav({ compactStyle = false }: { compactStyle?: boolean }) {
               : "pointer-events-none -ml-12 w-0 -translate-x-6 scale-50 opacity-0",
           ].join(" ")}
         >
-          <Home size={18} strokeWidth={1.8} />
+          <MessageSquare size={18} strokeWidth={1.8} />
         </Link>
 
         <Link

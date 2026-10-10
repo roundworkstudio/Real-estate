@@ -3,14 +3,15 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Home } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 
 /**
  * Compact mobile wordmark pill; the bottom tab bar remains the page nav.
- * After the page begins scrolling, a home bubble buds from the wordmark's
- * right edge and pulls away. The wrapper stays centred, so the wordmark
- * gently shifts left while the two pills settle around the viewport midpoint
- * as one balanced group.
+ * After the page begins scrolling, a contact bubble buds from the
+ * wordmark's right edge and pulls away. The wrapper stays centred, so the
+ * wordmark gently shifts left while the two pills settle around the
+ * viewport midpoint as one balanced group. Home lives in the bottom tab
+ * bar, so this bubble goes to /contact instead.
  */
 export function MobileTopBar() {
   const [scrolled, setScrolled] = useState(false);
@@ -43,8 +44,8 @@ export function MobileTopBar() {
         </Link>
 
         <Link
-          href="/"
-          aria-label="Home"
+          href="/contact"
+          aria-label="Contact Janvi"
           aria-hidden={!scrolled}
           tabIndex={scrolled ? 0 : -1}
           className={`glass-nav flex h-12 origin-left shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-royal-deep/80 text-white shadow-card transition-[width,margin,opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none ${
@@ -53,7 +54,7 @@ export function MobileTopBar() {
               : "pointer-events-none ml-0 w-0 -translate-x-6 scale-50 opacity-0"
           }`}
         >
-          <Home size={18} strokeWidth={1.8} />
+          <MessageSquare size={18} strokeWidth={1.8} />
         </Link>
       </div>
     </header>
