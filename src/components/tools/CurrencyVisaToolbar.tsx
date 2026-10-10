@@ -6,10 +6,6 @@
  */
 import { CurrencySwitcher } from "@/components/tools/CurrencySwitcher";
 
-export function CurrencyVisaToolbar({
-  priceAed: _priceAed,
-}: {
-  priceAed?: number;
-}) {
+export function CurrencyVisaToolbar() {
   return <CurrencySwitcher sticky />;
 }

@@ -37,6 +37,9 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_KEY);
+    // Restoring from localStorage after hydration: an external system,
+    // not derivable during render without a mismatch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (isCurrencyCode(saved)) setCurrencyState(saved);
   }, []);
 

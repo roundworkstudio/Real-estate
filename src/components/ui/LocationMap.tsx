@@ -4,9 +4,9 @@
  * Embed API), so it carries Google branding/ads, offers no styling
  * control, and could break without notice since it isn't a supported
  * product. Swap for Mapbox once there's a token: same query string
- * becomes a styled, interactive map that matches the brand palette, and
- * the same integration covers the /portfolio deal map too. See the
- * conversation this was flagged in, or ask for the Mapbox wiring directly.
+ * becomes a styled, interactive map that matches the brand palette. See
+ * the conversation this was flagged in, or ask for the Mapbox wiring
+ * directly.
  */
 export function LocationMap({ query }: { query: string }) {
   return (

@@ -14,14 +14,10 @@ import { whatsAppUrlWithMessage } from "@/lib/site-config";
 export function PropertyCard({
   property,
   featured = false,
-  compactOnMobile: _compactOnMobile,
-  minimal: _minimal,
   pickBelow = false,
 }: {
   property: Property;
   featured?: boolean;
-  compactOnMobile?: boolean;
-  minimal?: boolean;
   /** Render Janvi's pick quote as a bubble under the card so card heights stay uniform. */
   pickBelow?: boolean;
 }) {

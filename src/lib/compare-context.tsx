@@ -37,6 +37,9 @@ export function CompareProvider({ children }: { children: React.ReactNode }) {
       if (raw) {
         const parsed = JSON.parse(raw) as unknown;
         if (Array.isArray(parsed)) {
+          // Restoring from sessionStorage after hydration: an external
+          // system, not derivable during render without a mismatch.
+          // eslint-disable-next-line react-hooks/set-state-in-effect
           setSlugs(
             parsed.filter(
               (slug): slug is string =>

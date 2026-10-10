@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { Sparkles, TrendingUp, KeyRound, Landmark, Search } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-
 /**
  * UI shell for a natural-language "ask AI" search bar. The input and
  * quick-filter pills are genuinely interactive (typing works, pills fill

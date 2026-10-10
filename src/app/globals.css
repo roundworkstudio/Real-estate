@@ -427,8 +427,7 @@ html.is-scrolling .nav-cta {
    this stays a plain animation utility rather than hard-coding WhatsApp's
    brand green here; see each call site for the actual colour.
    Reserved for genuinely live/real-time state (an available chat channel),
-   not static computed facts like GoldenVisaBadge's eligibility dot or
-   PaymentPlanCalculator's timeline markers — pulsing those would claim a
+   not static computed facts like PaymentPlanCalculator's timeline markers — pulsing those would claim a
    "happening right now" quality neither one has. */
 .pulse-dot {
   position: relative;

@@ -7,8 +7,7 @@
  * prose or a stat tile.
  *
  * Extracted 2026-09-27 (explicit request — "clean, easily digestible"
- * tabular data, applied consistently) from CaseStudyCard's local `Metric`
- * component, which had exactly this shape already; also applied to
+ * tabular data, applied consistently); also applied to
  * PaymentPlanCalculator's fee list, which was the same row layout minus
  * the dividers.
  */

@@ -1,7 +1,7 @@
 import {
   List,
   Building2,
-  Home,
+  House,
   Newspaper,
   User,
   type LucideIcon,
@@ -34,7 +34,7 @@ export const navLinks: {
   // Index not yet in SITEMAP.md (only /developments/[slug] is planned
   // there) — see app/developments/page.tsx's top comment.
   { href: "/developments", label: "Projects", icon: Building2 },
-  { href: "/", label: "Home", icon: Home, mobileOnly: true },
+  { href: "/", label: "Home", icon: House, mobileOnly: true },
   { href: "/insights", label: "Insights", icon: Newspaper },
   { href: "/about", label: "About", icon: User },
 ];
