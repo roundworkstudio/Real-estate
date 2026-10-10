@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { MessageSquare } from "lucide-react";
@@ -8,6 +7,7 @@ import { motion } from "motion/react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { useScrollingFlag } from "@/lib/motion";
+import { BUBBLE_POP, useScrollBubble } from "@/lib/use-scroll-bubble";
 import { desktopNavLinks as navLinks } from "@/lib/nav-links";
 import { PLACEHOLDER_TEL_URL } from "@/lib/site-config";
 
@@ -88,18 +88,10 @@ function isNavLinkActive(pathname: string | null, href: string) {
  * reads as deliberately placed rather than cramped against the label.
  */
 export function Nav({ compactStyle = false }: { compactStyle?: boolean }) {
-  const [scrolled, setScrolled] = useState(false);
+  const { scrolled, phase, onBubbleAnimationEnd } = useScrollBubble();
+  const bubbleShown = phase === "shown";
   const pathname = usePathname();
   useScrollingFlag();
-
-  useEffect(() => {
-    function onScroll() {
-      setScrolled(window.scrollY > 80);
-    }
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   if (compactStyle) {
     return (
@@ -107,13 +99,16 @@ export function Nav({ compactStyle = false }: { compactStyle?: boolean }) {
         <Link
           href="/contact"
           aria-label="Contact Janvi"
-          aria-hidden={!scrolled}
-          tabIndex={scrolled ? 0 : -1}
+          aria-hidden={!bubbleShown}
+          tabIndex={bubbleShown ? 0 : -1}
+          data-state={phase}
+          data-pop={BUBBLE_POP}
+          onAnimationEnd={onBubbleAnimationEnd}
           className={[
-            "glass-nav pointer-events-auto flex h-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-royal-deep/80 text-white shadow-card transition-[width,margin,opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
-            scrolled
-              ? "w-12 translate-x-0 scale-100 opacity-100"
-              : "pointer-events-none -ml-12 w-0 -translate-x-6 scale-50 opacity-0",
+            "nav-bubble glass-nav pointer-events-auto flex h-12 w-12 origin-right shrink-0 items-center justify-center rounded-full border border-white/10 bg-royal-deep/80 text-white shadow-card",
+            bubbleShown
+              ? "mr-0 translate-x-0 scale-100 opacity-100"
+              : "pointer-events-none -mr-14 -translate-x-14 scale-50 opacity-0",
           ].join(" ")}
         >
           <MessageSquare size={18} strokeWidth={1.8} />
@@ -121,7 +116,7 @@ export function Nav({ compactStyle = false }: { compactStyle?: boolean }) {
 
         <Link
           href="/"
-          className="glass-nav pointer-events-auto flex h-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-royal-deep/80 px-4 shadow-card"
+          className="glass-nav pointer-events-auto relative z-10 flex h-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-royal-deep/80 px-4 shadow-card"
         >
           <Image
             src="/brand/logo-mobile-light.svg"

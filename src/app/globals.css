@@ -369,6 +369,176 @@ html.is-scrolling .glass-tilt {
     inset 0 -1px 0 rgb(255 255 255 / 0.08);
 }
 
+/* Contact bubble beside the top-bar wordmark (MobileTopBar.tsx, Nav.tsx),
+   phases from useScrollBubble. It never collapses its width: a negative
+   margin tucks it behind the wordmark, and a translate parks it where it
+   appears, so margin + translate cancel out for the bubble itself and
+   only the wordmark moves.
+   Shown: the bubble pops in on the spot, then the pair glides to centre.
+   Popped: the bubble swells and bursts in place (ring + droplets), then
+   the wordmark glides back to centre. Hidden keeps the same margin
+   transition so a glide still in progress isn't cut short. */
+.nav-bubble {
+  position: relative;
+}
+
+.nav-bubble[data-state="shown"] {
+  transition:
+    opacity 0.22s ease-out,
+    scale 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+    margin 0.6s cubic-bezier(0.65, 0, 0.35, 1) 0.28s,
+    translate 0.6s cubic-bezier(0.65, 0, 0.35, 1) 0.28s;
+}
+
+.nav-bubble[data-state="popped"],
+.nav-bubble[data-state="hidden"] {
+  transition:
+    margin 0.6s cubic-bezier(0.65, 0, 0.35, 1) 0.32s,
+    translate 0.6s cubic-bezier(0.65, 0, 0.35, 1) 0.32s;
+}
+
+.nav-bubble[data-state="popped"] {
+  animation: nav-bubble-pop 0.5s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+}
+
+.nav-bubble[data-state="popped"] > svg {
+  animation: nav-bubble-fade 0.12s ease-in 0.1s forwards;
+}
+
+/* Burst ring */
+.nav-bubble::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 1px solid rgb(244 231 213 / 0.5);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nav-bubble[data-state="popped"]::after {
+  animation: nav-bubble-ring 0.3s ease-out 0.12s forwards;
+}
+
+/* Droplets: one dot plus box-shadow copies, scaled outward from centre */
+.nav-bubble::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2.5px;
+  height: 2.5px;
+  margin: -1.25px 0 0 -1.25px;
+  border-radius: 9999px;
+  box-shadow:
+    0 -26px 0 rgb(244 231 213 / 0.6),
+    22px 13px 0 rgb(244 231 213 / 0.6),
+    -22px 13px 0 rgb(244 231 213 / 0.6),
+    18px -18px 0 rgb(244 231 213 / 0.45),
+    -18px -18px 0 rgb(244 231 213 / 0.45);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nav-bubble[data-state="popped"]::before {
+  animation: nav-bubble-droplets 0.3s ease-out 0.12s forwards;
+}
+
+@keyframes nav-bubble-pop {
+  0% {
+    scale: 1;
+    opacity: 1;
+  }
+  28% {
+    scale: 1.07;
+    background-color: color-mix(in oklab, var(--color-royal-deep) 80%, transparent);
+    border-color: rgb(255 255 255 / 0.1);
+  }
+  34% {
+    scale: 1.1;
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+  95% {
+    opacity: 1;
+  }
+  100% {
+    scale: 1.1;
+    opacity: 0;
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+}
+
+@keyframes nav-bubble-fade {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes nav-bubble-ring {
+  0% {
+    opacity: 0.6;
+    scale: 1;
+  }
+  100% {
+    opacity: 0;
+    scale: 1.25;
+  }
+}
+
+@keyframes nav-bubble-droplets {
+  0% {
+    opacity: 0.9;
+    scale: 0.7;
+  }
+  100% {
+    opacity: 0;
+    scale: 1;
+  }
+}
+
+/* "dissolve" exit: the bubble softens, drifts up a touch and fades, like
+   a bubble evaporating. Grows and drifts with transform, holding the
+   scale property at 1 (the hidden classes set it to 0.5) and leaving
+   translate to the parking trick above. */
+.nav-bubble[data-pop="dissolve"][data-state="popped"] {
+  scale: 1;
+  transform-origin: center;
+  animation: nav-bubble-pop-dissolve 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.nav-bubble[data-pop="dissolve"][data-state="popped"] > svg,
+.nav-bubble[data-pop="dissolve"][data-state="popped"]::before,
+.nav-bubble[data-pop="dissolve"][data-state="popped"]::after {
+  animation: none;
+}
+
+@keyframes nav-bubble-pop-dissolve {
+  0% {
+    opacity: 1;
+    filter: none;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(5px);
+    transform: translateY(-6px) scale(1.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-bubble[data-pop][data-state],
+  .nav-bubble[data-pop][data-state] > svg,
+  .nav-bubble[data-pop][data-state]::before,
+  .nav-bubble[data-pop][data-state]::after {
+    transition: none;
+    animation: none;
+  }
+}
+
 /* Desktop nav-link hover treatment — glass pill fill and a slight lift. */
 .nav-link {
   position: relative;
