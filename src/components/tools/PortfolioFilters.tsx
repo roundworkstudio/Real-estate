@@ -2,27 +2,31 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import { BedDouble, Building2, ChevronDown, CircleDollarSign, GitCompare, House, KeyRound, MapPin, Search, SlidersHorizontal, Sparkles, Star, TrendingUp, X } from "lucide-react";
+import { BedDouble, Building2, ChevronDown, GitCompare, House, KeyRound, MapPin, Search, SlidersHorizontal, Star, TrendingUp, X } from "lucide-react";
 import { COMPARE_LIMIT } from "@/lib/compare-context";
+import { listingLayout } from "@/lib/listing-grid";
 import { PropertyCard } from "@/components/ui/PropertyCard";
 import { AreaStory } from "@/components/ui/AreaStory";
 import { CurrencySwitcher } from "@/components/tools/CurrencySwitcher";
 import { FluidSlider } from "@/components/motion/range-slider-fluid";
 import { Slider } from "@/components/ui/slider";
-import type { Property, PropertyStatus, PropertyStrategy } from "@/lib/types";
+import type { Property } from "@/lib/types";
 
-const strategyLabels: Record<PropertyStrategy, string> = { yield: "Yield", "off-plan": "Off-plan", "value-add": "Value-add", str: "Short stay", commercial: "Commercial" };
-const statusLabels: Record<PropertyStatus, string> = { new: "New", "under-offer": "Under offer", sold: "Sold", "off-plan": "Off-plan" };
 type VisitorIntent = "all" | "buyer" | "investor";
 
-type QuickFilterId = "picks" | "ready" | "off-plan" | "yield" | "beds5";
+/**
+ * The one place listing status and yield are filtered. The Filters panel only
+ * carries what these can't express (intent, order, location, price, bedroom
+ * range), and the bedrooms chip drives the same state as the bedroom slider.
+ */
+type QuickFilterId = "picks" | "ready" | "off-plan" | "yield";
 const quickFilters: { id: QuickFilterId; label: string; icon: React.ReactNode; test: (p: Property) => boolean; excludes?: QuickFilterId }[] = [
   { id: "picks", label: "Janvi\u2019s picks", icon: <Star size={12} />, test: (p) => Boolean(p.janvisPick) },
   { id: "off-plan", label: "Off-plan", icon: <Building2 size={12} />, test: (p) => p.status === "off-plan", excludes: "ready" },
   { id: "ready", label: "Ready to move", icon: <KeyRound size={12} />, test: (p) => p.status !== "off-plan", excludes: "off-plan" },
   { id: "yield", label: "Yield 5%+", icon: <TrendingUp size={12} />, test: (p) => (p.grossYield ?? 0) >= 0.05 },
-  { id: "beds5", label: "5+ bedrooms", icon: <BedDouble size={12} />, test: (p) => p.beds >= 5 },
 ];
+const BIG_HOME_BEDS = 5;
 
 const areaStories: Record<string, { place: string; blurb: string; image: string; projectSlug: string }> = {
   "Wadeem Gardens": {
@@ -54,8 +58,6 @@ function IntentTile({ active, title, description, icon, onClick }: { active: boo
 }
 
 export function PortfolioFilters({ properties }: { properties: Property[] }) {
-  const [strategy, setStrategy] = useState<PropertyStrategy | "all">("all");
-  const [status, setStatus] = useState<PropertyStatus | "all">("all");
   const [community, setCommunity] = useState<string | "all">("all");
   const [query, setQuery] = useState("");
   const [showMoreFilters, setShowMoreFilters] = useState(false);
@@ -72,6 +74,15 @@ export function PortfolioFilters({ properties }: { properties: Property[] }) {
   const toggleQuick = (id: QuickFilterId) => {
     const excludes = quickFilters.find((f) => f.id === id)?.excludes;
     setQuick((current) => current.includes(id) ? current.filter((q) => q !== id) : [...current.filter((q) => q !== excludes), id]);
+  };
+  const bigHomesOnly = minBeds >= BIG_HOME_BEDS;
+  const toggleBigHomes = () => {
+    if (bigHomesOnly) {
+      setMinBeds(1);
+    } else {
+      setMinBeds(BIG_HOME_BEDS);
+      setMaxBeds((max) => Math.max(max, BIG_HOME_BEDS));
+    }
   };
   useEffect(() => {
     const frame = requestAnimationFrame(() => setIsMounted(true));
@@ -122,8 +133,6 @@ export function PortfolioFilters({ properties }: { properties: Property[] }) {
 
       return (
         matchesIntent &&
-        (strategy === "all" || property.strategy === strategy) &&
-        (status === "all" || property.status === status) &&
         (community === "all" || property.community === community) &&
         property.priceAed >= minPriceAed &&
         (maxPriceAed >= 15_000_000 || property.priceAed <= maxPriceAed) &&
@@ -140,7 +149,7 @@ export function PortfolioFilters({ properties }: { properties: Property[] }) {
       if (sortBy === "beds-high") return b.beds - a.beds;
       return 0;
     });
-  }, [community, maxBeds, maxPriceAed, minBeds, minPriceAed, properties, query, quick, sortBy, status, strategy, visitorIntent]);
+  }, [community, maxBeds, maxPriceAed, minBeds, minPriceAed, properties, query, quick, sortBy, visitorIntent]);
 
   const areaGroups = useMemo(() => {
     const groups = new Map<string, Property[]>();
@@ -149,8 +158,6 @@ export function PortfolioFilters({ properties }: { properties: Property[] }) {
   }, [sorted]);
 
   const resetFilters = () => {
-    setStrategy("all");
-    setStatus("all");
     setCommunity("all");
     setQuery("");
     setVisitorIntent("all");
@@ -171,6 +178,7 @@ export function PortfolioFilters({ properties }: { properties: Property[] }) {
         </div>
         <div className="no-scrollbar mt-3 flex gap-1.5 overflow-x-auto rounded-full [mask-image:linear-gradient(to_right,black_calc(100%-40px),transparent)] sm:flex-wrap sm:overflow-visible sm:rounded-none sm:[mask-image:none]" role="group" aria-label="Quick filters">
           {quickFilters.map((filter) => <FilterPill compact key={filter.id} icon={filter.icon} active={quick.includes(filter.id)} onClick={() => toggleQuick(filter.id)}>{filter.label}</FilterPill>)}
+          <FilterPill compact icon={<BedDouble size={12} />} active={bigHomesOnly} onClick={toggleBigHomes}>{BIG_HOME_BEDS}+ bedrooms</FilterPill>
         </div>
         <div className="mt-4 hidden items-end justify-between sm:flex"><div><p className="text-xs font-medium uppercase tracking-[0.16em] text-royal">Refine your search</p><button type="button" aria-expanded={showFilterContent} aria-controls="desktop-filter-content" onClick={() => setShowFilterContent((open) => !open)} className="mt-1 inline-flex items-center gap-2 text-left text-2xl font-semibold text-slate"><span>Filters</span><ChevronDown size={19} className={`transition-transform ${showFilterContent ? "rotate-180" : ""} ${arrowBounce ? "filter-arrow-bounce" : ""}`} /></button></div></div>
         <div id="desktop-filter-content" className={`hidden overflow-hidden transition-[grid-template-rows,opacity,transform] duration-750 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none sm:grid ${showFilterContent ? "sm:grid-rows-[1fr] sm:translate-y-0 sm:opacity-100" : "sm:pointer-events-none sm:grid-rows-[0fr] sm:-translate-y-2 sm:opacity-0"}`}>
@@ -178,11 +186,9 @@ export function PortfolioFilters({ properties }: { properties: Property[] }) {
         <div className="mt-5 space-y-4 sm:grid sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:gap-x-6 sm:gap-y-3 sm:space-y-0">
           <div className="sm:row-span-4 sm:flex sm:h-full sm:flex-col"><p className="mb-2 text-sm font-medium text-slate">I’m looking to</p><div className="flex flex-col gap-2 sm:mt-auto"><IntentTile icon={<Building2 size={17} />} active={visitorIntent === "all"} onClick={() => setVisitorIntent("all")} title="All listings" description="Browse every available home, from move-in properties to new opportunities." /><IntentTile icon={<House size={17} />} active={visitorIntent === "buyer"} onClick={() => setVisitorIntent("buyer")} title="Buy a home" description="Focus on homes suited to living, relocation, and day-to-day use." /><IntentTile icon={<TrendingUp size={17} />} active={visitorIntent === "investor"} onClick={() => setVisitorIntent("investor")} title="Invest" description="Explore listings with investment context, income potential, or a growth strategy." /></div></div>
           <label className="flex w-full items-center justify-between gap-3 rounded-2xl border border-white/85 bg-white/55 px-3.5 py-2 text-xs font-medium text-slate shadow-[inset_0_1px_2px_rgba(255,255,255,.9),0_8px_20px_rgba(58,45,40,.06)] backdrop-blur-md sm:col-start-2 sm:mt-7 sm:rounded-full sm:bg-white/65"><span>Order listings</span><span className="relative flex items-center rounded-full border border-white/75 bg-white/45 shadow-[inset_0_1px_2px_rgba(255,255,255,.8)]"><select value={sortBy} onChange={(event) => setSortBy(event.target.value as typeof sortBy)} className="appearance-none bg-transparent py-1 pl-3 pr-7 text-right text-xs font-medium text-royal-deep outline-none"><option value="featured">Featured</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="beds-high">Most bedrooms</option></select><ChevronDown size={13} className="pointer-events-none absolute right-2 text-royal-deep/70" /></span></label>
-          <div className="sm:col-start-2"><p className="mb-2 text-sm font-medium text-slate">Strategy</p><div className="flex flex-wrap gap-1.5"><FilterPill compact icon={<House size={12} />} active={strategy === "all"} onClick={() => setStrategy("all")}>All strategies</FilterPill>{Array.from(new Set(properties.map((p) => p.strategy))).map((value) => <FilterPill compact key={value} icon={value === "yield" ? <TrendingUp size={12} /> : <Building2 size={12} />} active={strategy === value} onClick={() => setStrategy(value)}>{strategyLabels[value]}</FilterPill>)}</div></div>
-          <div className="sm:col-start-2 sm:row-start-3"><p className="mb-2 text-sm font-medium text-slate">Location</p><div className="flex flex-wrap gap-1.5"><FilterPill compact icon={<MapPin size={12} />} active={community === "all"} onClick={() => setCommunity("all")}>All locations</FilterPill>{communities.map((value) => <FilterPill compact key={value} icon={<MapPin size={12} />} active={community === value} onClick={() => setCommunity(value)}>{value}</FilterPill>)}</div></div>
-          <div className="sm:col-start-2 sm:row-start-4"><p className="mb-2 text-sm font-medium text-slate">Listing status</p><div className="flex flex-wrap gap-1.5">{Array.from(new Set(properties.map((p) => p.status))).map((value) => <FilterPill compact key={value} icon={value === "new" ? <Sparkles size={12} /> : value === "off-plan" ? <Building2 size={12} /> : <CircleDollarSign size={12} />} active={status === value} onClick={() => setStatus(value)}>{statusLabels[value]}</FilterPill>)}</div></div>
-          <div className="sm:col-span-2 sm:row-start-5"><p className="mb-2 text-sm font-medium text-slate">Price</p><div className="space-y-2"><FluidSlider className="h-10 w-full" min={500_000} max={15_000_000} step={100_000} value={minPriceAed} onValueChange={(value) => setMinPriceAed(Math.min(value, maxPriceAed))} aria-label="Minimum price" format={(value) => `Min AED ${(value / 1_000_000).toFixed(1)}m`} /><FluidSlider className="h-10 w-full" min={500_000} max={15_000_000} step={100_000} value={maxPriceAed} onValueChange={(value) => setMaxPriceAed(Math.max(value, minPriceAed))} aria-label="Maximum price" format={(value) => `Max AED ${value >= 15_000_000 ? "15.0m+" : `${(value / 1_000_000).toFixed(1)}m`}`} /></div></div>
-          <div className="sm:col-span-2 sm:row-start-6"><div className="mb-2 flex items-center justify-between gap-3"><p className="text-sm font-medium text-slate">Bedrooms</p><span className="rounded-full border border-white/80 bg-white/55 px-2.5 py-1 text-[11px] font-medium text-royal-deep shadow-[inset_0_1px_2px_rgba(255,255,255,.8)]">{minBeds}–{maxBeds >= 8 ? "8+" : maxBeds} beds</span></div><Slider className="h-10 w-full" value={[minBeds, maxBeds]} min={1} max={8} step={1} onValueChange={([min, max]) => { setMinBeds(min); setMaxBeds(max); }} aria-label="Bedrooms" /></div>
+          <div className="sm:col-start-2 sm:row-start-2"><p className="mb-2 text-sm font-medium text-slate">Location</p><div className="flex flex-wrap gap-1.5"><FilterPill compact icon={<MapPin size={12} />} active={community === "all"} onClick={() => setCommunity("all")}>All locations</FilterPill>{communities.map((value) => <FilterPill compact key={value} icon={<MapPin size={12} />} active={community === value} onClick={() => setCommunity(value)}>{value}</FilterPill>)}</div></div>
+          <div className="sm:col-start-2 sm:row-start-3"><p className="mb-2 text-sm font-medium text-slate">Price</p><div className="space-y-2"><FluidSlider className="h-10 w-full" min={500_000} max={15_000_000} step={100_000} value={minPriceAed} onValueChange={(value) => setMinPriceAed(Math.min(value, maxPriceAed))} aria-label="Minimum price" format={(value) => `Min AED ${(value / 1_000_000).toFixed(1)}m`} /><FluidSlider className="h-10 w-full" min={500_000} max={15_000_000} step={100_000} value={maxPriceAed} onValueChange={(value) => setMaxPriceAed(Math.max(value, minPriceAed))} aria-label="Maximum price" format={(value) => `Max AED ${value >= 15_000_000 ? "15.0m+" : `${(value / 1_000_000).toFixed(1)}m`}`} /></div></div>
+          <div className="sm:col-start-2 sm:row-start-4"><div className="mb-2 flex items-center justify-between gap-3"><p className="text-sm font-medium text-slate">Bedrooms</p><span className="rounded-full border border-white/80 bg-white/55 px-2.5 py-1 text-[11px] font-medium text-royal-deep shadow-[inset_0_1px_2px_rgba(255,255,255,.8)]">{minBeds}–{maxBeds >= 8 ? "8+" : maxBeds} beds</span></div><Slider className="h-10 w-full" value={[minBeds, maxBeds]} min={1} max={8} step={1} onValueChange={([min, max]) => { setMinBeds(min); setMaxBeds(max); }} aria-label="Bedrooms" /></div>
           <div className="mt-5 sm:col-span-2"><button type="button" onClick={resetFilters} className="flex w-full items-center justify-center rounded-full border border-royal-deep/20 bg-white/55 px-4 py-2.5 text-xs font-medium text-royal-deep transition hover:bg-white/80">Reset filters</button></div>
         </div>
           </div>
@@ -198,19 +204,8 @@ export function PortfolioFilters({ properties }: { properties: Property[] }) {
                 <div className="rounded-2xl border border-white/85 bg-white/45 p-3 shadow-[inset_0_1px_2px_rgba(255,255,255,.8)] backdrop-blur-md"><p className="mb-2 text-sm font-medium text-slate">Price</p><div className="space-y-2"><FluidSlider className="h-10 w-full" min={500_000} max={15_000_000} step={100_000} value={minPriceAed} onValueChange={(value) => setMinPriceAed(Math.min(value, maxPriceAed))} aria-label="Minimum price" format={(value) => `Min AED ${(value / 1_000_000).toFixed(1)}m`} /><FluidSlider className="h-10 w-full" min={500_000} max={15_000_000} step={100_000} value={maxPriceAed} onValueChange={(value) => setMaxPriceAed(Math.max(value, minPriceAed))} aria-label="Maximum price" format={(value) => `Max AED ${value >= 15_000_000 ? "15.0m+" : `${(value / 1_000_000).toFixed(1)}m`}`} /></div></div>
                 <div><p className="mb-2 text-sm font-medium text-slate">Location</p><div className="flex flex-wrap gap-1.5"><FilterPill compact icon={<MapPin size={12} />} active={community === "all"} onClick={() => setCommunity("all")}>All locations</FilterPill>{communities.map((value) => <FilterPill compact key={value} icon={<MapPin size={12} />} active={community === value} onClick={() => setCommunity(value)}>{value}</FilterPill>)}</div></div>
                 <div className="rounded-2xl border border-white/85 bg-white/45 p-3 shadow-[inset_0_1px_2px_rgba(255,255,255,.8)] backdrop-blur-md"><div className="mb-2 flex items-center justify-between gap-3"><p className="text-sm font-medium text-slate">Bedrooms</p><span className="rounded-full border border-white/80 bg-white/55 px-2.5 py-1 text-[11px] font-medium text-royal-deep shadow-[inset_0_1px_2px_rgba(255,255,255,.8)]">{minBeds}–{maxBeds >= 8 ? "8+" : maxBeds} beds</span></div><Slider className="h-10 w-full" value={[minBeds, maxBeds]} min={1} max={8} step={1} onValueChange={([min, max]) => { setMinBeds(min); setMaxBeds(max); }} aria-label="Bedrooms" /></div>
-                <div><p className="mb-2 text-sm font-medium text-slate">Listing status</p><div className="flex flex-wrap gap-1.5">{Array.from(new Set(properties.map((p) => p.status))).map((value) => <FilterPill compact key={value} icon={value === "new" ? <Sparkles size={12} /> : value === "off-plan" ? <Building2 size={12} /> : <CircleDollarSign size={12} />} active={status === value} onClick={() => setStatus(value)}>{statusLabels[value]}</FilterPill>)}</div></div>
                 <div className="grid grid-cols-2 gap-2 pt-1"><button type="button" onClick={resetFilters} className="flex items-center justify-center rounded-full border border-royal-deep/20 bg-white/55 px-4 py-2.5 text-xs font-medium text-royal-deep transition hover:bg-white/80">Reset</button><button type="button" onClick={() => setShowMoreFilters(false)} className="flex items-center justify-center rounded-full bg-royal-deep px-4 py-2.5 text-xs font-medium text-white transition hover:bg-royal">Confirm</button></div>
               </div>
-              <div className="mt-5 hidden space-y-4 sm:grid sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:gap-x-6 sm:gap-y-3 sm:space-y-0">
-              <div className="sm:row-span-4 sm:flex sm:h-full sm:flex-col"><p className="mb-2 text-sm font-medium text-slate">I’m looking to</p><div className="flex flex-col gap-2 sm:mt-auto"><IntentTile icon={<Building2 size={17} />} active={visitorIntent === "all"} onClick={() => setVisitorIntent("all")} title="All listings" description="Browse every available home, from move-in properties to new opportunities." /><IntentTile icon={<House size={17} />} active={visitorIntent === "buyer"} onClick={() => setVisitorIntent("buyer")} title="Buy a home" description="Focus on homes suited to living, relocation, and day-to-day use." /><IntentTile icon={<TrendingUp size={17} />} active={visitorIntent === "investor"} onClick={() => setVisitorIntent("investor")} title="Invest" description="Explore listings with investment context, income potential, or a growth strategy." /></div></div>
-              <label className="flex w-full items-center justify-between gap-3 rounded-2xl border border-white/85 bg-white/55 px-3.5 py-2 text-xs font-medium text-slate shadow-[inset_0_1px_2px_rgba(255,255,255,.9),0_8px_20px_rgba(58,45,40,.06)] backdrop-blur-md sm:col-start-2 sm:mt-7 sm:rounded-full sm:bg-white/65"><span>Order listings</span><span className="relative flex items-center rounded-full border border-white/75 bg-white/45 shadow-[inset_0_1px_2px_rgba(255,255,255,.8)]"><select value={sortBy} onChange={(event) => setSortBy(event.target.value as typeof sortBy)} className="appearance-none bg-transparent py-1 pl-3 pr-7 text-right text-xs font-medium text-royal-deep outline-none"><option value="featured">Featured</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="beds-high">Most bedrooms</option></select><ChevronDown size={13} className="pointer-events-none absolute right-2 text-royal-deep/70" /></span></label>
-              <div className="sm:col-start-2"><p className="mb-2 text-sm font-medium text-slate">Strategy</p><div className="flex flex-wrap gap-1.5"><FilterPill compact icon={<House size={12} />} active={strategy === "all"} onClick={() => setStrategy("all")}>All strategies</FilterPill>{Array.from(new Set(properties.map((p) => p.strategy))).map((value) => <FilterPill compact key={value} icon={value === "yield" ? <TrendingUp size={12} /> : <Building2 size={12} />} active={strategy === value} onClick={() => setStrategy(value)}>{strategyLabels[value]}</FilterPill>)}</div></div>
-              <div className="sm:col-start-2 sm:row-start-3"><p className="mb-2 text-sm font-medium text-slate">Location</p><div className="flex flex-wrap gap-1.5"><FilterPill compact icon={<MapPin size={12} />} active={community === "all"} onClick={() => setCommunity("all")}>All locations</FilterPill>{communities.map((value) => <FilterPill compact key={value} icon={<MapPin size={12} />} active={community === value} onClick={() => setCommunity(value)}>{value}</FilterPill>)}</div></div>
-              <div className="sm:col-start-2 sm:row-start-4"><p className="mb-2 text-sm font-medium text-slate">Listing status</p><div className="flex flex-wrap gap-1.5">{Array.from(new Set(properties.map((p) => p.status))).map((value) => <FilterPill compact key={value} icon={value === "new" ? <Sparkles size={12} /> : value === "off-plan" ? <Building2 size={12} /> : <CircleDollarSign size={12} />} active={status === value} onClick={() => setStatus(value)}>{statusLabels[value]}</FilterPill>)}</div></div>
-              <div className="sm:col-span-2 sm:row-start-5"><p className="mb-2 text-sm font-medium text-slate">Price</p><div className="space-y-2"><FluidSlider className="h-10 w-full" min={500_000} max={15_000_000} step={100_000} value={minPriceAed} onValueChange={(value) => setMinPriceAed(Math.min(value, maxPriceAed))} aria-label="Minimum price" format={(value) => `Min AED ${(value / 1_000_000).toFixed(1)}m`} /><FluidSlider className="h-10 w-full" min={500_000} max={15_000_000} step={100_000} value={maxPriceAed} onValueChange={(value) => setMaxPriceAed(Math.max(value, minPriceAed))} aria-label="Maximum price" format={(value) => `Max AED ${value >= 15_000_000 ? "15.0m+" : `${(value / 1_000_000).toFixed(1)}m`}`} /></div></div>
-              <div className="sm:col-span-2 sm:row-start-6"><div className="mb-2 flex items-center justify-between gap-3"><p className="text-sm font-medium text-slate">Bedrooms</p><span className="rounded-full border border-white/80 bg-white/55 px-2.5 py-1 text-[11px] font-medium text-royal-deep shadow-[inset_0_1px_2px_rgba(255,255,255,.8)]">{minBeds}–{maxBeds >= 8 ? "8+" : maxBeds} beds</span></div><Slider className="h-10 w-full" value={[minBeds, maxBeds]} min={1} max={8} step={1} onValueChange={([min, max]) => { setMinBeds(min); setMaxBeds(max); }} aria-label="Bedrooms" /></div>
-              </div>
-              <div className="mt-5 hidden sm:block"><button type="button" onClick={resetFilters} className="flex w-full items-center justify-center rounded-full border border-royal-deep/20 bg-white/55 px-4 py-2.5 text-xs font-medium text-royal-deep transition hover:bg-white/80">Reset filters</button><button type="button" onClick={() => setShowMoreFilters(false)} className="mt-2 hidden w-full items-center justify-center rounded-full bg-royal-deep px-4 py-2.5 text-xs font-medium text-white transition hover:bg-royal sm:hidden">Show results</button></div>
               </div>
             </div>
           </div>
@@ -239,12 +234,12 @@ export function PortfolioFilters({ properties }: { properties: Property[] }) {
             return (
               <section key={group.name} id={story ? `homes-${story.projectSlug}` : undefined} aria-label={group.name} className="scroll-mt-28">
                 {story && <AreaStory community={group.name} place={story.place} blurb={story.blurb} image={story.image} projectHref={`/developments/${story.projectSlug}`} />}
-                <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{group.items.map((property, index) => <PropertyCard key={property.slug} property={property} featured={index === 0 && group.items.length > 2} />)}</div>
+                <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{group.items.map((property, index) => <PropertyCard key={property.slug} property={property} layout={listingLayout(index, group.items.length)} />)}</div>
               </section>
             );
           })}
         </div>
-      ) : <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{sorted.map((property, index) => <PropertyCard key={property.slug} property={property} featured={index === 0} />)}</div>}
+      ) : <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{sorted.map((property, index) => <PropertyCard key={property.slug} property={property} layout={listingLayout(index, sorted.length)} />)}</div>}
     </div>
   );
 }

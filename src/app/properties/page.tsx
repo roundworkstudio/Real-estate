@@ -6,6 +6,7 @@ import { WalkInBackdrop } from "@/components/ui/WalkInBackdrop";
 import { SunlightSweep } from "@/components/ui/SunlightSweep";
 import { PortfolioFilters } from "@/components/tools/PortfolioFilters";
 import { InvestorMatchTeaser } from "@/components/home/InvestorMatchTeaser";
+import { ExploreNext } from "@/components/ui/ExploreNext";
 import { sampleProperties } from "@/lib/sample-properties";
 
 export const viewport: Viewport = {
@@ -37,6 +38,15 @@ export default function PropertiesPage() {
           <div className="mt-10">
             <PortfolioFilters properties={sampleProperties} />
           </div>
+          <ExploreNext
+            className="mt-14 sm:mt-20"
+            eyebrow="Projects"
+            title="See the bigger picture behind each home"
+            body="Handover dates, construction progress and payment plans for every project, plus launches you can register for early."
+            href="/developments"
+            cta="Explore projects"
+            image={{ src: "/media/wadeem-gardens/hero.jpg", alt: "Aerial view of a villa community on the Abu Dhabi coastline" }}
+          />
         </div>
       </section>
       <InvestorMatchTeaser />

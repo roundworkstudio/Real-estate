@@ -50,6 +50,17 @@ export type DevelopmentMeta = {
   /** Full milestone schedule in lib/paymentPlan.ts, when one is published. */
   paymentStructureId?: PaymentStructureId;
   handover?: string;
+  /** Short form of `handover` for card stats, e.g. "48 months". */
+  handoverShort?: string;
+  construction?: { percent: number; isSample: boolean };
+  developerRecord?: DeveloperRecord;
+};
+
+/** What a buyer needs to trust an off-plan developer. */
+export type DeveloperRecord = {
+  delivered: number;
+  onTime: string;
+  isSample: boolean;
 };
 
 /** PLACEHOLDER — wording written for layout, not by Janvi. Replace each
@@ -98,8 +109,57 @@ const DEVELOPMENT_META: Record<string, DevelopmentMeta> = {
     paymentPlan: "5% down · 25% from you, 75% financed by ADIB",
     paymentStructureId: "wadeem-adib",
     handover: "Month 48 from booking",
+    handoverShort: "48 months",
+    // PLACEHOLDER — not from the developer pack; shown with a Sample label.
+    construction: { percent: 5, isSample: true },
+    developerRecord: { delivered: 12, onTime: "Most on schedule", isSample: true },
   },
 };
+
+/** A project announced but not yet selling — nothing to list, so it's
+ * its own record, like CompletedProject. */
+export type UpcomingLaunch = {
+  slug: string;
+  name: string;
+  area: string;
+  city: Property["city"];
+  developer: string;
+  expectedLaunch: string;
+  indicativePricePerSqftAed: number;
+  pitch: string;
+  image: { src: string; alt: string };
+  isSample: boolean;
+};
+
+/** PLACEHOLDER — no real upcoming launches supplied yet. Everything here is
+ * invented for layout and every card renders a sample label; replace with
+ * launches Janvi can offer priority access to. */
+export const upcomingLaunches: UpcomingLaunch[] = [
+  {
+    slug: "sample-reem",
+    name: "Sample waterfront launch",
+    area: "Al Reem Island",
+    city: "Abu Dhabi",
+    developer: "Developer to be confirmed",
+    expectedLaunch: "Q1 2027",
+    indicativePricePerSqftAed: 1_650,
+    pitch: "Waterfront apartments looking over the mangrove lagoon.",
+    image: { src: "/media/area-guides/al-reem-island.jpg", alt: "Glass towers on Al Reem Island beside a mangrove-lined lagoon" },
+    isSample: true,
+  },
+  {
+    slug: "sample-marina",
+    name: "Sample marina tower",
+    area: "Dubai Marina",
+    city: "Dubai",
+    developer: "Developer to be confirmed",
+    expectedLaunch: "Q2 2027",
+    indicativePricePerSqftAed: 2_400,
+    pitch: "High-floor residences with marina and sea views.",
+    image: { src: "/media/area-guides/dubai-marina.jpg", alt: "Dubai Marina towers and yacht berths at dusk" },
+    isSample: true,
+  },
+];
 
 /** A development Janvi has sold into that has since completed. Unlike
  * `Development`, it isn't derived from live listings — there's nothing
@@ -189,6 +249,10 @@ export const developments: Development[] = (() => {
 
 export function getDevelopment(slug: string): Development | undefined {
   return developments.find((d) => d.slug === slug);
+}
+
+export function developmentForProperty(p: Pick<Property, "community" | "city">): Development | undefined {
+  return developments.find((d) => d.name === p.community && d.city === p.city);
 }
 
 export type DevelopmentStats = {

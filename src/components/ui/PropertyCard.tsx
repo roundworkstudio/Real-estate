@@ -3,8 +3,10 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Building2, ChevronLeft, ChevronRight, MapPin, MoveUpRight, Star } from "lucide-react";
+import { ArrowRight, Building2, ChevronLeft, ChevronRight, MapPin, MoveUpRight, Star } from "lucide-react";
 import type { Property } from "@/lib/types";
+import { developmentForProperty } from "@/lib/developments";
+import type { CardLayout } from "@/lib/listing-grid";
 import { StatusBadge } from "@/components/ui/Badge";
 import { FormattedPrice } from "@/components/ui/FormattedPrice";
 import { CompareToggle } from "@/components/tools/CompareToggle";
@@ -13,16 +15,22 @@ import { whatsAppUrlWithMessage } from "@/lib/site-config";
 
 export function PropertyCard({
   property,
-  featured = false,
+  layout,
   pickBelow = false,
+  showProject = true,
 }: {
   property: Property;
-  featured?: boolean;
+  /** Grid placement from `listingLayout`; defaults to a regular single-column card. */
+  layout?: CardLayout;
   /** Render Janvi's pick quote as a bubble under the card so card heights stay uniform. */
   pickBelow?: boolean;
+  /** Link the developer chip to the project page. Off on the project page itself. */
+  showProject?: boolean;
 }) {
   const images = property.gallery?.length ? property.gallery : [property.image];
   const href = `/properties/${property.slug}`;
+  const project = showProject ? developmentForProperty(property) : undefined;
+  const wide = layout?.wide ?? false;
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
 
@@ -42,9 +50,9 @@ export function PropertyCard({
   );
 
   return (
-    <article className={`group relative ${featured ? "md:col-span-2" : ""}`}>
-      <div className="overflow-hidden rounded-[2rem] border border-white/70 bg-white/65 shadow-[0_18px_45px_-28px_rgba(58,45,40,.65)] transition duration-500 group-hover:-translate-y-1 group-hover:shadow-[0_25px_55px_-28px_rgba(58,45,40,.8)]">
-        <div className={`relative overflow-hidden ${featured ? "aspect-[16/9] sm:aspect-[2/1]" : "aspect-[4/3]"}`}>
+    <article className={`group relative flex flex-col ${layout?.article ?? ""}`}>
+      <div className="flex flex-1 flex-col overflow-hidden rounded-[2rem] border border-white/70 bg-white/65 shadow-[0_18px_45px_-28px_rgba(58,45,40,.65)] transition duration-500 group-hover:-translate-y-1 group-hover:shadow-[0_25px_55px_-28px_rgba(58,45,40,.8)]">
+        <div className={`relative overflow-hidden ${layout?.media ?? "aspect-[4/3]"}`}>
           <div
             ref={scrollerRef}
             onScroll={onScroll}
@@ -63,7 +71,7 @@ export function PropertyCard({
                   src={image.src}
                   alt={image.alt}
                   fill
-                  sizes={featured ? "(min-width: 1024px) 66vw, 100vw" : "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"}
+                  sizes={wide ? "(min-width: 1024px) 66vw, 100vw" : "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"}
                   className="object-cover transition duration-700 group-hover:scale-105"
                 />
               </Link>
@@ -82,7 +90,7 @@ export function PropertyCard({
             <div className="mb-1.5 inline-flex items-center gap-1.5 rounded-full bg-slate/40 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-md">
               <MapPin size={12} /> {property.community}, {property.city}
             </div>
-            <h3 className={`${featured ? "text-2xl sm:text-3xl" : "text-lg sm:text-xl"} font-semibold leading-tight [text-shadow:0_1px_12px_rgb(0_0_0/0.35)]`}>
+            <h3 className={`${layout?.title ?? "text-lg sm:text-xl"} font-semibold leading-tight [text-shadow:0_1px_12px_rgb(0_0_0/0.35)]`}>
               {property.title}
             </h3>
           </div>
@@ -128,7 +136,18 @@ export function PropertyCard({
               <p className="mt-1 text-xs text-slate/70">
                 {property.beds} bedrooms · {property.sqft.toLocaleString("en-AE")} sqft
               </p>
-              {property.developer && (
+              {project ? (
+                <Link
+                  href={`/developments/${project.slug}`}
+                  className="relative z-10 -my-1.5 mt-0.5 inline-flex items-center gap-1 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate/70 transition-colors hover:text-royal"
+                >
+                  <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-slate/10 bg-white/70 px-2 py-0.5 transition-colors group-hover:border-slate/20">
+                    <Building2 size={11} />
+                    {property.developer ? `${property.developer} · ` : ""}Project
+                    <ArrowRight size={11} />
+                  </span>
+                </Link>
+              ) : property.developer && (
                 <span className="mt-2 inline-flex items-center gap-1 rounded-full border border-slate/10 bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate/70">
                   <Building2 size={11} /> {property.developer}
                 </span>

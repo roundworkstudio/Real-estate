@@ -8,6 +8,7 @@ import { ArrowLeft, Bath, BedDouble, House, Images, LayoutGrid, MapPin, Phone, R
 import { sampleProperties } from "@/lib/sample-properties";
 import { pricePerSqft } from "@/lib/types";
 import { developments } from "@/lib/developments";
+import { ExploreNext } from "@/components/ui/ExploreNext";
 import { PAYMENT_STRUCTURES, type PaymentStructureId } from "@/lib/paymentPlan";
 import { StatusBadge } from "@/components/ui/Badge";
 import { StatStrip, type StatStripItem } from "@/components/ui/StatStrip";
@@ -336,6 +337,19 @@ export default async function PropertyDetailPage({
           paymentStructureId={paymentStructureId}
         />
       </div>
+
+      {development && (
+        <section className="mx-auto max-w-5xl px-6 pt-10 sm:px-10">
+          <ExploreNext
+            eyebrow={`Part of ${development.name}`}
+            title={`About the ${development.name} project`}
+            body="Handover, construction progress, the payment plan, and the other homes for sale in this project."
+            href={`/developments/${development.slug}`}
+            cta="Explore project"
+            image={development.meta?.heroImage ?? property.image}
+          />
+        </section>
+      )}
 
       {/* Location */}
       <section className="mx-auto max-w-5xl px-6 py-10 sm:px-10">

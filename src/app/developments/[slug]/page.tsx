@@ -17,6 +17,7 @@ import { notFound } from "next/navigation";
 import { developments, getDevelopment, developmentStats } from "@/lib/developments";
 import { PAYMENT_STRUCTURES, type PaymentStructureId } from "@/lib/paymentPlan";
 import { PropertyCard } from "@/components/ui/PropertyCard";
+import { listingLayout } from "@/lib/listing-grid";
 import { LocationMap } from "@/components/ui/LocationMap";
 import { PriceListRequest } from "@/components/tools/PriceListRequest";
 import { DevelopmentAnalytics } from "@/components/tools/DevelopmentAnalytics";
@@ -214,9 +215,14 @@ export default async function DevelopmentDetailPage({
         <h2 className="text-xl font-semibold text-slate">
           Listings in {development.name}
         </h2>
-        <div className="mt-6 grid grid-cols-1 gap-8 sm:grid-cols-3">
-          {development.properties.map((p) => (
-            <PropertyCard key={p.slug} property={p} />
+        <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {development.properties.map((p, index) => (
+            <PropertyCard
+              key={p.slug}
+              property={p}
+              layout={listingLayout(index, development.properties.length)}
+              showProject={false}
+            />
           ))}
         </div>
       </section>

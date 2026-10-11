@@ -369,7 +369,7 @@ html.is-scrolling .glass-tilt {
     inset 0 -1px 0 rgb(255 255 255 / 0.08);
 }
 
-/* Contact bubble beside the top-bar wordmark (MobileTopBar.tsx, Nav.tsx),
+/* Contact bubble beside the mobile top-bar wordmark (MobileTopBar.tsx),
    phases from useScrollBubble. It never collapses its width: a negative
    margin tucks it behind the wordmark, and a translate parks it where it
    appears, so margin + translate cancel out for the bubble itself and

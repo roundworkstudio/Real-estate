@@ -2,14 +2,12 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { MessageSquare } from "lucide-react";
 import { motion } from "motion/react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { useScrollingFlag } from "@/lib/motion";
-import { BUBBLE_POP, useScrollBubble } from "@/lib/use-scroll-bubble";
+import { useScrollBubble } from "@/lib/use-scroll-bubble";
 import { desktopNavLinks as navLinks } from "@/lib/nav-links";
-import { PLACEHOLDER_TEL_URL } from "@/lib/site-config";
 
 function isNavLinkActive(pathname: string | null, href: string) {
   if (!pathname) return false;
@@ -88,8 +86,7 @@ function isNavLinkActive(pathname: string | null, href: string) {
  * reads as deliberately placed rather than cramped against the label.
  */
 export function Nav({ compactStyle = false }: { compactStyle?: boolean }) {
-  const { scrolled, phase, onBubbleAnimationEnd } = useScrollBubble();
-  const bubbleShown = phase === "shown";
+  const { scrolled } = useScrollBubble();
   const pathname = usePathname();
   useScrollingFlag();
 
@@ -97,26 +94,8 @@ export function Nav({ compactStyle = false }: { compactStyle?: boolean }) {
     return (
       <header className="pointer-events-none fixed inset-x-6 top-4 z-30 hidden items-center justify-center gap-2 md:flex">
         <Link
-          href="/contact"
-          aria-label="Contact Janvi"
-          aria-hidden={!bubbleShown}
-          tabIndex={bubbleShown ? 0 : -1}
-          data-state={phase}
-          data-pop={BUBBLE_POP}
-          onAnimationEnd={onBubbleAnimationEnd}
-          className={[
-            "nav-bubble glass-nav pointer-events-auto flex h-12 w-12 origin-right shrink-0 items-center justify-center rounded-full border border-white/10 bg-royal-deep/80 text-white shadow-card",
-            bubbleShown
-              ? "mr-0 translate-x-0 scale-100 opacity-100"
-              : "pointer-events-none -mr-14 -translate-x-14 scale-50 opacity-0",
-          ].join(" ")}
-        >
-          <MessageSquare size={18} strokeWidth={1.8} />
-        </Link>
-
-        <Link
           href="/"
-          className="glass-nav pointer-events-auto relative z-10 flex h-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-royal-deep/80 px-4 shadow-card"
+          className="glass-nav pointer-events-auto flex h-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-royal-deep/80 px-4 shadow-card"
         >
           <Image
             src="/brand/logo-mobile-light.svg"
@@ -149,7 +128,7 @@ export function Nav({ compactStyle = false }: { compactStyle?: boolean }) {
         </nav>
 
         <Button
-          href={PLACEHOLDER_TEL_URL}
+          href="/contact"
           variant="primary"
           className="nav-cta glass-nav pointer-events-auto h-12 shrink-0 px-4 text-xs shadow-card lg:px-5 lg:text-sm"
         >
@@ -190,7 +169,7 @@ export function Nav({ compactStyle = false }: { compactStyle?: boolean }) {
         ))}
       </nav>
       <Button
-        href={PLACEHOLDER_TEL_URL}
+        href="/contact"
         variant="primary"
         className="h-10 justify-self-end px-6 text-sm"
       >

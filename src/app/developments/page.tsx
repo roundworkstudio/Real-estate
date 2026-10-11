@@ -15,9 +15,10 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CalendarClock, Dumbbell, Sparkles, Trees, Waves } from "lucide-react";
-import { completedProjects, derivedUnitMix, developments, developmentStats, JANVIS_TAKE, type Development } from "@/lib/developments";
+import { completedProjects, derivedUnitMix, developments, developmentStats, JANVIS_TAKE, upcomingLaunches, type Development } from "@/lib/developments";
 import { ProjectsShowcase } from "@/components/tools/ProjectsShowcase";
 import { WhatsAppBanner } from "@/components/tools/WhatsAppBanner";
+import { ExploreNext } from "@/components/ui/ExploreNext";
 import { PriceListRequest } from "@/components/tools/PriceListRequest";
 import { CurrencyIcon } from "@/components/tools/CurrencyIcon";
 import { PaymentTimeline } from "@/components/ui/PaymentTimeline";
@@ -45,11 +46,11 @@ function amenityIcon(amenity: string) {
 export const metadata: Metadata = {
   title: "Projects · Janvi Real Estate",
   description:
-    "Current and completed developments across Abu Dhabi and Dubai — payment plans, handover and unit mix for projects selling now, and price growth on completed ones.",
+    "Upcoming launches, projects selling now and completed developments across Abu Dhabi and Dubai: priority access, payment plans, handover and price growth since launch.",
   openGraph: {
     title: "Projects · Janvi Real Estate",
     description:
-      "Current and completed developments across Abu Dhabi and Dubai, with price growth since launch.",
+      "Upcoming launches, projects selling now and completed developments across Abu Dhabi and Dubai.",
     images: [{ url: "/media/wadeem-gardens/hero.jpg", alt: "Aerial view of a villa community on the Abu Dhabi coastline" }],
   },
 };
@@ -77,6 +78,14 @@ function bedRange(d: Development): string {
   return min === max ? `${min}` : `${min}–${max}`;
 }
 
+function SampleChip({ onDark = false }: { onDark?: boolean }) {
+  return (
+    <span className={`ml-1 rounded-full px-1.5 py-px align-middle text-[9px] font-medium ${onDark ? "bg-white/15 text-white/80" : "bg-slate/10 text-slate/70"}`}>
+      Sample
+    </span>
+  );
+}
+
 export default function DevelopmentsPage() {
   return (
     <main>
@@ -96,8 +105,8 @@ export default function DevelopmentsPage() {
           <div className="liquid-glass liquid-glass--tint max-w-xl rounded-[2rem] p-6 sm:p-8">
             <h1 className="text-3xl font-semibold text-white sm:text-4xl">Projects</h1>
             <p className="mt-2 max-w-lg text-white/90">
-              Developments Janvi is selling now, and ones she&rsquo;s seen through
-              to completion.
+              Get in before launch, buy while it&rsquo;s being built, and see how
+              the projects Janvi has seen through have grown.
             </p>
             <div className="mt-5">
               <CurrencySwitcher />
@@ -133,6 +142,7 @@ export default function DevelopmentsPage() {
           </div>
         </div>
         <ProjectsShowcase
+          upcoming={upcomingLaunches}
           completed={completedProjects}
           currentPoints={developments.map((d) => ({
             slug: d.slug,
@@ -153,7 +163,7 @@ export default function DevelopmentsPage() {
                   <ImageBreak
                     src={breakImage.src}
                     alt={breakImage.alt}
-                    eyebrow="Current projects"
+                    eyebrow="Selling now"
                     value={`${developments.length} ${developments.length === 1 ? "project" : "projects"}`}
                     label={`across ${Array.from(new Set(developments.map((dev) => dev.city))).join(" & ")}`}
                   />
@@ -162,7 +172,7 @@ export default function DevelopmentsPage() {
 
               <Reveal className={i === 0 ? "pt-8 sm:hidden" : "pt-5 sm:hidden"}>
                 <article className="relative overflow-hidden rounded-[2rem] shadow-[0_24px_50px_-28px_rgba(58,45,40,.7)]">
-                  <div className={`relative ${d.meta?.paymentStructureId ? "aspect-[3/4]" : "aspect-[4/5]"}`}>
+                  <div className={`relative ${d.meta?.paymentStructureId ? "aspect-[2/3]" : "aspect-[3/4]"}`}>
                     <Image
                       src={cover.src}
                       alt={cover.alt}
@@ -185,7 +195,7 @@ export default function DevelopmentsPage() {
                         href={`/properties#homes-${d.slug}`}
                         className="-my-2 inline-flex items-center gap-1 py-2 text-xs font-medium text-white underline-offset-2 hover:underline"
                       >
-                        See homes <ArrowRight size={12} />
+                        Available homes <ArrowRight size={12} />
                       </Link>
                     </div>
                     <h2 className="mt-0.5 text-2xl font-semibold leading-tight">
@@ -203,6 +213,27 @@ export default function DevelopmentsPage() {
                       <div className="pl-2">
                         <dt className="text-[11px] text-white/75">Listed</dt>
                         <dd className="mt-0.5 text-sm font-semibold">{stats.unitCount} {stats.unitCount === 1 ? "home" : "homes"}</dd>
+                      </div>
+                    </dl>
+                    <dl className="mt-3 grid grid-cols-3 divide-x divide-white/20 border-t border-white/20 pt-3 text-center">
+                      <div className="pr-2">
+                        <dt className="text-[11px] text-white/75">Handover</dt>
+                        <dd className="mt-0.5 text-sm font-semibold">{d.meta?.handoverShort ?? "TBC"}</dd>
+                      </div>
+                      <div className="px-2">
+                        <dt className="text-[11px] text-white/75">Built</dt>
+                        <dd className="mt-0.5 text-sm font-semibold">
+                          {d.meta?.construction ? (
+                            <>
+                              {d.meta.construction.percent}%
+                              {d.meta.construction.isSample && <SampleChip onDark />}
+                            </>
+                          ) : "TBC"}
+                        </dd>
+                      </div>
+                      <div className="pl-2">
+                        <dt className="text-[11px] text-white/75">Per sqft</dt>
+                        <dd className="mt-0.5 text-sm font-semibold"><FormattedPrice amountAed={stats.avgPricePerSqftAed} compact={false} /></dd>
                       </div>
                     </dl>
                     <PaymentTimeline
@@ -289,9 +320,29 @@ export default function DevelopmentsPage() {
                           </>
                         ),
                       },
+                      { label: "Bedrooms", value: bedRange(d) },
+                      { label: "Handover", value: d.meta?.handover ?? "To be confirmed" },
+                      d.meta?.construction && {
+                        label: "Construction",
+                        value: (
+                          <>
+                            {d.meta.construction.percent}% built
+                            {d.meta.construction.isSample && <SampleChip />}
+                          </>
+                        ),
+                      },
+                      { label: "Avg. price per sqft", value: <FormattedPrice amountAed={stats.avgPricePerSqftAed} compact={false} /> },
                       { label: "Unit mix", value: d.meta?.unitMix ?? derivedUnitMix(d) },
                       !d.meta?.paymentStructureId && d.meta?.paymentPlan && { label: "Payment plan", value: d.meta.paymentPlan },
-                      d.meta?.handover && { label: "Handover", value: d.meta.handover },
+                      d.meta?.developerRecord && {
+                        label: "Developer record",
+                        value: (
+                          <>
+                            {d.meta.developerRecord.delivered} delivered · {d.meta.developerRecord.onTime}
+                            {d.meta.developerRecord.isSample && <SampleChip />}
+                          </>
+                        ),
+                      },
                       stats.avgGrossYieldPercent !== null && {
                         label: "Avg. gross yield",
                         value: <span className="font-medium text-sovereign">{stats.avgGrossYieldPercent.toFixed(1)}%</span>,
@@ -333,7 +384,7 @@ export default function DevelopmentsPage() {
                       href={`/properties#homes-${d.slug}`}
                       className="inline-flex items-center gap-1.5 text-sm font-medium text-royal-deep transition-colors hover:text-royal"
                     >
-                      See homes <ArrowRight size={14} />
+                      Available homes <ArrowRight size={14} />
                     </Link>
                   </div>
                 </Reveal>
@@ -341,6 +392,15 @@ export default function DevelopmentsPage() {
             </div>
           );
         })}
+        />
+        <ExploreNext
+          className="mb-10 sm:mb-14"
+          eyebrow="Properties"
+          title="Ready to look at individual homes?"
+          body="Every home across these projects in one place, with prices, layouts and a side-by-side compare."
+          href="/properties"
+          cta="Browse homes"
+          image={{ src: "/media/hero/ramhan-villa-poolview-hero.jpg", alt: "Infinity pool looking out over the water from a villa" }}
         />
         <div className="pb-14">
           <WhatsAppBanner />
