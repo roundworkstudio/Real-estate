@@ -22,6 +22,7 @@ type PropertyDetailToolsProps = {
   estimatedMonthlyRent: number;
   estimatedAnnualNetCashFlow: number;
   city: Property["city"];
+  status?: Property["status"];
   paymentStructureId: PaymentStructureId;
 };
 
@@ -31,6 +32,7 @@ export function PropertyDetailTools({
   estimatedMonthlyRent,
   estimatedAnnualNetCashFlow,
   city,
+  status,
   paymentStructureId,
 }: PropertyDetailToolsProps) {
   const [activeTab, setActiveTab] = useState<(typeof TABS)[number]>("About");
@@ -100,7 +102,7 @@ export function PropertyDetailTools({
                 <h3 className="text-2xl font-semibold text-slate">Payment plan &amp; fee transparency</h3>
                 <p className="mt-3 text-base text-slate/60">Review capital outlay by milestone and the upfront fees due at closing.</p>
               </div>
-              <PaymentPlanCalculator priceAed={priceAed} city={city} defaultStructureId={paymentStructureId} />
+              <PaymentPlanCalculator priceAed={priceAed} city={city} status={status} defaultStructureId={paymentStructureId} />
             </div>
           )}
         </div>

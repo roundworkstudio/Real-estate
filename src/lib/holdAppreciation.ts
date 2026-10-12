@@ -29,6 +29,9 @@ export type HoldAppreciationInputs = {
   holdYears: number;
   /** Net rental income for the year, assumed flat across the hold period. */
   annualNetCashFlowAed: number;
+  /** Years before any rent comes in, e.g. 4 for an off-plan home handed
+   * over at month 48. Rent counts from the year after. Defaults to 0. */
+  rentStartsAfterYears?: number;
 };
 
 export type YearPoint = {
@@ -76,16 +79,23 @@ function solveIrr(cashFlows: number[]): number | null {
 export function calculateHoldAppreciation(
   inputs: HoldAppreciationInputs,
 ): HoldAppreciationResults {
-  const { purchasePriceAed, downPaymentPercent, annualGrowthPercent, holdYears, annualNetCashFlowAed } =
-    inputs;
+  const {
+    purchasePriceAed,
+    downPaymentPercent,
+    annualGrowthPercent,
+    holdYears,
+    annualNetCashFlowAed,
+    rentStartsAfterYears = 0,
+  } = inputs;
 
   const initialEquityAed = purchasePriceAed * (downPaymentPercent / 100);
   const growthRate = annualGrowthPercent / 100;
+  const rentIn = (year: number) => (year > rentStartsAfterYears ? annualNetCashFlowAed : 0);
 
   const series: YearPoint[] = [];
   let cumulativeCashFlow = 0;
   for (let year = 0; year <= holdYears; year++) {
-    if (year > 0) cumulativeCashFlow += annualNetCashFlowAed;
+    if (year > 0) cumulativeCashFlow += rentIn(year);
     const assetValueAed = purchasePriceAed * Math.pow(1 + growthRate, year);
     series.push({
       year,
@@ -95,7 +105,7 @@ export function calculateHoldAppreciation(
   }
 
   const projectedExitValueAed = purchasePriceAed * Math.pow(1 + growthRate, holdYears);
-  const cumulativeRentalIncomeAed = annualNetCashFlowAed * holdYears;
+  const cumulativeRentalIncomeAed = cumulativeCashFlow;
   const appreciationAed = projectedExitValueAed - purchasePriceAed;
   const totalEquityCreatedAed = appreciationAed + cumulativeRentalIncomeAed;
 
@@ -106,8 +116,8 @@ export function calculateHoldAppreciation(
   // from the sale (no amortisation paydown modelled) — a conservative
   // simplification, since paydown over the hold would only add to equity.
   const cashFlows: number[] = [-initialEquityAed];
-  for (let year = 1; year < holdYears; year++) cashFlows.push(annualNetCashFlowAed);
-  cashFlows.push(annualNetCashFlowAed + projectedExitValueAed - (purchasePriceAed - initialEquityAed));
+  for (let year = 1; year < holdYears; year++) cashFlows.push(rentIn(year));
+  cashFlows.push(rentIn(holdYears) + projectedExitValueAed - (purchasePriceAed - initialEquityAed));
 
   const irr = solveIrr(cashFlows);
 

@@ -52,6 +52,8 @@ export type DevelopmentMeta = {
   handover?: string;
   /** Short form of `handover` for card stats, e.g. "48 months". */
   handoverShort?: string;
+  /** Handover as months from booking, for the calculators. */
+  handoverMonths?: number;
   construction?: { percent: number; isSample: boolean };
   developerRecord?: DeveloperRecord;
 };
@@ -71,6 +73,13 @@ export const JANVIS_TAKE: Record<string, string> = {
     "Right for families who want a big villa by the beach and can wait for it. Handover is four years out, but you only fund 25% yourself.",
   "ramhan-island":
     "For buyers who want something finished and private now. Very few villas on the island, so resales are rare. Move quickly when one comes up.",
+};
+
+/** The phrase in each take that gets the hand-drawn underline. Must appear
+ * verbatim in JANVIS_TAKE. */
+export const JANVIS_TAKE_HIGHLIGHT: Record<string, string> = {
+  "wadeem-gardens": "you only fund 25% yourself",
+  "ramhan-island": "resales are rare",
 };
 
 /** Real project metadata, sourced from client-supplied developer packs —
@@ -110,6 +119,7 @@ const DEVELOPMENT_META: Record<string, DevelopmentMeta> = {
     paymentStructureId: "wadeem-adib",
     handover: "Month 48 from booking",
     handoverShort: "48 months",
+    handoverMonths: 48,
     // PLACEHOLDER — not from the developer pack; shown with a Sample label.
     construction: { percent: 5, isSample: true },
     developerRecord: { delivered: 12, onTime: "Most on schedule", isSample: true },

@@ -14,8 +14,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CalendarClock, Dumbbell, Sparkles, Trees, Waves } from "lucide-react";
-import { completedProjects, derivedUnitMix, developments, developmentStats, JANVIS_TAKE, upcomingLaunches, type Development } from "@/lib/developments";
+import { ArrowRight, CalendarClock } from "lucide-react";
+import { amenityIcon } from "@/components/ui/AmenityTiles";
+import { completedProjects, derivedUnitMix, developments, developmentStats, JANVIS_TAKE, JANVIS_TAKE_HIGHLIGHT, upcomingLaunches } from "@/lib/developments";
+import { bedRange, statusLabel } from "@/lib/project-facts";
+import { ProjectStats, SampleChip } from "@/components/ui/ProjectStats";
 import { ProjectsShowcase } from "@/components/tools/ProjectsShowcase";
 import { WhatsAppBanner } from "@/components/tools/WhatsAppBanner";
 import { ExploreNext } from "@/components/ui/ExploreNext";
@@ -34,14 +37,6 @@ import { FormattedPrice } from "@/components/ui/FormattedPrice";
 import { CurrencySwitcher } from "@/components/tools/CurrencySwitcher";
 
 type GlanceRow = { label: string; value: React.ReactNode };
-
-function amenityIcon(amenity: string) {
-  const a = amenity.toLowerCase();
-  if (a.includes("pool")) return <Waves size={13} />;
-  if (a.includes("gym")) return <Dumbbell size={13} />;
-  if (a.includes("garden") || a.includes("park")) return <Trees size={13} />;
-  return <Sparkles size={13} />;
-}
 
 export const metadata: Metadata = {
   title: "Projects · Janvi Real Estate",
@@ -65,26 +60,6 @@ const HERO_IMAGE = {
 const BUYER_COUNTRY_COUNT = 14;
 const BUYER_FLAGS: CurrencyCode[] = ["GBP", "INR", "USD", "EUR", "AED"];
 const MOBILE_FLAG_COUNT = 3;
-
-function statusLabel(d: Development): string {
-  if (d.meta?.salesStatus) return d.meta.salesStatus;
-  return d.properties.every((p) => p.status === "off-plan") ? "Off-plan" : "Ready to move";
-}
-
-function bedRange(d: Development): string {
-  const beds = d.properties.map((p) => p.beds);
-  const min = Math.min(...beds);
-  const max = Math.max(...beds);
-  return min === max ? `${min}` : `${min}–${max}`;
-}
-
-function SampleChip({ onDark = false }: { onDark?: boolean }) {
-  return (
-    <span className={`ml-1 rounded-full px-1.5 py-px align-middle text-[9px] font-medium ${onDark ? "bg-white/15 text-white/80" : "bg-slate/10 text-slate/70"}`}>
-      Sample
-    </span>
-  );
-}
 
 export default function DevelopmentsPage() {
   return (
@@ -201,41 +176,7 @@ export default function DevelopmentsPage() {
                     <h2 className="mt-0.5 text-2xl font-semibold leading-tight">
                       <Link href={`/developments/${d.slug}`}>{d.name}</Link>
                     </h2>
-                    <dl className="mt-3 grid grid-cols-3 divide-x divide-white/20 text-center">
-                      <div className="pr-2">
-                        <dt className="text-[11px] text-white/75">From</dt>
-                        <dd className="mt-0.5 text-sm font-semibold"><FormattedPrice amountAed={stats.minPriceAed} /></dd>
-                      </div>
-                      <div className="px-2">
-                        <dt className="text-[11px] text-white/75">Bedrooms</dt>
-                        <dd className="mt-0.5 text-sm font-semibold">{bedRange(d)}</dd>
-                      </div>
-                      <div className="pl-2">
-                        <dt className="text-[11px] text-white/75">Listed</dt>
-                        <dd className="mt-0.5 text-sm font-semibold">{stats.unitCount} {stats.unitCount === 1 ? "home" : "homes"}</dd>
-                      </div>
-                    </dl>
-                    <dl className="mt-3 grid grid-cols-3 divide-x divide-white/20 border-t border-white/20 pt-3 text-center">
-                      <div className="pr-2">
-                        <dt className="text-[11px] text-white/75">Handover</dt>
-                        <dd className="mt-0.5 text-sm font-semibold">{d.meta?.handoverShort ?? "TBC"}</dd>
-                      </div>
-                      <div className="px-2">
-                        <dt className="text-[11px] text-white/75">Built</dt>
-                        <dd className="mt-0.5 text-sm font-semibold">
-                          {d.meta?.construction ? (
-                            <>
-                              {d.meta.construction.percent}%
-                              {d.meta.construction.isSample && <SampleChip onDark />}
-                            </>
-                          ) : "TBC"}
-                        </dd>
-                      </div>
-                      <div className="pl-2">
-                        <dt className="text-[11px] text-white/75">Per sqft</dt>
-                        <dd className="mt-0.5 text-sm font-semibold"><FormattedPrice amountAed={stats.avgPricePerSqftAed} compact={false} /></dd>
-                      </div>
-                    </dl>
+                    <ProjectStats development={d} onDark className="mt-3" />
                     <PaymentTimeline
                       structureId={d.meta?.paymentStructureId}
                       fromPriceAed={stats.minPriceAed}
@@ -254,7 +195,7 @@ export default function DevelopmentsPage() {
                   </div>
                 </article>
                 {JANVIS_TAKE[d.slug] && (
-                  <JanviTake quote={JANVIS_TAKE[d.slug]} variant="bubble" className="mx-3 mt-4" />
+                  <JanviTake quote={JANVIS_TAKE[d.slug]} highlight={JANVIS_TAKE_HIGHLIGHT[d.slug]} variant="bubble" className="mx-3 mt-4" />
                 )}
               </Reveal>
 
@@ -298,7 +239,7 @@ export default function DevelopmentsPage() {
                   {d.meta && (
                     <p className="mt-4 line-clamp-2 max-w-md text-sm text-slate/70">{d.meta.description}</p>
                   )}
-                  {JANVIS_TAKE[d.slug] && <JanviTake quote={JANVIS_TAKE[d.slug]} className="mt-5 max-w-md" />}
+                  {JANVIS_TAKE[d.slug] && <JanviTake quote={JANVIS_TAKE[d.slug]} highlight={JANVIS_TAKE_HIGHLIGHT[d.slug]} className="mt-5 max-w-md" />}
 
                   <div className="liquid-glass-light mt-6 rounded-2xl text-sm">
                   <PaymentTimeline

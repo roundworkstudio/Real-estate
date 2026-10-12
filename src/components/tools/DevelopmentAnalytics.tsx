@@ -1,143 +1,117 @@
 "use client";
 
 /**
- * The analytics suite (yield simulator, hold model, payment plan) scoped
- * to one development's own unit types, with a selector between them —
- * same pattern as app/analytics/page.tsx, factored out so a development
- * page can embed it against just its own listings instead of the whole
- * sample inventory.
+ * The project page's calculators, one at a time: payment plan first (what
+ * an off-plan buyer asks before anything else), rental yield and five-year
+ * growth behind tabs. Runs against the home picked in the Homes section
+ * (shared through SelectedUnitProvider), so every figure is for a real
+ * listing and the unit choice lives in one place.
  */
 import { useState } from "react";
-import { TrendingUp, LineChart, Landmark } from "lucide-react";
 import type { Property } from "@/lib/types";
-import { CurrencyVisaToolbar } from "@/components/tools/CurrencyVisaToolbar";
-import { YieldSimulator } from "@/components/tools/YieldSimulator";
-import { HoldAppreciationModel } from "@/components/tools/HoldAppreciationModel";
+import { ProjectYield } from "@/components/tools/ProjectYield";
+import { ProjectGrowth } from "@/components/tools/ProjectGrowth";
 import { PaymentPlanCalculator } from "@/components/tools/PaymentPlanCalculator";
-import { InsightToolCard } from "@/components/ui/InsightToolCard";
-import { Reveal } from "@/components/ui/Reveal";
-import { ImageBreak } from "@/components/ui/ImageBreak";
-import type { PaymentStructureId } from "@/lib/paymentPlan";
+import { CurrencySwitcher } from "@/components/tools/CurrencySwitcher";
+import { FormattedPrice } from "@/components/ui/FormattedPrice";
+import { useSelectedUnit } from "@/components/ui/SelectedUnit";
+import { PLAN_TIMELINES, type PaymentStructureId } from "@/lib/paymentPlan";
+import { unitLabel } from "@/lib/project-facts";
 
-const tools = [
-  {
-    icon: TrendingUp,
-    title: "Yield strategy simulator",
-    description: "Short-term let vs. long-term lease, side by side.",
-    href: "#dev-yield-strategy",
-  },
-  {
-    icon: LineChart,
-    title: "5-year hold & appreciation",
-    description: "Project equity growth under a market scenario.",
-    href: "#dev-hold-appreciation",
-  },
-  {
-    icon: Landmark,
-    title: "Payment plan & fees",
-    description: "Capital outlay by milestone, every fee at closing.",
-    href: "#dev-payment-plan",
-  },
-];
+const TOOLS = [
+  { id: "plan", label: "Payment plan" },
+  { id: "yield", label: "Rental yield" },
+  { id: "growth", label: "5-year growth" },
+] as const;
+
+type ToolId = (typeof TOOLS)[number]["id"];
 
 export function DevelopmentAnalytics({
   properties,
   defaultPaymentStructureId,
+  paymentStructureIds,
+  handoverMonths,
 }: {
   properties: Property[];
   defaultPaymentStructureId?: PaymentStructureId;
+  paymentStructureIds?: PaymentStructureId[];
+  handoverMonths?: number;
 }) {
-  const [slug, setSlug] = useState(properties[0].slug);
-  const property = properties.find((p) => p.slug === slug) ?? properties[0];
-  const estimatedAnnualNetCashFlow = Math.round(
-    (property.expectedAnnualRentAed ?? property.priceAed * 0.05) * 0.85,
-  );
-  const gallery = property.gallery ?? [property.image];
-  const breakImage = (i: number) => gallery[i % gallery.length];
+  const sorted = [...properties].sort((a, b) => a.priceAed - b.priceAed);
+  const { home: property } = useSelectedUnit(sorted);
+  const [tool, setTool] = useState<ToolId>("plan");
+  const rentDelayMonths = property.status === "off-plan" ? handoverMonths : undefined;
+  const ownSharePercent = defaultPaymentStructureId
+    ? PLAN_TIMELINES[defaultPaymentStructureId]?.segments
+        .filter((s) => s.payer === "you")
+        .reduce((sum, s) => sum + s.percent, 0)
+    : undefined;
 
   return (
-    <div>
-      <label className="block max-w-sm">
-        <span className="text-sm text-slate/60">Unit type</span>
-        <select
-          value={slug}
-          onChange={(e) => setSlug(e.target.value)}
-          className="mt-2 w-full rounded-xl border border-slate/15 bg-canvas px-4 py-2.5 text-sm text-slate"
-        >
-          {properties.map((p) => (
-            <option key={p.slug} value={p.slug}>
-              {p.title} · AED {p.priceAed.toLocaleString("en-AE")}
-            </option>
-          ))}
-        </select>
-      </label>
+    <div className="liquid-glass-light rounded-[1.75rem] px-4 py-5 sm:p-8">
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-sm text-slate/70">
+          Figures for the <span className="font-medium text-slate">{unitLabel(property, sorted)}</span> at{" "}
+          <span className="whitespace-nowrap font-medium text-slate">
+            <FormattedPrice amountAed={property.priceAed} />
+          </span>
+          {sorted.length > 1 && (
+            <>
+              {" · "}
+              <a href="#homes" className="text-royal underline-offset-4 hover:underline">
+                Change home
+              </a>
+            </>
+          )}
+        </p>
+        <CurrencySwitcher />
+      </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
-        {tools.map((t, i) => (
-          <Reveal key={t.title} delayMs={i * 100}>
-            <InsightToolCard
-              icon={t.icon}
-              title={t.title}
-              description={t.description}
-              href={t.href}
-            />
-          </Reveal>
+      <div role="tablist" aria-label="Calculator" className="mt-6 flex gap-5 border-b border-slate/10 sm:gap-6">
+        {TOOLS.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            role="tab"
+            aria-selected={tool === t.id}
+            onClick={() => setTool(t.id)}
+            className={`-mb-px whitespace-nowrap border-b-2 pb-3 text-[13px] font-medium sm:text-sm transition-colors ${
+              tool === t.id ? "border-slate text-slate" : "border-transparent text-slate/55 hover:text-slate"
+            }`}
+          >
+            {t.label}
+          </button>
         ))}
       </div>
 
-        <div className="mt-10 -mx-6 sm:-mx-10">
-          <CurrencyVisaToolbar />
-        </div>
-
-        <div className="mt-10 space-y-16">
-          <div id="dev-yield-strategy" className="scroll-mt-24">
-            <h3 className="text-lg font-semibold text-slate">Yield strategy simulator</h3>
-            <div className="mt-6">
-              <YieldSimulator priceAed={property.priceAed} sqft={property.sqft} />
-            </div>
-          </div>
-
-          <ImageBreak
-            src={breakImage(2).src}
-            alt={breakImage(2).alt}
-            eyebrow={`${property.community}, ${property.city}`}
-            value={`${property.beds} bed`}
-            label={property.title}
+      <div role="tabpanel" className="mt-8">
+        {tool === "plan" && (
+          <PaymentPlanCalculator
+            key={property.slug}
+            priceAed={property.priceAed}
+            city={property.city}
+            status={property.status}
+            defaultStructureId={defaultPaymentStructureId}
+            structureIds={paymentStructureIds}
+            scheduleLimit={3}
+            bare
           />
-
-          <div id="dev-hold-appreciation" className="scroll-mt-24">
-            <h3 className="text-lg font-semibold text-slate">
-              5-year hold &amp; appreciation model
-            </h3>
-            <div className="mt-6">
-              <HoldAppreciationModel
-                purchasePriceAed={property.priceAed}
-                annualNetCashFlowAed={estimatedAnnualNetCashFlow}
-              />
-            </div>
-          </div>
-
-          <ImageBreak
-            src={breakImage(4).src}
-            alt={breakImage(4).alt}
-            eyebrow={`${property.community}, ${property.city}`}
-            value={`${property.sqft.toLocaleString("en-AE")} sqft`}
-            label={property.title}
+        )}
+        {tool === "yield" && <ProjectYield key={property.slug} home={property} handoverMonths={rentDelayMonths} />}
+        {tool === "growth" && (
+          <ProjectGrowth
+            key={property.slug}
+            home={property}
+            handoverMonths={rentDelayMonths}
+            defaultEquityPercent={ownSharePercent}
           />
+        )}
+      </div>
 
-          <div id="dev-payment-plan" className="scroll-mt-24">
-            <h3 className="text-lg font-semibold text-slate">
-              Payment plan &amp; fee transparency
-            </h3>
-            <div className="mt-6">
-              <PaymentPlanCalculator
-                priceAed={property.priceAed}
-                city={property.city}
-                defaultStructureId={defaultPaymentStructureId}
-              />
-            </div>
-          </div>
-        </div>
+      <p className="mt-8 border-t border-slate/10 pt-5 text-xs leading-relaxed text-slate/55">
+        These figures are guides based on recent market trends and the developer&apos;s published plan. They aren&apos;t
+        guaranteed; confirm exact terms with Janvi before you commit.
+      </p>
     </div>
   );
 }

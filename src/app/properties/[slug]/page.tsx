@@ -175,6 +175,7 @@ export default async function PropertyDetailPage({
                   <PaymentPlanCalculator
                     priceAed={property.priceAed}
                     city={property.city}
+                    status={property.status}
                     defaultStructureId={paymentStructureId}
                     glass
                     compact
@@ -334,6 +335,7 @@ export default async function PropertyDetailPage({
           estimatedMonthlyRent={estimatedMonthlyRent}
           estimatedAnnualNetCashFlow={estimatedAnnualNetCashFlow}
           city={property.city}
+          status={property.status}
           paymentStructureId={paymentStructureId}
         />
       </div>

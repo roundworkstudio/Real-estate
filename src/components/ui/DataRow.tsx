@@ -21,10 +21,10 @@ export function DataRow({
   tone?: "accent";
 }) {
   return (
-    <div className="flex items-baseline justify-between border-b border-slate/10 py-3 text-sm last:border-0">
+    <div className="flex items-baseline justify-between gap-4 border-b border-slate/10 py-3 text-sm last:border-0">
       <span className="text-slate/60">{label}</span>
       <span
-        className={`font-medium tabular-nums ${tone === "accent" ? "text-sovereign" : "text-slate"}`}
+        className={`shrink-0 whitespace-nowrap font-medium tabular-nums ${tone === "accent" ? "text-sovereign" : "text-slate"}`}
       >
         {value}
       </span>

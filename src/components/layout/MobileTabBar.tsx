@@ -141,14 +141,14 @@ export function MobileTabBar() {
                 className="flex w-[61px] shrink-0 items-center justify-center"
               >
                 <span
-                  className={`flex h-12 w-12 items-center justify-center rounded-full transition-[transform,background-color,box-shadow] duration-300 active:scale-95 ${
+                  className={`flex h-10 w-10 items-center justify-center rounded-full transition-[transform,background-color,box-shadow] duration-300 active:scale-95 ${
                     active
                       ? "border border-white/15 bg-white/10 text-[#d8c4ac] shadow-[inset_0_1px_1px_rgba(255,255,255,.18)]"
                       : "bg-gradient-to-b from-[#f4e7d5] to-[#d8c4ac] text-royal-deep shadow-[inset_0_1px_1px_rgba(255,255,255,.8),0_6px_16px_rgba(0,0,0,.28)]"
                   }`}
                 >
                   <Icon
-                    size={20}
+                    size={18}
                     strokeWidth={active ? 1.75 : 2}
                     className={active ? "drop-shadow-[0_0_4px_rgba(216,196,172,.45)]" : ""}
                   />

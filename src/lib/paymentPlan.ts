@@ -2,8 +2,8 @@
  * Off-plan / structured payment plan and closing-fee transparency.
  *
  * The transfer fee is emirate-specific, not a single UAE-wide number: 4%
- * to the Dubai Land Department in Dubai, versus 2% to the Abu Dhabi
- * Municipality/DMT in Abu Dhabi. Both sample listings are in Abu Dhabi, so
+ * to the Dubai Land Department in Dubai, versus 2% registered through
+ * ADREC's DARI platform in Abu Dhabi. Both sample listings are in Abu Dhabi, so
  * applying the Dubai rate there would be a real factual error, not just a
  * rough placeholder — this keys off Property.city rather than hard-coding
  * one emirate's rate. All figures are illustrative typical-structure
@@ -98,51 +98,57 @@ export const PLAN_TIMELINES: Partial<
   },
 };
 
-const TRANSFER_FEE_RATE_BY_CITY: Record<Property["city"], number> = {
-  Dubai: 0.04,
-  "Abu Dhabi": 0.02,
-};
-
-const TRANSFER_FEE_LABEL_BY_CITY: Record<Property["city"], string> = {
-  Dubai: "Transfer fee (Dubai Land Department, 4%)",
-  "Abu Dhabi": "Transfer fee (Abu Dhabi Municipality/DMT, 2%)",
-};
-
-const TRANSFER_ADMIN_FEE_AED = 580;
-const AGENCY_FEE_RATE = 0.02;
+/* Abu Dhabi (checked October 2026 against ADREC/DARI guidance):
+   - Registration is 2% of the price via DARI. By law it's split 50/50 with
+     the seller or developer unless the SPA says otherwise, so the full 2%
+     shown here is the most a buyer would pay.
+   - DARI charges AED 450 + 5% VAT to register an off-plan sale.
+   - There's no trustee office fee; that's a Dubai cost.
+   - Agency commission is 2%, capped at AED 500,000 (Resolution 183 of
+     2017), plus VAT. Off-plan bought from the developer carries none, as
+     the developer pays the agent.
+   Dubai figures are the long-standing DLD 4%, admin and trustee fees. */
 const VAT_RATE = 0.05;
-const TRUSTEE_REGISTRATION_FEE_AED = 4_200;
+const AGENCY_FEE_RATE = 0.02;
+const ABU_DHABI_AGENCY_FEE_CAP_AED = 500_000;
+const DARI_ADMIN_FEE_AED = 450 * (1 + VAT_RATE);
+const DUBAI_ADMIN_FEE_AED = 580;
+const DUBAI_TRUSTEE_FEE_AED = 4_000 * (1 + VAT_RATE);
+
+export type FeeLine = { label: string; amountAed: number };
 
 export type FeeBreakdown = {
-  transferFeeLabel: string;
-  transferFeeAed: number;
-  transferAdminFeeAed: number;
-  agencyFeeAed: number;
-  agencyVatAed: number;
-  trusteeRegistrationFeeAed: number;
+  lines: FeeLine[];
   totalUpfrontFeesAed: number;
 };
 
-export function calculateFees(priceAed: number, city: Property["city"]): FeeBreakdown {
-  const transferFeeAed = priceAed * TRANSFER_FEE_RATE_BY_CITY[city];
-  const agencyFeeAed = priceAed * AGENCY_FEE_RATE;
-  const agencyVatAed = agencyFeeAed * VAT_RATE;
-  const totalUpfrontFeesAed =
-    transferFeeAed +
-    TRANSFER_ADMIN_FEE_AED +
-    agencyFeeAed +
-    agencyVatAed +
-    TRUSTEE_REGISTRATION_FEE_AED;
+export function calculateFees(
+  priceAed: number,
+  city: Property["city"],
+  status?: Property["status"],
+): FeeBreakdown {
+  const offPlan = status === "off-plan";
+  const lines: FeeLine[] = [];
 
-  return {
-    transferFeeLabel: TRANSFER_FEE_LABEL_BY_CITY[city],
-    transferFeeAed,
-    transferAdminFeeAed: TRANSFER_ADMIN_FEE_AED,
-    agencyFeeAed,
-    agencyVatAed,
-    trusteeRegistrationFeeAed: TRUSTEE_REGISTRATION_FEE_AED,
-    totalUpfrontFeesAed,
-  };
+  if (city === "Abu Dhabi") {
+    lines.push({ label: "Registration fee (DARI, 2%, often split with the seller)", amountAed: priceAed * 0.02 });
+    lines.push({ label: "DARI admin fee (incl. VAT)", amountAed: DARI_ADMIN_FEE_AED });
+  } else {
+    lines.push({ label: "Transfer fee (Dubai Land Department, 4%)", amountAed: priceAed * 0.04 });
+    lines.push({ label: "DLD admin fee", amountAed: DUBAI_ADMIN_FEE_AED });
+    if (!offPlan) lines.push({ label: "Trustee office fee (incl. VAT)", amountAed: DUBAI_TRUSTEE_FEE_AED });
+  }
+
+  if (!offPlan) {
+    const agencyFeeAed =
+      city === "Abu Dhabi"
+        ? Math.min(priceAed * AGENCY_FEE_RATE, ABU_DHABI_AGENCY_FEE_CAP_AED)
+        : priceAed * AGENCY_FEE_RATE;
+    lines.push({ label: "Agency fee (2%)", amountAed: agencyFeeAed });
+    lines.push({ label: "VAT on agency fee (5%)", amountAed: agencyFeeAed * VAT_RATE });
+  }
+
+  return { lines, totalUpfrontFeesAed: lines.reduce((sum, l) => sum + l.amountAed, 0) };
 }
 
 export function calculateMilestoneSchedule(priceAed: number, structureId: PaymentStructureId) {
@@ -156,9 +162,10 @@ export function totalInitialCapitalRequired(
   priceAed: number,
   city: Property["city"],
   structureId: PaymentStructureId,
+  status?: Property["status"],
 ): number {
   const firstMilestone = PAYMENT_STRUCTURES[structureId].milestones[0];
   const bookingAed = priceAed * (firstMilestone.percentOfPrice / 100);
-  const fees = calculateFees(priceAed, city);
+  const fees = calculateFees(priceAed, city, status);
   return bookingAed + fees.totalUpfrontFeesAed;
 }

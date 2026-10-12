@@ -79,7 +79,7 @@ export function PriceListRequest({
           setSubmitted(false);
           setOpen(true);
         }}
-        className={`inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors ${TRIGGER_STYLES[variant]} ${className}`}
+        className={`btn-hover relative inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium ${TRIGGER_STYLES[variant]} ${className}`}
       >
         <FileText size={15} aria-hidden />
         Price list
