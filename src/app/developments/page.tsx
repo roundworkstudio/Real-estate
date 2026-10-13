@@ -26,6 +26,7 @@ import { PriceListRequest } from "@/components/tools/PriceListRequest";
 import { CurrencyIcon } from "@/components/tools/CurrencyIcon";
 import { PaymentTimeline } from "@/components/ui/PaymentTimeline";
 import { JanviTake } from "@/components/ui/JanviTake";
+import { PROJECT_CARD_PRIMARY, ProjectPhotoCard } from "@/components/ui/ProjectPhotoCard";
 import type { CurrencyCode } from "@/lib/currency";
 import { RevealImage } from "@/components/ui/RevealImage";
 import { GlassCard } from "@/components/ui/GlassCard";
@@ -146,22 +147,7 @@ export default function DevelopmentsPage() {
               )}
 
               <Reveal className={i === 0 ? "pt-8 sm:hidden" : "pt-5 sm:hidden"}>
-                <article className="relative overflow-hidden rounded-[2rem] shadow-[0_24px_50px_-28px_rgba(58,45,40,.7)]">
-                  <div className={`relative ${d.meta?.paymentStructureId ? "aspect-[2/3]" : "aspect-[3/4]"}`}>
-                    <Image
-                      src={cover.src}
-                      alt={cover.alt}
-                      fill
-                      quality={90}
-                      sizes="100vw"
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate/55 via-transparent via-50% to-slate/15" />
-                  <span className="liquid-glass liquid-glass--tint absolute left-4 top-4 rounded-full px-3 py-1.5 text-xs font-medium text-white">
-                    {statusLabel(d)}
-                  </span>
-                  <div className="liquid-glass liquid-glass--tint absolute inset-x-3 bottom-3 rounded-[1.5rem] p-4 text-white">
+                <ProjectPhotoCard image={cover} badge={statusLabel(d)}>
                     <div className="flex items-center justify-between gap-3">
                       <p className="text-xs font-medium text-white/80">
                         {d.meta ? `${d.meta.developer} · ` : ""}{d.city}
@@ -184,16 +170,12 @@ export default function DevelopmentsPage() {
                       className="mt-3 border-t border-white/20 pt-3"
                     />
                     <div className="mt-4 grid grid-cols-2 gap-2">
-                      <Link
-                        href={`/developments/${d.slug}`}
-                        className="flex items-center justify-center whitespace-nowrap rounded-full bg-white px-3 py-2.5 text-sm font-medium text-slate transition-colors hover:bg-white/90"
-                      >
+                      <Link href={`/developments/${d.slug}`} className={PROJECT_CARD_PRIMARY}>
                         Explore project
                       </Link>
                       <PriceListRequest project={d.name} developer={d.meta?.developer} variant="glass" className="whitespace-nowrap px-3" />
                     </div>
-                  </div>
-                </article>
+                </ProjectPhotoCard>
                 {JANVIS_TAKE[d.slug] && (
                   <JanviTake quote={JANVIS_TAKE[d.slug]} highlight={JANVIS_TAKE_HIGHLIGHT[d.slug]} variant="bubble" className="mx-3 mt-4" />
                 )}

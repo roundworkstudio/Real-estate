@@ -5,18 +5,19 @@ import { AreaGuideCard, type AreaGuide } from "./AreaGuideCard";
 import { MobileAreasCarousel } from "./MobileAreasCarousel";
 
 /**
- * LAYOUT FILLER — yield ranges and price-from figures are representative
- * market estimates, not verified data. Replace with real numbers from the
- * client or a current REIDIN/Bayut report before this goes live.
- * docs/client-inputs-required.md has the outstanding data request.
+ * Saadiyat's yield is the sourced premium-villa range used on Insights
+ * (Bayut H1 2026; Sands of Wealth) and Hudayriyat's entry price is the
+ * Wadeem Gardens 4 bed listing. Every other figure flagged in `sample` is a
+ * placeholder until Janvi supplies figures.
  */
 const areas: AreaGuide[] = [
   {
     name: "Saadiyat Island",
+    sample: { price: true },
     city: "Abu Dhabi",
     image: "/media/area-guides/saadiyat-island.jpg",
     imageAlt: "The Louvre Abu Dhabi dome beside the water on Saadiyat Island",
-    yieldRange: "5–6%",
+    yieldRange: "4.3–4.8%",
     priceFromAed: 3_500_000,
     tag: "Cultural district",
     description:
@@ -24,6 +25,7 @@ const areas: AreaGuide[] = [
   },
   {
     name: "Yas Island",
+    sample: { yield: true, price: true },
     city: "Abu Dhabi",
     image: "/media/area-guides/yas-island.jpg",
     imageAlt: "Yas Marina Circuit on Yas Island",
@@ -35,6 +37,7 @@ const areas: AreaGuide[] = [
   },
   {
     name: "Al Reem Island",
+    sample: { yield: true, price: true },
     city: "Abu Dhabi",
     image: "/media/area-guides/al-reem-island.jpg",
     imageAlt: "Al Reem Island skyline beyond Abu Dhabi's mangroves",
@@ -49,7 +52,7 @@ const areas: AreaGuide[] = [
     city: "Abu Dhabi",
     image: "/media/area-guides/hudayriyat-island.jpg",
     imageAlt: "The illuminated waterfront at Hudayriyat Island after sunset",
-    yieldRange: "5–6%",
+    yieldRange: "Too new to measure",
     priceFromAed: 8_700_000,
     tag: "Emerging waterfront",
     description:
@@ -57,6 +60,7 @@ const areas: AreaGuide[] = [
   },
   {
     name: "Dubai Marina",
+    sample: { yield: true, price: true },
     city: "Dubai",
     image: "/media/area-guides/dubai-marina.jpg",
     imageAlt: "Dubai Marina towers and waterfront at dusk",
@@ -68,6 +72,7 @@ const areas: AreaGuide[] = [
   },
   {
     name: "Downtown Dubai",
+    sample: { yield: true, price: true },
     city: "Dubai",
     image: "/media/area-guides/downtown-dubai.jpg",
     imageAlt: "The Burj Khalifa rising above Downtown Dubai",

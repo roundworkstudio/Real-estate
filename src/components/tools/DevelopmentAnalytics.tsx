@@ -24,22 +24,24 @@ const TOOLS = [
   { id: "growth", label: "5-year growth" },
 ] as const;
 
-type ToolId = (typeof TOOLS)[number]["id"];
+export type ToolId = (typeof TOOLS)[number]["id"];
 
 export function DevelopmentAnalytics({
   properties,
   defaultPaymentStructureId,
   paymentStructureIds,
   handoverMonths,
+  defaultTool = "plan",
 }: {
   properties: Property[];
   defaultPaymentStructureId?: PaymentStructureId;
   paymentStructureIds?: PaymentStructureId[];
   handoverMonths?: number;
+  defaultTool?: ToolId;
 }) {
   const sorted = [...properties].sort((a, b) => a.priceAed - b.priceAed);
   const { home: property } = useSelectedUnit(sorted);
-  const [tool, setTool] = useState<ToolId>("plan");
+  const [tool, setTool] = useState<ToolId>(defaultTool);
   const rentDelayMonths = property.status === "off-plan" ? handoverMonths : undefined;
   const ownSharePercent = defaultPaymentStructureId
     ? PLAN_TIMELINES[defaultPaymentStructureId]?.segments

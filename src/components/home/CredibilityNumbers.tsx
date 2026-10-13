@@ -13,7 +13,7 @@ import { GlassCard } from "@/components/ui/GlassCard";
  * and the typographic pattern (docs/what-worked.md) until Janvi supplies
  * her actual numbers. Do not present these to the client as real.
  */
-const stats = [
+export const TRACK_RECORD = [
   { label: "Transaction volume", value: 312, prefix: "AED", unit: "M" },
   { label: "Properties sold", value: 148 },
   { label: "Years active", value: 9 },
@@ -24,13 +24,13 @@ export function CredibilityNumbers() {
   return (
     <section id="numbers" className="scroll-mt-24 px-6 py-6 sm:px-10 sm:py-20">
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6">
-        {stats.map((s, i) => (
+        {TRACK_RECORD.map((s, i) => (
           <Reveal key={s.label} delayMs={i * 100}>
             <GlassCard
               maxDeg={6}
               className="rounded-2xl bg-sand p-6 shadow-card sm:aspect-square sm:flex sm:flex-col sm:items-center sm:justify-center"
             >
-              <StatFigure {...s} />
+              <StatFigure {...s} sample />
             </GlassCard>
           </Reveal>
         ))}

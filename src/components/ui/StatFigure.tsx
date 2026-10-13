@@ -1,6 +1,7 @@
 "use client";
 
 import { useInView, useCountUp } from "@/lib/motion";
+import { SampleChip } from "@/components/ui/ProjectStats";
 
 /**
  * Plain stat figure — no card, no border, no shadow. Used for the
@@ -27,6 +28,7 @@ export function StatFigure({
   prefix,
   unit,
   format,
+  sample = false,
 }: {
   label: string;
   value: number;
@@ -36,6 +38,8 @@ export function StatFigure({
   /** Shown after the number, small and muted — e.g. "M", "days". */
   unit?: string;
   format?: (n: number) => string;
+  /** Marks a placeholder figure with the site-wide "Sample" chip. */
+  sample?: boolean;
 }) {
   const fmt = format ?? ((n: number) => Math.round(n).toLocaleString("en-AE"));
   const { ref, inView } = useInView<HTMLSpanElement>(0.4);
@@ -61,7 +65,10 @@ export function StatFigure({
           </span>
         )}
       </div>
-      <div className="mt-2 text-sm text-slate/60">{label}</div>
+      <div className="mt-2 text-sm text-slate/60">
+        {label}
+        {sample && <SampleChip />}
+      </div>
     </div>
   );
 }

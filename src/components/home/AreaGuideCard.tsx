@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { FormattedPrice } from "@/components/ui/FormattedPrice";
+import { SampleChip } from "@/components/ui/ProjectStats";
 
 export type AreaGuide = {
   name: string;
@@ -13,6 +14,8 @@ export type AreaGuide = {
   priceFromAed: number;
   tag: string;
   description: string;
+  /** Placeholder figures, not a sourced range or a live listing. */
+  sample?: { yield?: boolean; price?: boolean };
 };
 
 export function AreaGuideCard({ area }: { area: AreaGuide }) {
@@ -49,13 +52,13 @@ export function AreaGuideCard({ area }: { area: AreaGuide }) {
           </p>
           <div className="mt-4 flex items-center gap-6 border-t border-slate/10 pt-4">
             <div>
-              <div className="text-xs text-slate/55">Gross yield</div>
+              <div className="text-xs text-slate/55">Gross yield{area.sample?.yield && <SampleChip />}</div>
               <div className="mt-0.5 text-sm font-semibold text-sovereign">
                 {area.yieldRange}
               </div>
             </div>
             <div>
-              <div className="text-xs text-slate/55">From</div>
+              <div className="text-xs text-slate/55">From{area.sample?.price && <SampleChip />}</div>
               <div className="mt-0.5 text-sm font-semibold text-slate">
                 <FormattedPrice amountAed={area.priceFromAed} compact={false} />
               </div>

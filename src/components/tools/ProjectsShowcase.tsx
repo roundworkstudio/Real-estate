@@ -1,10 +1,10 @@
 "use client";
 
 import { useId, useState, type ReactNode } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowRight, CalendarClock, MapPin, TrendingUp } from "lucide-react";
+import { PROJECT_CARD_PRIMARY, ProjectPhotoCard } from "@/components/ui/ProjectPhotoCard";
 import { growthSinceLaunch, type CompletedProject, type UpcomingLaunch } from "@/lib/developments";
 import { whatsAppUrlWithMessage } from "@/lib/site-config";
 import { FormattedPrice } from "@/components/ui/FormattedPrice";
@@ -146,110 +146,69 @@ export function ProjectsShowcase({
 function UpcomingCard({ project }: { project: UpcomingLaunch }) {
   const message = `Hi Janvi, please add me to the priority list for ${project.name} in ${project.area}.`;
   return (
-    <article className="liquid-glass-light overflow-hidden rounded-[2rem]">
-      <div className="relative aspect-[16/10]">
-        <Image
-          src={project.image.src}
-          alt={project.image.alt}
-          fill
-          quality={90}
-          sizes="(min-width: 640px) 50vw, 100vw"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate/50 to-transparent to-50%" />
-        <span className="liquid-glass liquid-glass--tint absolute left-4 top-4 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-white">
+    <ProjectPhotoCard
+      image={project.image}
+      sizes="(min-width: 640px) 50vw, 100vw"
+      isSample={project.isSample}
+      badge={
+        <>
           <CalendarClock size={13} aria-hidden /> Expected {project.expectedLaunch}
-        </span>
-        {project.isSample && (
-          <span className="liquid-glass liquid-glass--tint absolute right-4 top-4 rounded-full px-3 py-1.5 text-xs font-medium text-white">
-            Sample
-          </span>
-        )}
-      </div>
-      <div className="p-5 sm:p-6">
-        <h3 className="text-lg font-semibold text-slate">{project.name}</h3>
-        <p className="mt-0.5 flex items-center gap-1.5 text-sm text-slate/70">
-          <MapPin size={13} /> {project.area} · {project.developer}
+        </>
+      }
+    >
+      <p className="text-xs font-medium text-white/80">
+        {project.developer} · {project.area}
+      </p>
+      <h3 className="mt-0.5 text-2xl font-semibold leading-tight">{project.name}</h3>
+      <p className="mt-2 text-sm text-white/85">{project.pitch}</p>
+      <div className="mt-3 border-t border-white/20 pt-3">
+        <p className="text-xs text-white/70">Indicative price per sqft</p>
+        <p className="mt-1 text-lg font-semibold">
+          From <FormattedPrice amountAed={project.indicativePricePerSqftAed} compact={false} />
         </p>
-        <p className="mt-2 text-sm text-slate/75">{project.pitch}</p>
-
-        <div className="mt-5 flex flex-wrap items-end justify-between gap-4 border-t border-slate/10 pt-4">
-          <div>
-            <p className="text-xs text-slate/70">Indicative price per sqft</p>
-            <p className="mt-1 text-sm font-medium text-slate">
-              From <FormattedPrice amountAed={project.indicativePricePerSqftAed} compact={false} />
-            </p>
-          </div>
-          <a
-            href={whatsAppUrlWithMessage(message)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-royal-deep px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-royal-deep/90"
-          >
-            Get priority access
-          </a>
-        </div>
       </div>
-    </article>
+      <a href={whatsAppUrlWithMessage(message)} target="_blank" rel="noopener noreferrer" className={`mt-4 ${PROJECT_CARD_PRIMARY}`}>
+        Get priority access
+      </a>
+    </ProjectPhotoCard>
   );
 }
 
 function CompletedCard({ project }: { project: CompletedProject }) {
   const growth = growthSinceLaunch(project);
   return (
-    <article className="liquid-glass-light overflow-hidden rounded-[2rem]">
-      <div className="relative aspect-[16/10]">
-        <Image
-          src={project.image.src}
-          alt={project.image.alt}
-          fill
-          quality={90}
-          sizes="(min-width: 640px) 50vw, 100vw"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate/50 to-transparent to-50%" />
-        <span className="liquid-glass liquid-glass--tint absolute left-4 top-4 rounded-full px-3 py-1.5 text-xs font-medium text-white">
-          Completed {project.completedYear}
-        </span>
-        {project.isSample && (
-          <span className="liquid-glass liquid-glass--tint absolute right-4 top-4 rounded-full px-3 py-1.5 text-xs font-medium text-white">
-            Sample
-          </span>
-        )}
-      </div>
-      <div className="p-5 sm:p-6">
-        <h3 className="text-lg font-semibold text-slate">{project.name}</h3>
-        <p className="mt-0.5 flex items-center gap-1.5 text-sm text-slate/70">
-          <MapPin size={13} /> {project.area} · {project.developer}
-        </p>
-
-        <div className="mt-5 flex items-end justify-between gap-4 border-t border-slate/10 pt-4">
-          <div>
-            <p className="text-xs text-slate/70">Price per sqft, launch → today</p>
-            <p className="mt-1 text-sm font-medium text-slate">
-              <FormattedPrice amountAed={project.launchPricePerSqftAed} compact={false} />
-              {" → "}
-              <FormattedPrice amountAed={project.currentPricePerSqftAed} compact={false} />
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="flex items-center justify-end gap-1 text-3xl font-semibold leading-none text-[#0B6B35]">
-              <TrendingUp size={20} aria-hidden />+{Math.round(growth)}%
-            </p>
-            <p className="mt-1 text-xs text-slate/70">since launch</p>
-          </div>
+    <ProjectPhotoCard
+      image={project.image}
+      sizes="(min-width: 640px) 50vw, 100vw"
+      isSample={project.isSample}
+      badge={`Completed ${project.completedYear}`}
+    >
+      <p className="text-xs font-medium text-white/80">
+        {project.developer} · {project.area}
+      </p>
+      <h3 className="mt-0.5 text-2xl font-semibold leading-tight">{project.name}</h3>
+      <div className="mt-3 flex items-end justify-between gap-4 border-t border-white/20 pt-3">
+        <div>
+          <p className="text-xs text-white/70">Per sqft, launch → today</p>
+          <p className="mt-1 whitespace-nowrap text-sm font-medium">
+            <FormattedPrice amountAed={project.launchPricePerSqftAed} compact={false} />
+            {" → "}
+            <FormattedPrice amountAed={project.currentPricePerSqftAed} compact={false} />
+          </p>
         </div>
-
-        {project.caseStudyHref && (
-          <Link
-            href={project.caseStudyHref}
-            className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-royal-deep transition-colors hover:text-royal"
-          >
-            Read the case study <ArrowRight size={14} />
-          </Link>
-        )}
+        <div className="shrink-0 text-right">
+          <p className="flex items-center justify-end gap-1 text-3xl font-semibold leading-none">
+            <TrendingUp size={20} aria-hidden className="text-sovereign" />+{Math.round(growth)}%
+          </p>
+          <p className="mt-1 text-xs text-white/70">since launch</p>
+        </div>
       </div>
-    </article>
+      {project.caseStudyHref && (
+        <Link href={project.caseStudyHref} className={`mt-4 gap-1.5 ${PROJECT_CARD_PRIMARY}`}>
+          Read the case study <ArrowRight size={14} />
+        </Link>
+      )}
+    </ProjectPhotoCard>
   );
 }
 
