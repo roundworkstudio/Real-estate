@@ -41,4 +41,4 @@ export function ProjectPhotoCard({
 }
 
 export const PROJECT_CARD_PRIMARY =
-  "flex items-center justify-center whitespace-nowrap rounded-full bg-white px-3 py-2.5 text-sm font-medium text-slate transition-colors hover:bg-white/90";
+  "btn-hover relative flex items-center justify-center whitespace-nowrap rounded-full bg-white px-3 py-2.5 text-sm font-medium text-slate hover:bg-white/90";

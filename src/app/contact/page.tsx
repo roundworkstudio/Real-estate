@@ -20,7 +20,7 @@ import {
 } from "@/lib/site-config";
 
 export const metadata: Metadata = {
-  title: "Contact · Janvi Real Estate",
+  title: "Contact",
   description:
     "Talk to Janvi about buying or investing in Abu Dhabi and Dubai property, on WhatsApp, by phone or by email.",
 };

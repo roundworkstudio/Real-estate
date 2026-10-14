@@ -24,6 +24,7 @@ import {
   PLACEHOLDER_PHONE_NUMBER_DISPLAY,
   PLACEHOLDER_TEL_URL,
   PLACEHOLDER_WHATSAPP_URL,
+  WHATSAPP_BROADCAST_LIVE,
 } from "@/lib/site-config";
 
 const PORTRAIT = {
@@ -49,7 +50,9 @@ const HOW_I_WORK: BuyingStep[] = [
   },
   {
     title: "Launches as they open",
-    body: "Clients on my WhatsApp list get new launches and EOI dates as soon as developers release them, with my view on whether they’re worth it.",
+    body: WHATSAPP_BROADCAST_LIVE
+      ? "Clients on my WhatsApp list get new launches and EOI dates as soon as developers release them, with my view on whether they’re worth it."
+      : "I follow new launches and EOI dates as developers release them, and tell you honestly whether they’re worth it.",
   },
   {
     title: "One contact, start to finish",
@@ -78,14 +81,14 @@ function ContactActions({ onDark = false }: { onDark?: boolean }) {
       </WhatsAppButton>
       <a
         href={PLACEHOLDER_TEL_URL}
-        className={`inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-colors ${secondary}`}
+        className={`btn-hover relative inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium ${secondary}`}
       >
         <Phone className="h-4 w-4" aria-hidden />
         Call
       </a>
       <a
         href={`mailto:${PLACEHOLDER_EMAIL}`}
-        className={`inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-colors ${secondary}`}
+        className={`btn-hover relative inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium ${secondary}`}
       >
         <Mail className="h-4 w-4" aria-hidden />
         Email

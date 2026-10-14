@@ -29,7 +29,6 @@ import { JanviTake } from "@/components/ui/JanviTake";
 import { PROJECT_CARD_PRIMARY, ProjectPhotoCard } from "@/components/ui/ProjectPhotoCard";
 import type { CurrencyCode } from "@/lib/currency";
 import { RevealImage } from "@/components/ui/RevealImage";
-import { GlassCard } from "@/components/ui/GlassCard";
 import { Reveal } from "@/components/ui/Reveal";
 import { ImageBreak } from "@/components/ui/ImageBreak";
 import { Nav } from "@/components/layout/Nav";
@@ -40,11 +39,11 @@ import { CurrencySwitcher } from "@/components/tools/CurrencySwitcher";
 type GlanceRow = { label: string; value: React.ReactNode };
 
 export const metadata: Metadata = {
-  title: "Projects · Janvi Real Estate",
+  title: "Projects",
   description:
     "Upcoming launches, projects selling now and completed developments across Abu Dhabi and Dubai: priority access, payment plans, handover and price growth since launch.",
   openGraph: {
-    title: "Projects · Janvi Real Estate",
+    title: "Projects · Property with Janvi",
     description:
       "Upcoming launches, projects selling now and completed developments across Abu Dhabi and Dubai.",
     images: [{ url: "/media/wadeem-gardens/hero.jpg", alt: "Aerial view of a villa community on the Abu Dhabi coastline" }],
@@ -131,6 +130,9 @@ export default function DevelopmentsPage() {
           const cover = d.meta?.heroImage ?? d.properties[0].image;
           const imageFirst = i % 2 === 0;
           const breakImage = d.properties[0].gallery?.[0];
+          const photos = [cover, ...d.properties.flatMap((p) => [p.image, ...(p.gallery ?? [])])]
+            .filter((img, idx, all) => !/plan/i.test(img.alt) && all.findIndex((o) => o.src === img.src) === idx);
+          const extraPhotos = photos.length - 3;
 
           return (
             <div key={d.slug}>
@@ -181,26 +183,49 @@ export default function DevelopmentsPage() {
                 )}
               </Reveal>
 
-              <section className="hidden items-center gap-12 py-14 sm:grid sm:grid-cols-2">
+              <section
+                className={`hidden items-start gap-12 py-14 sm:grid ${imageFirst ? "sm:grid-cols-[1.15fr_1fr]" : "sm:grid-cols-[1fr_1.15fr]"}`}
+              >
                 <Reveal
                   direction={imageFirst ? "left" : "right"}
-                  className={imageFirst ? "sm:order-1" : "sm:order-2"}
+                  className={`sticky top-28 ${imageFirst ? "sm:order-1" : "sm:order-2"}`}
                 >
-                  <Link href={`/developments/${d.slug}`} tabIndex={-1} aria-hidden className="block">
-                  <GlassCard maxDeg={6} className="relative overflow-hidden rounded-2xl bg-sand shadow-card">
-                    <RevealImage
-                      src={cover.src}
-                      alt={cover.alt}
-                      fill
-                      quality={90}
-                      sizes="(min-width: 640px) 50vw, 100vw"
-                      containerClassName="relative aspect-[4/3]"
-                      className="object-cover"
-                    />
-                    <span className="liquid-glass liquid-glass--tint absolute left-4 top-4 z-10 rounded-full px-3 py-1.5 text-xs font-medium text-white">
-                      {statusLabel(d)}
-                    </span>
-                  </GlassCard>
+                  <Link
+                    href={`/developments/${d.slug}`}
+                    tabIndex={-1}
+                    aria-hidden
+                    className="group grid grid-cols-2 gap-3"
+                  >
+                    <div className="relative col-span-2 overflow-hidden rounded-[1.75rem] bg-sand shadow-card">
+                      <RevealImage
+                        src={cover.src}
+                        alt={cover.alt}
+                        fill
+                        quality={90}
+                        sizes="(min-width: 1024px) 560px, 55vw"
+                        containerClassName="relative aspect-[4/3]"
+                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                      />
+                      <span className="liquid-glass liquid-glass--tint absolute left-4 top-4 z-10 rounded-full px-3 py-1.5 text-xs font-medium text-white">
+                        {statusLabel(d)}
+                      </span>
+                    </div>
+                    {photos.slice(1, 3).map((img, k) => (
+                      <div key={img.src} className="relative aspect-[4/3] overflow-hidden rounded-[1.25rem] bg-sand">
+                        <Image
+                          src={img.src}
+                          alt=""
+                          fill
+                          sizes="(min-width: 1024px) 280px, 28vw"
+                          className="object-cover"
+                        />
+                        {k === 1 && extraPhotos > 0 && (
+                          <span className="absolute inset-0 flex items-center justify-center bg-slate/45 text-sm font-medium text-white">
+                            +{extraPhotos} photos
+                          </span>
+                        )}
+                      </div>
+                    ))}
                   </Link>
                 </Reveal>
 
@@ -298,7 +323,7 @@ export default function DevelopmentsPage() {
                   <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
                     <Link
                       href={`/developments/${d.slug}`}
-                      className="inline-flex items-center gap-2 rounded-full bg-royal-deep px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-royal-deep/90"
+                      className="btn-hover relative inline-flex items-center gap-2 rounded-full bg-royal-deep px-5 py-2.5 text-sm font-medium text-white hover:bg-royal-deep/90"
                     >
                       Explore project
                     </Link>

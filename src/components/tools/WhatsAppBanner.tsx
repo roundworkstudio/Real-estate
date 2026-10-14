@@ -1,48 +1,48 @@
-import { PLACEHOLDER_WHATSAPP_URL } from "@/lib/site-config";
+import {
+  PLACEHOLDER_WHATSAPP_URL,
+  WHATSAPP_BROADCAST_LIVE,
+  WHATSAPP_BROADCAST_URL,
+} from "@/lib/site-config";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 
 /**
- * WhatsApp lead-gen banner. Green here is a scoped exception to
+ * WhatsApp lead banner. Green here is a scoped exception to
  * brand-guidelines.md's monochromatic-palette rule — it's WhatsApp's own
- * near-universal brand convention, not a new arbitrary accent colour, so
- * it's used only on WhatsApp-specific elements (this banner, the floating
- * trigger), nowhere else. Previously this comment claimed the exception
- * without using it — the response-time dot was sovereign/camel, matching
- * the site's own accent, not actually green. Fixed 2026-09-27 (explicit
- * request) alongside making it genuinely pulse (`.pulse-dot`, globals.css)
- * rather than sitting static, since "< 5 mins" is a live-response claim.
+ * near-universal brand convention, used only on WhatsApp-specific elements.
  *
- * PLACEHOLDER: the phone number (lib/site-config.ts, shared with every
- * other "Book a call"/WhatsApp CTA site-wide) and the "< 5 mins"
- * response-time claim are both unverified — replace with the real
- * WhatsApp Business number and a defensible figure before this ships.
+ * Until WHATSAPP_BROADCAST_LIVE is switched on, this invites a direct
+ * message rather than promising launch alerts from a list that doesn't
+ * exist yet. No response-time claim until Janvi confirms one.
  */
+const COPY = WHATSAPP_BROADCAST_LIVE
+  ? {
+      title: "New launches on WhatsApp",
+      body: "Join Janvi’s list for new launches and EOI dates as developers release them, with her view on which are worth a look.",
+      cta: "Join the list",
+      href: WHATSAPP_BROADCAST_URL,
+    }
+  : {
+      title: "Questions about a home? Ask on WhatsApp",
+      body: "Message Janvi about any home, project or area. Voice notes and photos are welcome, and she replies herself.",
+      cta: "Chat on WhatsApp",
+      href: PLACEHOLDER_WHATSAPP_URL,
+    };
 
 export function WhatsAppBanner() {
   return (
     <div className="grid grid-cols-1 gap-8 rounded-2xl border border-slate/10 bg-canvas p-8 shadow-card sm:grid-cols-2 sm:items-center sm:gap-10 sm:p-10">
       <div>
-        <h2 className="text-2xl font-semibold text-slate sm:text-3xl">
-          Get private off-market deals on WhatsApp
-        </h2>
-        <p className="mt-3 text-slate/70">
-          Instant pro forma access the moment a deal is available, before
-          it&apos;s listed anywhere else.
-        </p>
-        <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#25D366]/10 px-3.5 py-1.5 text-sm font-medium text-[#0B6B35]">
-          <span className="pulse-dot h-2 w-2 rounded-full bg-[#25D366]" />
-          Avg. response time: &lt; 5 mins
-        </div>
+        <h2 className="text-2xl font-semibold text-slate sm:text-3xl">{COPY.title}</h2>
+        <p className="mt-3 text-slate/70">{COPY.body}</p>
       </div>
 
       <div className="flex justify-center sm:justify-end">
         <WhatsAppButton
-          href={PLACEHOLDER_WHATSAPP_URL}
+          href={COPY.href}
           variant="green"
           className="w-full max-w-[260px] sm:w-auto sm:max-w-none"
         >
-          <span className="sm:hidden">Chat on WhatsApp</span>
-          <span className="hidden sm:inline">Chat on WhatsApp now</span>
+          {COPY.cta}
         </WhatsAppButton>
       </div>
     </div>

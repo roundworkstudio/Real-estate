@@ -12,7 +12,7 @@ export function Footer() {
     <footer className="border-t border-slate/10 px-6 pt-10 pb-[calc(7rem+env(safe-area-inset-bottom))] text-sm text-slate/75 sm:px-10 md:pb-10">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <div className="font-medium text-slate">Janvi Real Estate</div>
+          <div className="font-medium text-slate">Property with Janvi</div>
           <div className="mt-1">
             BRN [pending] · ORN [pending] · 123 Placeholder Street, Abu Dhabi
           </div>
@@ -53,7 +53,7 @@ export function Footer() {
       <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <CurrencySwitcher />
         <div className="text-xs text-slate/65">
-          © {new Date().getFullYear()} Janvi Real Estate. All rights reserved.
+          © {new Date().getFullYear()} Property with Janvi. All rights reserved.
           Prices convert at illustrative rates, not a live quote.
         </div>
       </div>

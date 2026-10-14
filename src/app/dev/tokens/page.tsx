@@ -21,7 +21,7 @@ export default function Home() {
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
       <h1 className="text-2xl font-semibold text-slate">
-        Janvi Real Estate — build placeholder
+        Property with Janvi — build placeholder
       </h1>
       <p className="mt-2 text-slate/70">
         Provisional colour tokens only. No page design yet.

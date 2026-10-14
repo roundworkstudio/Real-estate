@@ -340,7 +340,13 @@ html.is-scrolling .glass-tilt {
   border-radius: inherit;
   background: linear-gradient(110deg, transparent 35%, rgb(255 255 255 / 0.32) 50%, transparent 65%);
   transform: translateX(-110%);
+  opacity: 0;
   pointer-events: none;
+  /* Leaving mid-sweep fades the highlight where it is, then resets it
+     off-screen, instead of snapping it away half-finished. */
+  transition:
+    opacity 0.3s ease,
+    transform 0s linear 0.3s;
 }
 @media (hover: hover) {
   .btn-hover:hover {
@@ -349,7 +355,10 @@ html.is-scrolling .glass-tilt {
   }
   .btn-hover:hover::after {
     transform: translateX(110%);
-    transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 1;
+    transition:
+      transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.15s ease;
   }
 }
 .btn-hover:active {
@@ -745,7 +754,7 @@ html.is-scrolling .nav-cta {
   background: var(--wa-overlay);
   transform: translateY(-50%) scale(0);
   transform-origin: center;
-  transition: transform 0.58s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .whatsapp-action:hover,
@@ -757,7 +766,9 @@ html.is-scrolling .nav-cta {
 
 .whatsapp-action:hover .whatsapp-action__overlay,
 .whatsapp-action:focus-visible .whatsapp-action__overlay {
-  transform: translateY(-50%) scale(12);
+  /* Grows from the icon at the right edge, so it must reach the far-left
+     corner of full-width buttons (up to ~600px), not just a pill's width. */
+  transform: translateY(-50%) scale(40);
 }
 
 .whatsapp-action:hover .whatsapp-action__icon,

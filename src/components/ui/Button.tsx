@@ -17,7 +17,7 @@ const variantClass: Record<Variant, string> = {
 };
 
 const baseClass =
-  "inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors";
+  "btn-hover relative inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium";
 
 type ButtonAsButton = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: Variant;
