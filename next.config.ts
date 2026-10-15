@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs/config";
 
 const nextConfig: NextConfig = {
   // Insights+Analytics and About+Areas merged into single pages
@@ -32,4 +33,14 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: "roundworkstudio",
+  project: "javascript-nextjs",
+  // Source map upload only runs where SENTRY_AUTH_TOKEN is set (Vercel, or
+  // a gitignored .env.sentry-build-plugin locally). Never commit the token.
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  widenClientFileUpload: true,
+  // Routes browser events through this site so ad blockers don't drop them.
+  tunnelRoute: "/sentry-tunnel",
+  silent: !process.env.CI,
+});
